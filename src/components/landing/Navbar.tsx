@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { EASING, DURATION } from '@/lib/animations';
 import RyznWordLogo from '@/components/RyznWordLogo';
+import RyznIconLogo from '@/components/RyznIconLogo';
 
 const navLinks = ['Features', 'How It Works', 'Pricing', 'FAQ'];
 
@@ -76,9 +77,12 @@ const Navbar = () => {
                 className="text-2xl font-semibold text-foreground"
                 onClick={() => setMobileOpen(false)}
               >
-                {link}
+              {link} 
               </motion.a>
             ))}
+            <div className="mb-4">
+              <RyznIconLogo size={40} />
+            </div>
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
