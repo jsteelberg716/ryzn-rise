@@ -108,8 +108,7 @@ const Hero = () => {
             <div
               className="absolute -inset-[40px] -z-10 blur-[40px]"
               style={{
-                background: 'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34,197,94,0.4) 0%, rgba(69,183,209,0.15) 40%, transparent 70%)',
-                animation: 'glowPulse 4s ease-in-out infinite alternate',
+                background: 'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34,197,94,0.25) 0%, rgba(69,183,209,0.1) 40%, transparent 70%)',
               }}
             />
             <PhoneMockup />
