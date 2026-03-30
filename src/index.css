@@ -204,7 +204,7 @@
 
 /* Gradient text utility */
 .gradient-text {
-  background: linear-gradient(135deg, hsl(244 100% 69%) 0%, hsl(0 100% 71%) 100%);
+  background: linear-gradient(135deg, hsl(145 72% 50%) 0%, hsl(172 63% 55%) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
