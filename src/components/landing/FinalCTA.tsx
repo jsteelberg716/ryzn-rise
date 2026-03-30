@@ -39,7 +39,7 @@ const FinalCTA = () => {
         </motion.h2>
 
         <motion.p variants={fadeUpVariant} className="mt-6 text-muted-foreground text-lg leading-relaxed">
-          2 days. Full access. No credit card.<br />
+          3 days. Full access. No credit card.<br />
           Try RYZN and see what training with intelligence feels like.
         </motion.p>
 

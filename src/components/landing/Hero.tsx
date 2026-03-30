@@ -78,7 +78,7 @@ const Hero = () => {
             <div>
               <a href="#pricing" className="cta-primary inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]">
                 <span className="shimmer" />
-                <span className="relative z-10">Start 2-Day Free Trial</span>
+                <span className="relative z-10">Start 3-Day Free Trial</span>
               </a>
               <p className="text-muted-foreground/60 text-xs mt-2 ml-1">No credit card. Cancel anytime.</p>
             </div>
