@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 
 const splits = [
-  { name: 'Push/Pull/Legs (PPL)', subtitle: 'The classic', gradient: 'linear-gradient(135deg, #6C63FF, #9B59B6)', tags: ['6 days/week', 'Intermediate', 'Strength + Size'] },
+  { name: 'Push/Pull/Legs (PPL)', subtitle: 'The classic', gradient: 'linear-gradient(135deg, #22C55E, #15803D)', tags: ['6 days/week', 'Intermediate', 'Strength + Size'] },
   { name: 'Upper/Lower', subtitle: 'Efficient & effective', gradient: 'linear-gradient(135deg, #FF6B6B, #FF8E53)', tags: ['4 days/week', 'Beginner+', 'Balanced'] },
   { name: 'Arnold Split', subtitle: 'Old school, proven', gradient: 'linear-gradient(135deg, #45B7D1, #0096FF)', tags: ['6 days/week', 'Advanced', 'Volume'] },
   { name: 'Bro Split', subtitle: 'One muscle at a time', gradient: 'linear-gradient(135deg, #4ECDC4, #2ECC71)', tags: ['5 days/week', 'All levels', 'Classic'] },
