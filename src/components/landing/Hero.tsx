@@ -45,7 +45,7 @@ const Hero = () => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
             </span>
             <span className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
-              iOS App — 2 Days Free
+              iOS App — 3 Days Free
             </span>
           </motion.div>
 
