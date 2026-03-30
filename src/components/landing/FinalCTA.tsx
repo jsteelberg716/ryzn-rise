@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
+import RyznIconLogo from '@/components/RyznIconLogo';
 
 const FinalCTA = () => {
   return (
@@ -19,12 +20,8 @@ const FinalCTA = () => {
         viewport={{ once: true, margin: '-100px' }}
       >
         {/* Logo icon */}
-        <motion.div
-          variants={fadeUpVariant}
-          className="w-16 h-16 mx-auto rounded-2xl bg-primary/20 flex items-center justify-center mb-8"
-          style={{ animation: 'glowPulse 3s ease-in-out infinite alternate', filter: 'drop-shadow(0 0 20px rgba(108,99,255,0.4))' }}
-        >
-          <span className="text-3xl font-extrabold gradient-text">R</span>
+        <motion.div variants={fadeUpVariant} className="mb-8 flex justify-center">
+          <RyznIconLogo size={56} />
         </motion.div>
 
         <motion.h2
