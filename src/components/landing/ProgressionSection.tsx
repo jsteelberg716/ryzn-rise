@@ -79,8 +79,8 @@ function ProgressionChart() {
         })}
         <defs>
           <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6C63FF" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#6C63FF" stopOpacity="0" />
+            <stop offset="0%" stopColor="#22C55E" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#22C55E" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
