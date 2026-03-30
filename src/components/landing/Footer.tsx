@@ -1,4 +1,5 @@
-import ryznWordWhite from '@/assets/ryzn-word-white.svg';
+import RyznWordLogo from '@/components/RyznWordLogo';
+import RyznIconLogo from '@/components/RyznIconLogo';
 
 const footerLinks = {
   Product: ['Features', 'Pricing', 'FAQ', 'Download'],
@@ -12,7 +13,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <img src={ryznWordWhite} alt="RYZN" className="h-8 w-auto" />
+            <RyznWordLogo height={24} />
             <p className="text-text-secondary text-sm mt-3 leading-relaxed">
               The workout app that trains as hard as you do.
             </p>
