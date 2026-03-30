@@ -137,70 +137,22 @@
   z-index: 1;
 }
 
-/* CTA button animations */
+/* CTA button */
 .cta-primary {
   position: relative;
-  animation: ctaPulse 3s ease-in-out infinite;
-}
-
-@keyframes ctaPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(34,197,94,0.0), 0 4px 24px rgba(34,197,94,0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 12px rgba(34,197,94,0.0), 0 4px 32px rgba(34,197,94,0.6);
-  }
-}
-
-.cta-primary::before,
-.cta-primary::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 2px solid rgba(34,197,94,0.5);
-  animation: ringExpand 3s ease-out infinite;
-}
-.cta-primary::after {
-  animation-delay: 1.5s;
-}
-
-@keyframes ringExpand {
-  0%   { transform: scale(1); opacity: 0.7; }
-  100% { transform: scale(1.6); opacity: 0; }
+  box-shadow: 0 4px 24px rgba(34,197,94,0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cta-primary:hover {
-  animation: none;
   transform: scale(1.03);
-  box-shadow: 0 8px 40px rgba(34,197,94,0.7), 0 0 80px rgba(34,197,94,0.2);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.cta-primary:hover::before,
-.cta-primary:hover::after {
-  animation: none;
-  opacity: 0;
+  box-shadow: 0 8px 32px rgba(34,197,94,0.5);
 }
 
 .cta-primary:active {
   transform: scale(0.97);
 }
 
-/* Shimmer effect */
-.shimmer {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%);
-  background-size: 200% 100%;
-  animation: shimmerSweep 4s ease-in-out infinite;
-}
-
-@keyframes shimmerSweep {
-  0%   { background-position: 200% 0; }
-  50%  { background-position: -200% 0; }
-  100% { background-position: -200% 0; }
-}
 
 /* Phone float */
 @keyframes phoneFloat {
@@ -213,17 +165,6 @@
   animation: phoneFloat 5s ease-in-out infinite;
 }
 
-/* Glow pulse */
-@keyframes glowPulse {
-  from { opacity: 0.6; transform: scale(0.95); }
-  to   { opacity: 1.0; transform: scale(1.05); }
-}
-
-/* Muscle overwork pulse */
-@keyframes muscleOverworkPulse {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(255,107,107,0.3)); }
-  50%       { filter: drop-shadow(0 0 14px rgba(255,107,107,0.8)); }
-}
 
 /* Bounce chevron */
 @keyframes bounceChevron {

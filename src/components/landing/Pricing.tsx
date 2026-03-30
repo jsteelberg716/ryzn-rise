@@ -67,8 +67,7 @@ const Pricing = () => {
           </div>
 
           <button className="cta-primary w-full mt-8 py-4 rounded-[16px] bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-lg">
-            <span className="shimmer" />
-            <span className="relative z-10">Start My Free 3 Days</span>
+            Start My Free 3 Days
           </button>
 
           <div className="mt-6 flex justify-center gap-6 flex-wrap">

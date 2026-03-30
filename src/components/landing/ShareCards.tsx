@@ -62,7 +62,7 @@ const ShareCards = () => {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, duration: 0.6 }}
               >
-                {i === 2 && <div className="shimmer" />}
+                
                 <div className="relative z-10">
                   <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center text-foreground font-extrabold text-xs border border-primary/30">R</div>

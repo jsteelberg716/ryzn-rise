@@ -77,8 +77,7 @@ const Hero = () => {
           <motion.div variants={wordReveal} className="mt-8 flex flex-wrap gap-4 items-start">
             <div>
               <a href="#pricing" className="cta-primary inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]">
-                <span className="shimmer" />
-                <span className="relative z-10">Start 3-Day Free Trial</span>
+                Start 3-Day Free Trial
               </a>
               <p className="text-muted-foreground/60 text-xs mt-2 ml-1">No credit card. Cancel anytime.</p>
             </div>
@@ -108,8 +107,7 @@ const Hero = () => {
             <div
               className="absolute -inset-[40px] -z-10 blur-[40px]"
               style={{
-                background: 'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34,197,94,0.4) 0%, rgba(69,183,209,0.15) 40%, transparent 70%)',
-                animation: 'glowPulse 4s ease-in-out infinite alternate',
+                background: 'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34,197,94,0.25) 0%, rgba(69,183,209,0.1) 40%, transparent 70%)',
               }}
             />
             <PhoneMockup />
