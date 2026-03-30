@@ -148,7 +148,7 @@ const MuscleMapSection = () => {
             href="#pricing"
             className="inline-block mt-6 text-primary font-medium hover:underline"
           >
-            → Try it free for 2 days
+            → Try it free for 3 days
           </motion.a>
         </motion.div>
       </div>

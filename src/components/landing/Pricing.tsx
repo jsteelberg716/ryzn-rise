@@ -54,7 +54,7 @@ const Pricing = () => {
             <span className="text-muted-foreground text-xl">/ month</span>
           </div>
 
-          <p className="text-muted-foreground mt-2"><strong className="text-foreground">2-day free trial</strong> — no credit card required</p>
+          <p className="text-muted-foreground mt-2"><strong className="text-foreground">3-day free trial</strong> — no credit card required</p>
           <p className="text-muted-foreground/50 text-xs mt-1">Billed monthly. Cancel anytime.</p>
 
           <div className="mt-8 text-left space-y-3">
@@ -68,7 +68,7 @@ const Pricing = () => {
 
           <button className="cta-primary w-full mt-8 py-4 rounded-[16px] bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-lg">
             <span className="shimmer" />
-            <span className="relative z-10">Start My Free 2 Days</span>
+            <span className="relative z-10">Start My Free 3 Days</span>
           </button>
 
           <div className="mt-6 flex justify-center gap-6 flex-wrap">
