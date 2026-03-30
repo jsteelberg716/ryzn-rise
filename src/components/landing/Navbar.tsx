@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { EASING, DURATION } from '@/lib/animations';
+import ryznIconWhite from '@/assets/ryzn-icon-white.svg';
 
 const navLinks = ['Features', 'How It Works', 'Pricing', 'FAQ'];
 
@@ -12,8 +13,9 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-[1000] h-16 backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(10,10,15,0.85)] border-b border-primary/[0.15]">
       <div className="max-w-[1200px] mx-auto h-full flex items-center justify-between px-6">
         {/* Logo */}
-        <a href="#" className="text-2xl font-extrabold tracking-tight gradient-text">
-          RYZN
+        <a href="#" className="flex items-center gap-2">
+          <img src={ryznIconWhite} alt="RYZN" className="h-8 w-auto" />
+          <span className="text-2xl font-extrabold tracking-tight gradient-text">RYZN</span>
         </a>
 
         {/* Desktop nav */}
