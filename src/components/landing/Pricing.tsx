@@ -18,7 +18,7 @@ const Pricing = () => {
   return (
     <section id="pricing" className="relative bg-bg-primary py-20 lg:py-32">
       {/* Subtle glow */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(108,99,255,0.12) 0%, transparent 70%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(34,197,94,0.12) 0%, transparent 70%)' }} />
 
       <motion.div
         className="relative z-10 max-w-[500px] mx-auto px-6 text-center"
