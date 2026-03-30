@@ -153,21 +153,6 @@
   transform: scale(0.97);
 }
 
-/* Shimmer effect */
-.shimmer {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%);
-  background-size: 200% 100%;
-  animation: shimmerSweep 4s ease-in-out infinite;
-}
-
-@keyframes shimmerSweep {
-  0%   { background-position: 200% 0; }
-  50%  { background-position: -200% 0; }
-  100% { background-position: -200% 0; }
-}
 
 /* Phone float */
 @keyframes phoneFloat {

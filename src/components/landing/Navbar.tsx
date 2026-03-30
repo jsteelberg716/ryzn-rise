@@ -30,13 +30,10 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <button className="px-4 py-2 rounded-pill border border-primary/[0.15] text-muted-foreground text-sm font-medium hover:text-foreground hover:border-primary/40 transition-all duration-200">
-            Log In
-          </button>
           <button className="cta-primary px-5 py-2.5 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground text-sm font-semibold">
-            <span className="shimmer" />
-            <span className="relative z-10">Start Free Trial</span>
+            Start Free Trial
           </button>
+        </div>
         </div>
 
         <button className="md:hidden text-foreground" onClick={() => setMobileOpen(true)}>
