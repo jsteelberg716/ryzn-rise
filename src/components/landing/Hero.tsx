@@ -41,7 +41,7 @@ const Hero = () => {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-pill bg-bg-tertiary border-l-2 border-primary mb-6"
           >
             <span className="text-xs font-medium tracking-widest uppercase text-text-secondary">
-              ✦ iOS App — 14 Days Free
+              ✦ iOS App — 2 Days Free
             </span>
           </motion.div>
 
