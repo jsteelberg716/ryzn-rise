@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 
 const faqs = [
-  { q: "What's included in the 14-day free trial?", a: "Everything. Full access to the AI progression engine, muscle map, all workout programs, challenges, badges, shareable cards, recipes, articles, and all customization options. No limits. No credit card required." },
+  { q: "What's included in the 2-day free trial?", a: "Everything. Full access to the AI progression engine, muscle map, all workout programs, challenges, badges, shareable cards, recipes, articles, and all customization options. No limits. No credit card required." },
   { q: "Does RYZN work with Apple Health?", a: "Yes. RYZN syncs workouts to and from Apple Health, including calories burned, workout duration, and exercise records. Enable it in Settings." },
   { q: "Can I import my workouts from another app?", a: "Direct imports aren't available at launch, but you can rebuild your routines quickly using our exercise library. We're working on import support for major apps." },
   { q: "How does the progression engine decide what weight to suggest?", a: "It analyzes your last 6 sessions on each exercise, detects plateaus (reps dropping at the same weight), calculates your natural ceiling based on bodyweight and muscle group, and adjusts increments as you approach it. It also auto-accepts a new baseline if you consistently drop weight." },
@@ -17,7 +17,7 @@ const FAQ = () => {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="bg-bg-secondary py-20 lg:py-32">
+    <section id="faq" className="relative bg-card py-20 lg:py-32 section-glow">
       <motion.div
         className="max-w-[720px] mx-auto px-6"
         variants={staggerContainer}
@@ -43,7 +43,7 @@ const FAQ = () => {
               key={i}
               variants={fadeUpVariant}
               custom={i * 0.05}
-              className="bg-bg-tertiary rounded-2xl border border-primary/[0.15] overflow-hidden"
+              className="glass-card rounded-2xl overflow-hidden"
             >
               <button
                 className="w-full flex items-center justify-between p-5 text-left"
@@ -51,7 +51,7 @@ const FAQ = () => {
               >
                 <span className="text-foreground font-semibold text-sm pr-4">{faq.q}</span>
                 <span
-                  className="text-text-secondary text-xl flex-shrink-0 transition-transform duration-200"
+                  className="text-primary text-xl flex-shrink-0 transition-transform duration-300"
                   style={{ transform: open === i ? 'rotate(45deg)' : 'rotate(0deg)' }}
                 >
                   +
@@ -66,7 +66,7 @@ const FAQ = () => {
                     transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     className="overflow-hidden"
                   >
-                    <p className="px-5 pb-5 text-text-secondary text-sm leading-relaxed">
+                    <p className="px-5 pb-5 text-muted-foreground text-sm leading-relaxed">
                       {faq.a}
                     </p>
                   </motion.div>

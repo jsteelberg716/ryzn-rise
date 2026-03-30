@@ -27,7 +27,7 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className="bg-bg-secondary py-20 lg:py-32">
+    <section className="relative bg-card py-20 lg:py-32 section-glow">
       <motion.div
         className="max-w-[1200px] mx-auto px-6 text-center"
         variants={staggerContainer}
@@ -55,24 +55,24 @@ const Testimonials = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1, duration: 0.5 }}
-            className="bg-bg-tertiary rounded-2xl p-8 border border-primary/[0.15] hover:border-primary/25 transition-all duration-200"
+            className="glass-card rounded-2xl p-8 transition-all duration-300"
           >
             <div className="text-[#FFD700] text-sm mb-4">{'★'.repeat(t.stars)}</div>
-            <p className="text-text-secondary leading-relaxed text-sm italic">"{t.quote}"</p>
+            <p className="text-muted-foreground leading-relaxed text-sm italic">"{t.quote}"</p>
             <div className="mt-6 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-foreground font-bold text-sm">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-accent-green/20 flex items-center justify-center text-foreground font-bold text-sm border border-primary/20">
                 {t.initials}
               </div>
               <div>
                 <p className="text-foreground font-medium text-sm">— {t.name}</p>
-                <p className="text-text-tertiary text-xs">{t.detail}</p>
+                <p className="text-muted-foreground/50 text-xs">{t.detail}</p>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
-      <p className="text-center text-text-secondary text-sm mt-10">
+      <p className="text-center text-muted-foreground text-sm mt-10">
         ★ 4.9 / 5 average from beta users | iOS App Store launch pending
       </p>
     </section>

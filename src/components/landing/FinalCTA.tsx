@@ -4,13 +4,18 @@ import RyznIconLogo from '@/components/RyznIconLogo';
 
 const FinalCTA = () => {
   return (
-    <section
-      className="relative py-32 lg:py-40"
-      style={{
-        background: 'linear-gradient(160deg, #0D0B1A 0%, #1A0A10 50%, #0A0D1A 100%)',
-      }}
-    >
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(34,197,94,0.2) 0%, rgba(255,107,107,0.1) 50%, transparent 70%)' }} />
+    <section className="relative py-32 lg:py-40 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, hsl(240 33% 4%) 0%, hsl(145 30% 6%) 50%, hsl(240 33% 4%) 100%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(34,197,94,0.15) 0%, transparent 70%)' }} />
+      
+      {/* Grid pattern */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        backgroundImage: 'linear-gradient(rgba(34,197,94,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.03) 1px, transparent 1px)',
+        backgroundSize: '60px 60px',
+        maskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, black 0%, transparent 70%)',
+        WebkitMaskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, black 0%, transparent 70%)',
+      }} />
 
       <motion.div
         className="relative z-10 max-w-[600px] mx-auto px-6 text-center"
@@ -19,9 +24,10 @@ const FinalCTA = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-100px' }}
       >
-        {/* Logo icon */}
         <motion.div variants={fadeUpVariant} className="mb-8 flex justify-center">
-          <RyznIconLogo size={56} />
+          <div className="p-4 rounded-2xl glass-card">
+            <RyznIconLogo size={48} />
+          </div>
         </motion.div>
 
         <motion.h2
@@ -32,15 +38,15 @@ const FinalCTA = () => {
           Your first PR is on us.
         </motion.h2>
 
-        <motion.p variants={fadeUpVariant} className="mt-6 text-text-secondary text-lg leading-relaxed">
-          14 days. Full access. No credit card.<br />
+        <motion.p variants={fadeUpVariant} className="mt-6 text-muted-foreground text-lg leading-relaxed">
+          2 days. Full access. No credit card.<br />
           Try RYZN and see what training with intelligence feels like.
         </motion.p>
 
         <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap justify-center gap-4">
           <a
             href="#"
-            className="cta-primary inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-foreground text-bg-primary font-bold"
+            className="cta-primary inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-foreground text-background font-bold"
           >
             <span className="shimmer" />
             <svg className="relative z-10 w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
@@ -51,12 +57,12 @@ const FinalCTA = () => {
               <span className="text-sm">App Store</span>
             </span>
           </a>
-          <a href="#how-it-works" className="px-8 py-4 rounded-2xl border border-primary/[0.15] text-text-secondary font-semibold hover:text-foreground hover:border-primary/40 transition-all duration-200">
+          <a href="#how-it-works" className="px-8 py-4 rounded-2xl border border-primary/[0.15] text-muted-foreground font-semibold hover:text-foreground hover:border-primary/40 transition-all duration-200">
             Learn More
           </a>
         </motion.div>
 
-        <motion.p variants={fadeUpVariant} className="mt-8 text-text-tertiary text-xs">
+        <motion.p variants={fadeUpVariant} className="mt-8 text-muted-foreground/50 text-xs">
           Available for iPhone · iOS 15.0+ · Free to download · $6.99/month after trial
         </motion.p>
       </motion.div>

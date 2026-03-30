@@ -6,7 +6,7 @@ const stats = [
   { value: 10000, suffix: '+', label: 'Workouts Logged' },
   { value: 4.9, suffix: '★', label: 'App Store Rating', decimals: 1 },
   { value: 200, suffix: '+', label: 'Exercises in Library' },
-  { value: 14, suffix: ' Days', label: 'Free Trial, No Card' },
+  { value: 2, suffix: ' Days', label: 'Free Trial, No Card' },
 ];
 
 function AnimatedCounter({ target, decimals = 0, suffix = '' }: { target: number; decimals?: number; suffix?: string }) {
@@ -37,7 +37,7 @@ function AnimatedCounter({ target, decimals = 0, suffix = '' }: { target: number
 
 const StatsBar = () => {
   return (
-    <section className="bg-bg-secondary py-12" id="stats">
+    <section className="relative bg-background py-12 section-glow" id="stats">
       <motion.div
         className="max-w-[1200px] mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-8"
         variants={staggerContainer}
@@ -52,14 +52,13 @@ const StatsBar = () => {
             custom={i * 0.1}
             className="text-center relative"
           >
-            {/* Divider */}
             {i > 0 && (
-              <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-12 bg-primary/[0.15]" />
+              <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-12 bg-primary/[0.1]" />
             )}
             <div className="font-bold gradient-text" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
               <AnimatedCounter target={stat.value} decimals={stat.decimals} suffix={stat.suffix} />
             </div>
-            <p className="text-text-tertiary text-xs font-medium tracking-widest uppercase mt-2">
+            <p className="text-muted-foreground/60 text-xs font-medium tracking-widest uppercase mt-2">
               {stat.label}
             </p>
           </motion.div>
