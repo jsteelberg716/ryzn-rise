@@ -52,7 +52,7 @@ const Pricing = () => {
             <span className="text-text-secondary text-xl">/ month</span>
           </div>
 
-          <p className="text-text-secondary mt-2"><strong className="text-foreground">14-day free trial</strong> — no credit card required</p>
+          <p className="text-text-secondary mt-2"><strong className="text-foreground">2-day free trial</strong> — no credit card required</p>
           <p className="text-text-tertiary text-xs mt-1">Billed monthly. Cancel anytime.</p>
 
           <div className="mt-8 text-left space-y-3">
