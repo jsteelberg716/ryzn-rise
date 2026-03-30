@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 
 const faqs = [
-  { q: "What's included in the 14-day free trial?", a: "Everything. Full access to the AI progression engine, muscle map, all workout programs, challenges, badges, shareable cards, recipes, articles, and all customization options. No limits. No credit card required." },
+  { q: "What's included in the 2-day free trial?", a: "Everything. Full access to the AI progression engine, muscle map, all workout programs, challenges, badges, shareable cards, recipes, articles, and all customization options. No limits. No credit card required." },
   { q: "Does RYZN work with Apple Health?", a: "Yes. RYZN syncs workouts to and from Apple Health, including calories burned, workout duration, and exercise records. Enable it in Settings." },
   { q: "Can I import my workouts from another app?", a: "Direct imports aren't available at launch, but you can rebuild your routines quickly using our exercise library. We're working on import support for major apps." },
   { q: "How does the progression engine decide what weight to suggest?", a: "It analyzes your last 6 sessions on each exercise, detects plateaus (reps dropping at the same weight), calculates your natural ceiling based on bodyweight and muscle group, and adjusts increments as you approach it. It also auto-accepts a new baseline if you consistently drop weight." },

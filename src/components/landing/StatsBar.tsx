@@ -6,7 +6,7 @@ const stats = [
   { value: 10000, suffix: '+', label: 'Workouts Logged' },
   { value: 4.9, suffix: '★', label: 'App Store Rating', decimals: 1 },
   { value: 200, suffix: '+', label: 'Exercises in Library' },
-  { value: 14, suffix: ' Days', label: 'Free Trial, No Card' },
+  { value: 2, suffix: ' Days', label: 'Free Trial, No Card' },
 ];
 
 function AnimatedCounter({ target, decimals = 0, suffix = '' }: { target: number; decimals?: number; suffix?: string }) {
