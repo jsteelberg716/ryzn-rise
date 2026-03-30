@@ -10,7 +10,7 @@ const FinalCTA = () => {
         background: 'linear-gradient(160deg, #0D0B1A 0%, #1A0A10 50%, #0A0D1A 100%)',
       }}
     >
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(108,99,255,0.2) 0%, rgba(255,107,107,0.1) 50%, transparent 70%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(34,197,94,0.2) 0%, rgba(255,107,107,0.1) 50%, transparent 70%)' }} />
 
       <motion.div
         className="relative z-10 max-w-[600px] mx-auto px-6 text-center"

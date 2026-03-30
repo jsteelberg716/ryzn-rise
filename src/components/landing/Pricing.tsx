@@ -18,7 +18,7 @@ const Pricing = () => {
   return (
     <section id="pricing" className="relative bg-bg-primary py-20 lg:py-32">
       {/* Subtle glow */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(108,99,255,0.12) 0%, transparent 70%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(34,197,94,0.12) 0%, transparent 70%)' }} />
 
       <motion.div
         className="relative z-10 max-w-[500px] mx-auto px-6 text-center"
@@ -41,7 +41,7 @@ const Pricing = () => {
         <motion.div
           variants={fadeUpVariant}
           className="mt-10 bg-bg-secondary rounded-2xl p-8 border border-primary/[0.15] text-center"
-          style={{ boxShadow: '0 0 60px rgba(108,99,255,0.15)' }}
+          style={{ boxShadow: '0 0 60px rgba(34,197,94,0.15)' }}
         >
           <span className="inline-block px-4 py-1 rounded-pill bg-gradient-to-r from-primary to-accent text-foreground text-xs font-medium tracking-widest uppercase mb-6">
             Most Popular

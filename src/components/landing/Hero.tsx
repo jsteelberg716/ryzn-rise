@@ -105,7 +105,7 @@ const Hero = () => {
             <div
               className="absolute -inset-[30px] -z-10 blur-[30px]"
               style={{
-                background: 'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(108,99,255,0.35) 0%, rgba(255,107,107,0.15) 40%, transparent 70%)',
+                background: 'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34,197,94,0.35) 0%, rgba(255,107,107,0.15) 40%, transparent 70%)',
                 animation: 'glowPulse 4s ease-in-out infinite alternate',
               }}
             />
