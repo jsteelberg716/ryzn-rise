@@ -52,7 +52,7 @@ function ProgressionChart() {
         <motion.path
           d={pathD}
           fill="none"
-          stroke="#6C63FF"
+          stroke="#22C55E"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
