@@ -38,7 +38,7 @@ function ProgressionChart() {
       <svg viewBox="0 0 400 200" className="w-full">
         {/* Grid lines */}
         {[0, 1, 2, 3, 4].map(i => (
-          <line key={i} x1="20" y1={10 + i * 45} x2="380" y2={10 + i * 45} stroke="rgba(108,99,255,0.08)" strokeWidth="1" />
+          <line key={i} x1="20" y1={10 + i * 45} x2="380" y2={10 + i * 45} stroke="rgba(34,197,94,0.08)" strokeWidth="1" />
         ))}
         {/* Area fill */}
         <motion.path
