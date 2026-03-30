@@ -22,7 +22,7 @@ const FrontBody = () => (
     <rect x="92" y="50" width="16" height="14" rx="6" fill="#2A2A3A" opacity="0.6" />
     <ellipse cx="55" cy="78" rx="22" ry="14" fill="#4ECDC4" opacity="0.7" />
     <ellipse cx="145" cy="78" rx="22" ry="14" fill="#4ECDC4" opacity="0.7" />
-    <ellipse cx="100" cy="100" rx="38" ry="26" fill="#FF6B6B" opacity="0.9" className="animate-[muscleOverworkPulse_2.5s_ease-in-out_infinite]" style={{ filter: 'drop-shadow(0 0 8px rgba(255,107,107,0.5))' }} />
+    <ellipse cx="100" cy="100" rx="38" ry="26" fill="#FF6B6B" opacity="0.9" style={{ filter: 'drop-shadow(0 0 6px rgba(255,107,107,0.4))' }} />
     <rect x="20" y="82" width="16" height="58" rx="8" fill="#45B7D1" opacity="0.6" />
     <rect x="164" y="82" width="16" height="58" rx="8" fill="#45B7D1" opacity="0.6" />
     <rect x="18" y="140" width="14" height="44" rx="7" fill="#2A2A3A" opacity="0.5" />
