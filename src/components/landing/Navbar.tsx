@@ -34,7 +34,6 @@ const Navbar = () => {
             Start Free Trial
           </button>
         </div>
-        </div>
 
         <button className="md:hidden text-foreground" onClick={() => setMobileOpen(true)}>
           <Menu size={24} />
