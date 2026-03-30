@@ -1,3 +1,5 @@
+import ryznWordWhite from '@/assets/ryzn-word-white.svg';
+
 const footerLinks = {
   Product: ['Features', 'Pricing', 'FAQ', 'Download'],
   Company: ['About', 'Contact', 'Privacy Policy', 'Terms of Service'],
@@ -10,7 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <span className="text-2xl font-extrabold gradient-text">RYZN</span>
+            <img src={ryznWordWhite} alt="RYZN" className="h-8 w-auto" />
             <p className="text-text-secondary text-sm mt-3 leading-relaxed">
               The workout app that trains as hard as you do.
             </p>
