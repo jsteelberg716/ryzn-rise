@@ -70,7 +70,7 @@ function ProgressionChart() {
               cx={x}
               cy={y}
               r="4"
-              fill="#6C63FF"
+              fill="#22C55E"
               initial={{ scale: 0, opacity: 0 }}
               animate={inView ? { scale: 1, opacity: 1 } : {}}
               transition={{ delay: 0.3 + i * 0.25, duration: 0.3, ease: EASING.overshoot }}
