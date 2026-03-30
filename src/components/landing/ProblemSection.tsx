@@ -18,7 +18,7 @@ const problems = [
 
 const ProblemSection = () => {
   return (
-    <section id="how-it-works" className="bg-bg-primary py-20 lg:py-32">
+    <section id="how-it-works" className="relative bg-background py-20 lg:py-32 section-glow">
       <motion.div
         className="max-w-[720px] mx-auto px-6 text-center"
         variants={staggerContainer}
@@ -38,7 +38,7 @@ const ProblemSection = () => {
         </motion.h2>
         <motion.p
           variants={fadeUpVariant}
-          className="mt-6 text-text-secondary leading-relaxed"
+          className="mt-6 text-muted-foreground leading-relaxed"
           style={{ fontSize: '1.25rem' }}
         >
           You log your sets. You guess your weights. You finish the workout
@@ -61,13 +61,13 @@ const ProblemSection = () => {
             key={i}
             variants={fadeUpVariant}
             custom={i * 0.1}
-            className="bg-bg-secondary rounded-[24px] p-8 border border-primary/[0.15] hover:-translate-y-1 hover:border-primary/30 transition-all duration-200"
+            className="glass-card rounded-[24px] p-8 hover:-translate-y-1 transition-all duration-300"
           >
             <div className="flex items-start gap-3 text-accent">
               <span className="text-lg">✗</span>
-              <p className="text-text-secondary">{item.problem}</p>
+              <p className="text-muted-foreground">{item.problem}</p>
             </div>
-            <div className="my-4 h-px bg-primary/[0.15]" />
+            <div className="my-4 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
             <div className="flex items-start gap-3 text-accent-green">
               <span className="text-lg">✓</span>
               <p className="text-foreground">{item.solution}</p>

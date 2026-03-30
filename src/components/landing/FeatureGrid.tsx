@@ -24,7 +24,7 @@ const features = [
 
 const FeatureGrid = () => {
   return (
-    <section className="bg-bg-secondary py-20 lg:py-32">
+    <section className="relative bg-card py-20 lg:py-32 section-glow">
       <motion.div
         className="max-w-[1200px] mx-auto px-6 text-center"
         variants={staggerContainer}
@@ -42,7 +42,7 @@ const FeatureGrid = () => {
         >
           Built for lifters who take training seriously.
         </motion.h2>
-        <motion.p variants={fadeUpVariant} className="mt-4 text-text-secondary mx-auto max-w-[580px] text-[1.0625rem]">
+        <motion.p variants={fadeUpVariant} className="mt-4 text-muted-foreground mx-auto max-w-[580px] text-[1.0625rem]">
           From your first session to your thousandth — every tool you need
           is here, in one clean native iOS app.
         </motion.p>
@@ -56,11 +56,11 @@ const FeatureGrid = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: (i % 6) * 0.05, duration: 0.4 }}
-            className="bg-bg-tertiary rounded-2xl p-5 border border-primary/[0.15] hover:border-primary/30 transition-all duration-200"
+            className="glass-card rounded-2xl p-5 transition-all duration-300 group"
           >
-            <span className="text-2xl">{f.icon}</span>
+            <span className="text-2xl group-hover:scale-110 inline-block transition-transform duration-200">{f.icon}</span>
             <h3 className="text-foreground font-semibold mt-2">{f.name}</h3>
-            <p className="text-text-secondary text-sm mt-1">{f.desc}</p>
+            <p className="text-muted-foreground text-sm mt-1">{f.desc}</p>
           </motion.div>
         ))}
       </div>
