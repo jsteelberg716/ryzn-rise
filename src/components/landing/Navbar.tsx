@@ -4,14 +4,20 @@ import { Menu, X } from 'lucide-react';
 import { EASING, DURATION } from '@/lib/animations';
 import RyznWordLogo from '@/components/RyznWordLogo';
 import RyznIconLogo from '@/components/RyznIconLogo';
+import { useIsWildcats } from '@/hooks/useIsWildcats';
 
 const navLinks = ['Features', 'How It Works', 'Pricing', 'FAQ'];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isWildcats = useIsWildcats();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[1000] h-16 backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(8,8,14,0.8)] border-b border-primary/[0.1]">
+    <nav
+      className={`fixed left-0 right-0 z-[1000] h-16 backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(8,8,14,0.8)] border-b border-primary/[0.1] transition-[top] duration-300 ${
+        isWildcats ? 'top-11' : 'top-0'
+      }`}
+    >
       <div className="max-w-[1200px] mx-auto h-full flex items-center justify-between px-6">
         <a href="#" className="flex items-center">
           <RyznWordLogo height={28} />
@@ -31,7 +37,7 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-3">
           <button className="cta-primary px-5 py-2.5 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground text-sm font-semibold">
-            Start Free Trial
+            {isWildcats ? 'Claim Free Account' : 'Start Free Trial'}
           </button>
         </div>
 
@@ -74,7 +80,7 @@ const Navbar = () => {
               transition={{ delay: 0.4 }}
               className="mt-4 px-8 py-3 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-semibold"
             >
-              Start Free Trial
+              {isWildcats ? 'Claim Free Account' : 'Start Free Trial'}
             </motion.button>
           </motion.div>
         )}

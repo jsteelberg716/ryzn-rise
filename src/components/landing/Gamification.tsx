@@ -19,7 +19,7 @@ const Gamification = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-100px' }}
       >
-        <motion.span variants={fadeUpVariant} className="text-xs font-medium tracking-widest uppercase text-primary">
+        <motion.span variants={fadeUpVariant} className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary">
           GAMIFICATION & ENGAGEMENT
         </motion.span>
         <motion.h2
@@ -50,7 +50,7 @@ const Gamification = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <div className="glass-card rounded-[24px] p-6">
+          <div className="dmd-convex rounded-[24px] p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-foreground font-bold">This Week's Challenge</span>
               <span className="text-muted-foreground/50 text-xs">6d 14h remaining</span>
@@ -115,7 +115,7 @@ const Gamification = () => {
               key={cat.name}
               variants={fadeUpVariant}
               custom={i * 0.08}
-              className="glass-card rounded-[24px] p-5 text-center transition-all duration-300"
+              className="dmd-convex rounded-[24px] p-5 text-center transition-all duration-300"
             >
               <span className="text-3xl">{cat.icon}</span>
               <p className="text-foreground font-semibold text-sm mt-2">{cat.name}</p>

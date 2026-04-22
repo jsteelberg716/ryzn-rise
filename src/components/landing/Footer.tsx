@@ -1,8 +1,13 @@
+import { Link } from 'react-router-dom';
 import RyznWordLogo from '@/components/RyznWordLogo';
 
 const footerLinks = {
   Product: ['Features', 'Pricing', 'FAQ', 'Download'],
   Company: ['About', 'Contact', 'Privacy Policy', 'Terms of Service'],
+};
+
+const routeMap: Record<string, string> = {
+  'Privacy Policy': '/privacy',
 };
 
 const Footer = () => {
@@ -30,9 +35,15 @@ const Footer = () => {
               <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
-                      {link}
-                    </a>
+                    {routeMap[link] ? (
+                      <Link to={routeMap[link]} className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                        {link}
+                      </Link>
+                    ) : (
+                      <a href="#" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                        {link}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

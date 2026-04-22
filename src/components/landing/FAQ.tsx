@@ -17,7 +17,7 @@ const FAQ = () => {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="relative bg-card py-20 lg:py-32 section-glow">
+    <section id="faq" className="relative bg-card py-20 lg:py-32 section-glow section-inset">
       <motion.div
         className="max-w-[720px] mx-auto px-6"
         variants={staggerContainer}
@@ -26,7 +26,7 @@ const FAQ = () => {
         viewport={{ once: true, margin: '-100px' }}
       >
         <motion.div variants={fadeUpVariant} className="text-center mb-12">
-          <span className="text-xs font-medium tracking-widest uppercase text-primary">
+          <span className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary">
             FREQUENTLY ASKED QUESTIONS
           </span>
           <h2
@@ -43,7 +43,7 @@ const FAQ = () => {
               key={i}
               variants={fadeUpVariant}
               custom={i * 0.05}
-              className="glass-card rounded-2xl overflow-hidden"
+              className="dmd-convex rounded-2xl overflow-hidden"
             >
               <button
                 className="w-full flex items-center justify-between p-5 text-left"

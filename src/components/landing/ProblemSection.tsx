@@ -1,18 +1,20 @@
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FlaskConical } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 
 const problems = [
   {
-    problem: 'Guessing what weight to use',
-    solution: 'AI progression engine tells you exactly what to lift',
+    problem: 'Calorie trackers are wrong by 2-3x for lifting',
+    solution: 'Patent-pending physics engine calculates from actual weight moved — 1% accuracy vs. lab data',
   },
   {
     problem: 'No idea if muscles are balanced',
     solution: 'Live muscle map shows imbalances in real time',
   },
   {
-    problem: 'Nothing to keep you coming back',
-    solution: 'Weekly challenges, streaks, and badges keep momentum',
+    problem: 'Guessing what weight to use',
+    solution: 'AI progression engine tells you exactly what to lift',
   },
 ];
 
@@ -26,7 +28,7 @@ const ProblemSection = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-100px' }}
       >
-        <motion.span variants={fadeUpVariant} className="text-xs font-medium tracking-widest uppercase text-primary">
+        <motion.span variants={fadeUpVariant} className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary">
           THE PROBLEM
         </motion.span>
         <motion.h2
@@ -45,8 +47,31 @@ const ProblemSection = () => {
           and wonder if you're actually making progress. There's no feedback.
           No intelligence. No way to know if your training is balanced.
           <br /><br />
-          <strong className="text-foreground">RYZN fixes all of that.</strong>
+          <strong className="text-foreground">RYZN fixes all of that</strong> — with a <strong className="text-foreground">patent-pending thermodynamic calorie engine</strong> that calculates energy from the actual weight you move, not just your heart rate.
         </motion.p>
+
+        <motion.div
+          variants={fadeUpVariant}
+          className="mt-6 inline-flex items-center gap-3 dmd-concave rounded-pill px-5 py-2.5"
+        >
+          <div className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
+          <span className="text-muted-foreground text-sm">
+            <strong className="text-foreground">Patent Pending</strong> — USPTO #64/021,144 · Validated within 1% of lab calorimetry data
+          </span>
+        </motion.div>
+
+        <motion.div variants={fadeUpVariant} className="mt-8 flex justify-center">
+          <Link
+            to="/validation"
+            className="cta-validation inline-flex items-center gap-2 px-8 py-4 rounded-pill text-foreground font-bold text-[1.0625rem]"
+            style={{
+              background: 'linear-gradient(135deg, hsl(145 72% 50%) 0%, hsl(172 63% 55%) 100%)',
+            }}
+          >
+            <FlaskConical size={18} />
+            Validation
+          </Link>
+        </motion.div>
       </motion.div>
 
       <motion.div
@@ -61,7 +86,7 @@ const ProblemSection = () => {
             key={i}
             variants={fadeUpVariant}
             custom={i * 0.1}
-            className="glass-card rounded-[24px] p-8 hover:-translate-y-1 transition-all duration-300"
+            className="dmd-convex rounded-[24px] p-8 hover:-translate-y-1 transition-all duration-300"
           >
             <div className="flex items-start gap-3 text-accent">
               <span className="text-lg">✗</span>

@@ -1,16 +1,17 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, PawPrint } from 'lucide-react';
 import { staggerContainer, wordReveal, EASING, DURATION } from '@/lib/animations';
 import PhoneMockup from './PhoneMockup';
+import { useIsWildcats } from '@/hooks/useIsWildcats';
 
 const heroLines = [
   { text: 'Log ', highlight: 'smarter.' },
   { text: 'Lift ', highlight: 'heavier.' },
-  { text: 'See ', highlight: 'every muscle.' },
 ];
 
 const Hero = () => {
+  const isWildcats = useIsWildcats();
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -38,15 +39,26 @@ const Hero = () => {
           {/* Eyebrow */}
           <motion.div
             variants={wordReveal}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-pill glass-card border-l-2 border-primary mb-6"
+            className="dmd-concave inline-flex items-center gap-2 px-4 py-1.5 rounded-pill mb-6"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            <span className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
-              iOS App — 3 Days Free
-            </span>
+            {isWildcats ? (
+              <>
+                <PawPrint size={13} className="text-primary" />
+                <span className="text-xs font-bold tracking-widest uppercase text-primary">
+                  Wildcats · Free Forever
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                <span className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
+                  iOS App — 3 Days Free
+                </span>
+              </>
+            )}
           </motion.div>
 
           {/* Headline */}
@@ -68,33 +80,45 @@ const Hero = () => {
             className="mt-6 text-muted-foreground leading-relaxed"
             style={{ fontSize: '1.25rem' }}
           >
-            RYZN is the workout app that thinks like a coach,
-            logs like a pro, and looks good enough to share.
-            Real-time muscle maps. AI progression. Built for iPhone.
+            {isWildcats ? (
+              <>
+                RYZN is <strong className="text-foreground">free for every Wildcat, forever</strong>.
+                Patent-pending calorie engine. Real-time muscle maps. AI progression.
+                Built for the grind at the rec.
+              </>
+            ) : (
+              <>
+                RYZN is the fitness app with a patent-pending calorie engine
+                that actually works. Real-time muscle maps. AI progression.
+                Validated against lab research. Built for iPhone.
+              </>
+            )}
           </motion.p>
 
           {/* CTA Group */}
           <motion.div variants={wordReveal} className="mt-8 flex flex-wrap gap-4 items-start">
             <div>
-              <a href="#pricing" className="cta-primary inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]">
-                Start 3-Day Free Trial
+              <a
+                href="#pricing"
+                className="cta-primary cta-pulse inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]"
+              >
+                {isWildcats ? 'Claim Your Free Account' : 'Start 3-Day Free Trial'}
               </a>
-              <p className="text-muted-foreground/60 text-xs mt-2 ml-1">No credit card. Cancel anytime.</p>
+              <p className="text-muted-foreground/60 text-xs mt-2 ml-1">
+                {isWildcats ? 'Verify with your .edu email. Free forever.' : 'No credit card. Cancel anytime.'}
+              </p>
             </div>
             <a
               href="#how-it-works"
-              className="px-8 py-4 rounded-pill border border-primary/[0.15] text-muted-foreground font-semibold text-[1.0625rem] hover:border-primary/40 hover:text-foreground transition-all duration-200"
+              className="dmd-convex px-8 py-4 rounded-pill text-muted-foreground font-semibold text-[1.0625rem] hover:text-foreground transition-all duration-200"
             >
               See How It Works
             </a>
           </motion.div>
 
-          {/* Social Proof */}
+          {/* App Store */}
           <motion.div variants={wordReveal} className="mt-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span className="text-[#FFD700]">★★★★★</span>
-            <span><strong className="text-foreground">4.9 stars</strong> from 1,200+ lifters</span>
-            <span className="hidden sm:inline text-primary/30">|</span>
-            <span>Available on the <strong className="text-foreground">App Store</strong></span>
+            <span>Coming soon to the <strong className="text-foreground">App Store</strong></span>
           </motion.div>
         </motion.div>
 
@@ -107,7 +131,7 @@ const Hero = () => {
             <div
               className="absolute -inset-[40px] -z-10 blur-[40px]"
               style={{
-                background: 'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34,197,94,0.25) 0%, rgba(69,183,209,0.1) 40%, transparent 70%)',
+                background: 'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34, 197, 94,0.25) 0%, rgba(69,183,209,0.1) 40%, transparent 70%)',
               }}
             />
             <PhoneMockup />

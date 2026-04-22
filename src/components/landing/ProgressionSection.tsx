@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { fadeUpVariant, staggerContainer, EASING } from '@/lib/animations';
 
@@ -34,10 +34,10 @@ function ProgressionChart() {
   const areaD = `${pathD} L 380,190 L 20,190 Z`;
 
   return (
-    <div ref={ref} className="glass-card rounded-[24px] p-6">
+    <div ref={ref} className="dmd-convex rounded-[24px] p-6">
       <svg viewBox="0 0 400 200" className="w-full">
         {[0, 1, 2, 3, 4].map(i => (
-          <line key={i} x1="20" y1={10 + i * 45} x2="380" y2={10 + i * 45} stroke="rgba(34,197,94,0.06)" strokeWidth="1" />
+          <line key={i} x1="20" y1={10 + i * 45} x2="380" y2={10 + i * 45} stroke="rgba(34, 197, 94,0.06)" strokeWidth="1" />
         ))}
         <motion.path
           d={areaD}
@@ -49,7 +49,7 @@ function ProgressionChart() {
         <motion.path
           d={pathD}
           fill="none"
-          stroke="#22C55E"
+          stroke="#22c55e"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -66,7 +66,7 @@ function ProgressionChart() {
               cx={x}
               cy={y}
               r="4"
-              fill="#22C55E"
+              fill="#22c55e"
               initial={{ scale: 0, opacity: 0 }}
               animate={inView ? { scale: 1, opacity: 1 } : {}}
               transition={{ delay: 0.3 + i * 0.25, duration: 0.3, ease: EASING.overshoot }}
@@ -75,8 +75,8 @@ function ProgressionChart() {
         })}
         <defs>
           <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#22C55E" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#22C55E" stopOpacity="0" />
+            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
@@ -111,8 +111,11 @@ function ProgressionChart() {
 }
 
 const ProgressionSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [50, -50]);
   return (
-    <section className="relative bg-background py-20 lg:py-32 section-glow">
+    <section ref={sectionRef} className="relative bg-background py-20 lg:py-32 section-glow">
       <div className="max-w-[1200px] mx-auto px-6 flex flex-col lg:flex-row items-center gap-16">
         <motion.div
           className="flex-1"
@@ -121,7 +124,7 @@ const ProgressionSection = () => {
           whileInView="visible"
           viewport={{ once: true, margin: '-100px' }}
         >
-          <motion.span variants={fadeUpVariant} className="text-xs font-medium tracking-widest uppercase text-primary">
+          <motion.span variants={fadeUpVariant} className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary">
             AI PROGRESSION ENGINE
           </motion.span>
           <motion.h2
@@ -139,7 +142,7 @@ const ProgressionSection = () => {
 
           <motion.div variants={fadeUpVariant} className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {engineFeatures.map((f) => (
-              <div key={f.title} className="glass-card rounded-2xl p-5 hover:-translate-y-1 transition-all duration-300">
+              <div key={f.title} className="dmd-convex rounded-2xl p-5 hover:-translate-y-1 transition-all duration-300">
                 <span className="text-2xl">{f.icon}</span>
                 <h4 className="text-foreground font-semibold mt-2">{f.title}</h4>
                 <p className="text-muted-foreground text-sm mt-1">{f.copy}</p>
@@ -149,7 +152,7 @@ const ProgressionSection = () => {
 
           <motion.div
             variants={fadeUpVariant}
-            className="mt-6 glass-card rounded-[24px] p-6 border-l-4 !border-l-primary"
+            className="mt-6 dmd-convex rounded-[24px] p-6 border-l-4 !border-l-primary"
           >
             <p className="text-muted-foreground italic text-sm">
               "This isn't '+5 lbs every week.' RYZN's 4-rail safety system is the closest thing to real periodization science in any consumer fitness app."
@@ -157,9 +160,9 @@ const ProgressionSection = () => {
           </motion.div>
         </motion.div>
 
-        <div className="flex-1 w-full">
+        <motion.div style={{ y: parallaxY }} className="flex-1 w-full">
           <ProgressionChart />
-        </div>
+        </motion.div>
       </div>
     </section>
   );

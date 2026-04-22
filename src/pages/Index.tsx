@@ -1,33 +1,35 @@
 import Navbar from '@/components/landing/Navbar';
 import Hero from '@/components/landing/Hero';
 import StatsBar from '@/components/landing/StatsBar';
-import ProblemSection from '@/components/landing/ProblemSection';
+import CalorieEngine from '@/components/landing/CalorieEngine';
 import MuscleMapSection from '@/components/landing/MuscleMapSection';
-import ProgressionSection from '@/components/landing/ProgressionSection';
+import CalorieLoggingSection from '@/components/landing/CalorieLoggingSection';
 import WorkoutPrograms from '@/components/landing/WorkoutPrograms';
 import ShareCards from '@/components/landing/ShareCards';
-import FeatureGrid from '@/components/landing/FeatureGrid';
 import Gamification from '@/components/landing/Gamification';
-import Testimonials from '@/components/landing/Testimonials';
+import WildcatsBanner from '@/components/landing/WildcatsBanner';
+import { useIsWildcats } from '@/hooks/useIsWildcats';
+
 import Pricing from '@/components/landing/Pricing';
 import FAQ from '@/components/landing/FAQ';
 import FinalCTA from '@/components/landing/FinalCTA';
 import Footer from '@/components/landing/Footer';
 
 const Index = () => {
+  const isWildcats = useIsWildcats();
   return (
-    <div className="min-h-screen bg-bg-primary text-foreground">
+    <div className={`min-h-screen bg-bg-primary text-foreground ${isWildcats ? 'pt-11' : ''}`}>
+      {isWildcats && <WildcatsBanner />}
       <Navbar />
       <Hero />
       <StatsBar />
-      <ProblemSection />
+      <CalorieEngine />
       <MuscleMapSection />
-      <ProgressionSection />
+      <CalorieLoggingSection />
       <WorkoutPrograms />
       <ShareCards />
-      <FeatureGrid />
       <Gamification />
-      <Testimonials />
+
       <Pricing />
       <FAQ />
       <FinalCTA />

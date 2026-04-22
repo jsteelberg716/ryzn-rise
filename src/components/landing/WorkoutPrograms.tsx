@@ -1,17 +1,158 @@
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
+import Lottie from 'lottie-react';
+import benchPress from '@/assets/lottie/bench-press.json';
+import pullups from '@/assets/lottie/pullups.json';
+import pushups from '@/assets/lottie/pushups.json';
+import deadlift from '@/assets/lottie/deadlift.json';
+import strength from '@/assets/lottie/strength.json';
 
 const splits = [
-  { name: 'Push/Pull/Legs (PPL)', subtitle: 'The classic', gradient: 'linear-gradient(135deg, #22C55E, #15803D)', tags: ['6 days/week', 'Intermediate', 'Strength + Size'] },
-  { name: 'Upper/Lower', subtitle: 'Efficient & effective', gradient: 'linear-gradient(135deg, #FF6B6B, #FF8E53)', tags: ['4 days/week', 'Beginner+', 'Balanced'] },
-  { name: 'Arnold Split', subtitle: 'Old school, proven', gradient: 'linear-gradient(135deg, #45B7D1, #0096FF)', tags: ['6 days/week', 'Advanced', 'Volume'] },
-  { name: 'Bro Split', subtitle: 'One muscle at a time', gradient: 'linear-gradient(135deg, #4ECDC4, #2ECC71)', tags: ['5 days/week', 'All levels', 'Classic'] },
-  { name: 'Full Body', subtitle: 'Maximize frequency', gradient: 'linear-gradient(135deg, #F7971E, #FFD200)', tags: ['3 days/week', 'All levels', 'Efficient'] },
+  {
+    name: 'Push/Pull/Legs',
+    subtitle: 'The classic 6-day split',
+    lottie: benchPress,
+    gradient: 'linear-gradient(135deg, #22c55e, #15803D)',
+    tags: ['6 days/week', 'Intermediate', 'Strength + Size'],
+    days: [
+      { day: 'Push', exercises: ['Bench Press', 'Overhead Press', 'Incline DB Press', 'Lateral Raises', 'Tricep Pushdowns', 'Cable Flyes'] },
+      { day: 'Pull', exercises: ['Deadlift', 'Barbell Rows', 'Lat Pulldowns', 'Face Pulls', 'Barbell Curls', 'Hammer Curls'] },
+      { day: 'Legs', exercises: ['Squats', 'Romanian Deadlift', 'Leg Press', 'Leg Curls', 'Calf Raises', 'Lunges'] },
+    ],
+  },
+  {
+    name: 'Upper/Lower',
+    subtitle: 'Efficient & effective',
+    lottie: pullups,
+    gradient: 'linear-gradient(135deg, #FF6B6B, #FF8E53)',
+    tags: ['4 days/week', 'Beginner+', 'Balanced'],
+    days: [
+      { day: 'Upper A', exercises: ['Bench Press', 'Barbell Rows', 'OHP', 'Lat Pulldowns', 'Curls', 'Tricep Ext.'] },
+      { day: 'Lower A', exercises: ['Squats', 'RDL', 'Leg Press', 'Leg Curls', 'Calf Raises', 'Ab Rollouts'] },
+      { day: 'Upper B', exercises: ['Incline DB Press', 'Cable Rows', 'DB Shoulder Press', 'Pull-Ups', 'Hammer Curls', 'Skull Crushers'] },
+      { day: 'Lower B', exercises: ['Deadlift', 'Bulgarian Splits', 'Leg Extensions', 'Glute Bridges', 'Calf Raises', 'Planks'] },
+    ],
+  },
+  {
+    name: 'Arnold Split',
+    subtitle: 'Old school, proven',
+    lottie: strength,
+    gradient: 'linear-gradient(135deg, #45B7D1, #0096FF)',
+    tags: ['6 days/week', 'Advanced', 'Volume'],
+    days: [
+      { day: 'Chest & Back', exercises: ['Bench Press', 'Barbell Rows', 'Incline Press', 'Lat Pulldowns', 'Cable Flyes', 'Seated Rows'] },
+      { day: 'Shoulders & Arms', exercises: ['OHP', 'Lateral Raises', 'Barbell Curls', 'Tricep Pushdowns', 'Rear Delt Flyes', 'Hammer Curls'] },
+      { day: 'Legs', exercises: ['Squats', 'RDL', 'Leg Press', 'Leg Curls', 'Calf Raises', 'Lunges'] },
+    ],
+  },
+  {
+    name: 'Bro Split',
+    subtitle: 'One muscle at a time',
+    lottie: pushups,
+    gradient: 'linear-gradient(135deg, #4ECDC4, #2ECC71)',
+    tags: ['5 days/week', 'All levels', 'Classic'],
+    days: [
+      { day: 'Chest', exercises: ['Bench Press', 'Incline Press', 'Cable Flyes', 'Dips', 'Push-Ups'] },
+      { day: 'Back', exercises: ['Deadlift', 'Barbell Rows', 'Lat Pulldowns', 'Seated Rows', 'Pull-Ups'] },
+      { day: 'Shoulders', exercises: ['OHP', 'Lateral Raises', 'Front Raises', 'Rear Delt Flyes', 'Shrugs'] },
+      { day: 'Arms', exercises: ['Barbell Curls', 'Tricep Pushdowns', 'Hammer Curls', 'Skull Crushers', 'Preacher Curls'] },
+      { day: 'Legs', exercises: ['Squats', 'Leg Press', 'RDL', 'Leg Curls', 'Calf Raises'] },
+    ],
+  },
+  {
+    name: 'Full Body',
+    subtitle: 'Maximize frequency',
+    lottie: deadlift,
+    gradient: 'linear-gradient(135deg, #F7971E, #FFD200)',
+    tags: ['3 days/week', 'All levels', 'Efficient'],
+    days: [
+      { day: 'Day A', exercises: ['Squats', 'Bench Press', 'Barbell Rows', 'OHP', 'Curls', 'Calf Raises'] },
+      { day: 'Day B', exercises: ['Deadlift', 'Incline Press', 'Lat Pulldowns', 'Lateral Raises', 'Tricep Ext.', 'Leg Curls'] },
+      { day: 'Day C', exercises: ['Front Squats', 'DB Press', 'Cable Rows', 'Face Pulls', 'Hammer Curls', 'Planks'] },
+    ],
+  },
 ];
+
+const SplitCard = ({ split, index }: { split: typeof splits[number]; index: number }) => {
+  const [flipped, setFlipped] = useState(false);
+
+  return (
+    <div
+      className="relative z-10 flex-shrink-0 w-[280px] snap-start cursor-pointer"
+      onClick={() => setFlipped(!flipped)}
+    >
+      <div className="relative w-full" style={{ minHeight: 330 }}>
+        {/* Front */}
+        <div
+          className="absolute inset-0 rounded-2xl overflow-hidden dmd-convex transition-opacity duration-300"
+          style={{ opacity: flipped ? 0 : 1, pointerEvents: flipped ? 'none' : 'auto' }}
+        >
+          <div className="h-48 relative flex items-center justify-center" style={{ background: split.gradient }}>
+            <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+            <div className="relative z-10 w-28 h-28">
+              <Lottie
+                animationData={split.lottie}
+                loop={true}
+                autoplay={true}
+                style={{ width: '100%', height: '100%' }}
+              />
+            </div>
+          </div>
+          <div className="p-5">
+            <h3 className="text-foreground font-bold">{split.name}</h3>
+            <p className="text-muted-foreground text-sm mt-1">{split.subtitle}</p>
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {split.tags.map((tag) => (
+                <span key={tag} className="px-2.5 py-1 rounded-pill bg-primary/10 text-primary text-[0.6875rem] font-medium tracking-wide uppercase border border-primary/15">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <p className="mt-4 text-primary/60 text-xs font-medium">Tap to see exercises →</p>
+          </div>
+        </div>
+
+        {/* Back */}
+        <div
+          className="absolute inset-0 rounded-2xl overflow-hidden dmd-convex p-5 transition-opacity duration-300"
+          style={{ opacity: flipped ? 1 : 0, pointerEvents: flipped ? 'auto' : 'none' }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: split.gradient }}>
+              <Lottie
+                animationData={split.lottie}
+                loop={true}
+                autoplay={true}
+                style={{ width: 22, height: 22 }}
+              />
+            </div>
+            <h3 className="text-foreground font-bold text-sm">{split.name}</h3>
+          </div>
+          <div className="space-y-2 overflow-y-auto" style={{ maxHeight: 240 }}>
+            {split.days.map((d) => (
+              <div key={d.day}>
+                <p className="text-primary text-[10px] font-semibold tracking-widest uppercase mb-1">{d.day}</p>
+                <div className="flex flex-wrap gap-1">
+                  {d.exercises.map((ex) => (
+                    <span key={ex} className="px-2 py-0.5 rounded-md bg-primary/8 text-foreground/70 text-[0.65rem] font-medium border border-primary/10">
+                      {ex}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-primary/60 text-xs font-medium">Tap to flip back →</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const WorkoutPrograms = () => {
   return (
-    <section className="relative bg-card py-20 lg:py-32 overflow-hidden section-glow">
+    <section className="relative bg-card pt-16 lg:pt-20 pb-8 lg:pb-10 section-glow section-inset">
       <motion.div
         className="max-w-[1200px] mx-auto px-6 text-center"
         variants={staggerContainer}
@@ -19,7 +160,7 @@ const WorkoutPrograms = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-100px' }}
       >
-        <motion.span variants={fadeUpVariant} className="text-xs font-medium tracking-widest uppercase text-primary">
+        <motion.span variants={fadeUpVariant} className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary">
           WORKOUT PROGRAMS & SPLITS
         </motion.span>
         <motion.h2
@@ -35,38 +176,13 @@ const WorkoutPrograms = () => {
         </motion.p>
       </motion.div>
 
-      <div className="mt-12 flex gap-6 overflow-x-auto hide-scrollbar px-6 snap-x snap-mandatory pb-4" style={{ scrollPaddingLeft: 'max(1.5rem, calc((100vw - 1200px) / 2 + 1.5rem))' }}>
+      <div className="mt-8 flex gap-6 overflow-x-auto overflow-y-visible hide-scrollbar px-6 py-4 snap-x snap-mandatory relative z-20" style={{ scrollPaddingLeft: 'max(1.5rem, calc((100vw - 1200px) / 2 + 1.5rem))' }}>
         {splits.map((split, i) => (
-          <motion.div
-            key={split.name}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1, duration: 0.5 }}
-            className="flex-shrink-0 w-[280px] rounded-2xl overflow-hidden glass-card hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(34,197,94,0.15)] transition-all duration-300 snap-start"
-          >
-            <div className="h-28 relative" style={{ background: split.gradient }}>
-              <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
-            </div>
-            <div className="p-5">
-              <h3 className="text-foreground font-bold">{split.name}</h3>
-              <p className="text-muted-foreground text-sm mt-1">{split.subtitle}</p>
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {split.tags.map((tag) => (
-                  <span key={tag} className="px-2.5 py-1 rounded-pill bg-primary/10 text-primary text-[0.6875rem] font-medium tracking-wide uppercase border border-primary/15">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <a href="#" className="inline-block mt-4 text-primary text-sm font-medium hover:underline">
-                Adopt this split →
-              </a>
-            </div>
-          </motion.div>
+          <SplitCard key={split.name} split={split} index={i} />
         ))}
       </div>
 
-      <p className="text-center text-muted-foreground text-sm mt-6">
+      <p className="text-center text-muted-foreground text-sm mt-2">
         Or build your own custom split — day by day, exercise by exercise.
       </p>
     </section>

@@ -24,7 +24,7 @@ const features = [
 
 const FeatureGrid = () => {
   return (
-    <section className="relative bg-card py-20 lg:py-32 section-glow">
+    <section className="relative bg-card py-20 lg:py-32 section-glow section-inset">
       <motion.div
         className="max-w-[1200px] mx-auto px-6 text-center"
         variants={staggerContainer}
@@ -32,7 +32,7 @@ const FeatureGrid = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-100px' }}
       >
-        <motion.span variants={fadeUpVariant} className="text-xs font-medium tracking-widest uppercase text-primary">
+        <motion.span variants={fadeUpVariant} className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary">
           EVERYTHING INCLUDED
         </motion.span>
         <motion.h2
@@ -56,7 +56,7 @@ const FeatureGrid = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: (i % 6) * 0.05, duration: 0.4 }}
-            className="glass-card rounded-2xl p-5 transition-all duration-300 group"
+            className="dmd-convex rounded-2xl p-5 transition-all duration-300 group"
           >
             <span className="text-2xl group-hover:scale-110 inline-block transition-transform duration-200">{f.icon}</span>
             <h3 className="text-foreground font-semibold mt-2">{f.name}</h3>

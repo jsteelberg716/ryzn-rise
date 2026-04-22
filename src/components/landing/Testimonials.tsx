@@ -27,7 +27,7 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className="relative bg-card py-20 lg:py-32 section-glow">
+    <section className="relative bg-card py-20 lg:py-32 section-glow section-inset">
       <motion.div
         className="max-w-[1200px] mx-auto px-6 text-center"
         variants={staggerContainer}
@@ -35,7 +35,7 @@ const Testimonials = () => {
         whileInView="visible"
         viewport={{ once: true, margin: '-100px' }}
       >
-        <motion.span variants={fadeUpVariant} className="text-xs font-medium tracking-widest uppercase text-primary">
+        <motion.span variants={fadeUpVariant} className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary">
           WHAT LIFTERS ARE SAYING
         </motion.span>
         <motion.h2
@@ -55,7 +55,7 @@ const Testimonials = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1, duration: 0.5 }}
-            className="glass-card rounded-2xl p-8 transition-all duration-300"
+            className="dmd-convex rounded-2xl p-8 transition-all duration-300"
           >
             <div className="text-[#FFD700] text-sm mb-4">{'★'.repeat(t.stars)}</div>
             <p className="text-muted-foreground leading-relaxed text-sm italic">"{t.quote}"</p>

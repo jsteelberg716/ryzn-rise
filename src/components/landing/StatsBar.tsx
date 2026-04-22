@@ -3,10 +3,10 @@ import { motion, useInView } from 'framer-motion';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 
 const stats = [
-  { value: 10000, suffix: '+', label: 'Workouts Logged' },
-  { value: 4.9, suffix: '★', label: 'App Store Rating', decimals: 1 },
-  { value: 200, suffix: '+', label: 'Exercises in Library' },
-  { value: 2, suffix: ' Days', label: 'Free Trial, No Card' },
+  { value: 1, suffix: '%', label: 'Margin vs. Lab Calorimetry' },
+  { value: 127, suffix: '%', label: 'Apple Watch Deviation (Same Test)' },
+  { value: 48, suffix: '+', label: 'Exercises in Library' },
+  { value: 16, suffix: '', label: 'Muscle Groups Tracked' },
 ];
 
 function AnimatedCounter({ target, decimals = 0, suffix = '' }: { target: number; decimals?: number; suffix?: string }) {
@@ -50,11 +50,8 @@ const StatsBar = () => {
             key={stat.label}
             variants={fadeUpVariant}
             custom={i * 0.1}
-            className="text-center relative"
+            className="dmd-concave rounded-2xl px-6 py-6 text-center relative"
           >
-            {i > 0 && (
-              <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-12 bg-primary/[0.1]" />
-            )}
             <div className="font-bold gradient-text" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
               <AnimatedCounter target={stat.value} decimals={stat.decimals} suffix={stat.suffix} />
             </div>
