@@ -249,7 +249,7 @@ const sections = [
     title: '20. Contact',
     body: (
       <p>
-        Questions? Email <a href="mailto:jacksteelberg@gmail.com" className="text-accent-green hover:underline">jacksteelberg@gmail.com</a>. RYZN is operated by <strong className="text-foreground">Jack Steelberg</strong> as a sole proprietor — there is no parent company.
+        Questions? Email <a href="mailto:jackwork716@gmail.com" className="text-accent-green hover:underline">jackwork716@gmail.com</a>. RYZN is operated by <strong className="text-foreground">Jack Steelberg</strong> as a sole proprietor — there is no parent company.
       </p>
     ),
   },
