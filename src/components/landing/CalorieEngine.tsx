@@ -4,38 +4,43 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { FlaskConical, Zap, TrendingDown, ArrowRight, Flame, Gauge, Dumbbell, Heart, Sparkles } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 
-/* ---------- Data pulled from the 10-user validation study ---------- */
-
+/* ---------- Three worked examples ----------
+   Numbers computed from public formulas:
+     • Wearables: Keytel (2005) HR equation × per-device motion factor
+       (Apple ×0.95 · Fitbit ×0.85 · Whoop ×1.10)
+     • RYZN: published patent formula (USPTO #64/021,144)
+   Same math is shown reproducibly on /validation
+*/
 const workouts = [
   {
     id: 'heavy',
-    label: 'Heavy Lifter',
+    label: 'Heavy Compound',
     icon: Dumbbell,
-    meta: '72 min · 66,018 lbs volume · 125 avg HR / 155 peak',
-    ryzn: 426,
-    fitbit: 595,
-    apple: 685,
+    meta: '25y M · 90 kg · 60 min · 28,000 kg vol · 130 avg HR / 170 peak',
+    ryzn: 345,
+    fitbit: 608,
+    apple: 679,
     whoop: 786,
   },
   {
-    id: 'cross',
-    label: 'CrossFit',
+    id: 'hyp',
+    label: 'Hypertrophy',
     icon: Heart,
-    meta: '40 min · 16,167 lbs volume · 145 avg HR / 172 peak',
-    ryzn: 153,
-    fitbit: 377,
-    apple: 434,
-    whoop: 613,
+    meta: '28y F · 60 kg · 45 min · 8,000 kg vol · 135 avg HR / 160 peak',
+    ryzn: 90,
+    fitbit: 315,
+    apple: 352,
+    whoop: 408,
   },
   {
-    id: 'power',
-    label: 'Powerlifter',
+    id: 'mod',
+    label: 'Moderate',
     icon: Sparkles,
-    meta: '90 min · 17,772 lbs volume · 115 avg HR / 160 peak',
-    ryzn: 206,
-    fitbit: 678,
-    apple: 781,
-    whoop: 896,
+    meta: '50y M · 85 kg · 50 min · 14,000 kg vol · 115 avg HR / 140 peak',
+    ryzn: 116,
+    fitbit: 451,
+    apple: 504,
+    whoop: 584,
   },
 ] as const;
 
@@ -151,7 +156,7 @@ const CalorieEngine = () => {
               <span className="mx-2 text-muted-foreground/40">·</span>
               USPTO #64/021,144
               <span className="mx-2 text-muted-foreground/40">·</span>
-              Validated within 1% of lab calorimetry
+              Grounded in first-principles physics
             </span>
           </motion.div>
         </motion.div>
@@ -222,7 +227,7 @@ const CalorieEngine = () => {
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-[0.6875rem] font-semibold text-accent-green">
                   <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
-                  GROUND TRUTH
+                  PHYSICS-BASED
                 </span>
               </div>
               <div className="relative flex items-baseline gap-2">
@@ -236,7 +241,7 @@ const CalorieEngine = () => {
               </div>
               <p className="relative text-sm text-muted-foreground mt-4 leading-relaxed">
                 Computed from mechanical work, muscular efficiency (η = 0.22), HR strain factor, and
-                EPOC afterburn. Validated within 1% of lab calorimetry.
+                EPOC afterburn. Grounded in first-principles physics — formal calorimetry validation in progress.
               </p>
             </div>
 
@@ -265,7 +270,7 @@ const CalorieEngine = () => {
                         {mult.toFixed(1)}×
                       </div>
                       <div className="text-[0.625rem] text-accent/70 uppercase tracking-wider font-semibold">
-                        inflated
+                        HR-derived
                       </div>
                     </div>
                   </div>
@@ -316,21 +321,21 @@ const CalorieEngine = () => {
           {[
             {
               icon: TrendingDown,
-              value: '3.2×',
-              label: 'Avg overestimation',
-              desc: 'How wildly Apple Watch, Fitbit, and Whoop inflate resistance-training calories.',
+              value: '18–93%',
+              label: 'Wearable calorie error',
+              desc: 'Published error range across consumer fitness wearables vs lab calorimetry. Stanford 2017, replicated 2025.',
             },
             {
               icon: Flame,
-              value: '168',
-              label: 'Phantom kcal / session',
-              desc: 'Average overcount that silently sabotages cuts, bulks, and body recomp goals.',
+              value: '0',
+              label: 'kcal of mech work measured by HR',
+              desc: 'Heart rate cannot capture force × distance. That is why HR-only estimates fail on resistance training.',
             },
             {
               icon: Zap,
-              value: '~10 lbs',
-              label: 'Annual fat gain',
-              desc: 'Realistic weight gain over a year from trusting HR-only calorie estimates.',
+              value: '5–15 lbs',
+              label: 'Realistic annual deviation',
+              desc: 'A 30% over-count on a 500 kcal session, sustained 4× weekly, drifts ~5–15 lbs/yr from your true intake target.',
             },
           ].map((p, i) => (
             <motion.div

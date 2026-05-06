@@ -82,10 +82,10 @@ const SplitCard = ({ split, index }: { split: typeof splits[number]; index: numb
       className="relative z-10 flex-shrink-0 w-[280px] snap-start cursor-pointer"
       onClick={() => setFlipped(!flipped)}
     >
-      <div className="relative w-full" style={{ minHeight: 330 }}>
-        {/* Front */}
+      <div className="relative w-full">
+        {/* Front (in flow — determines card height) */}
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden dmd-convex transition-opacity duration-300"
+          className="rounded-2xl overflow-hidden dmd-convex transition-opacity duration-300"
           style={{ opacity: flipped ? 0 : 1, pointerEvents: flipped ? 'none' : 'auto' }}
         >
           <div className="h-48 relative flex items-center justify-center" style={{ background: split.gradient }}>
@@ -113,12 +113,12 @@ const SplitCard = ({ split, index }: { split: typeof splits[number]; index: numb
           </div>
         </div>
 
-        {/* Back */}
+        {/* Back (absolute, fills front's natural height) */}
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden dmd-convex p-5 transition-opacity duration-300"
-          style={{ opacity: flipped ? 1 : 0, pointerEvents: flipped ? 'auto' : 'none' }}
+          className="rounded-2xl overflow-hidden dmd-convex p-5 transition-opacity duration-300 flex flex-col"
+          style={{ position: 'absolute', inset: 0, opacity: flipped ? 1 : 0, pointerEvents: flipped ? 'auto' : 'none' }}
         >
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-4 flex-shrink-0">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: split.gradient }}>
               <Lottie
                 animationData={split.lottie}
@@ -129,7 +129,7 @@ const SplitCard = ({ split, index }: { split: typeof splits[number]; index: numb
             </div>
             <h3 className="text-foreground font-bold text-sm">{split.name}</h3>
           </div>
-          <div className="space-y-2 overflow-y-auto" style={{ maxHeight: 240 }}>
+          <div className="space-y-2 overflow-y-auto flex-1 min-h-0">
             {split.days.map((d) => (
               <div key={d.day}>
                 <p className="text-primary text-[10px] font-semibold tracking-widest uppercase mb-1">{d.day}</p>
@@ -143,7 +143,7 @@ const SplitCard = ({ split, index }: { split: typeof splits[number]; index: numb
               </div>
             ))}
           </div>
-          <p className="mt-3 text-primary/60 text-xs font-medium">Tap to flip back →</p>
+          <p className="mt-3 text-primary/60 text-xs font-medium flex-shrink-0">Tap to flip back →</p>
         </div>
       </div>
     </div>
@@ -152,7 +152,7 @@ const SplitCard = ({ split, index }: { split: typeof splits[number]; index: numb
 
 const WorkoutPrograms = () => {
   return (
-    <section className="relative bg-card pt-16 lg:pt-20 pb-8 lg:pb-10 section-glow section-inset">
+    <section className="relative bg-card pt-16 lg:pt-20 pb-0 section-glow section-inset">
       <motion.div
         className="max-w-[1200px] mx-auto px-6 text-center"
         variants={staggerContainer}
@@ -176,13 +176,15 @@ const WorkoutPrograms = () => {
         </motion.p>
       </motion.div>
 
-      <div className="mt-8 flex gap-6 overflow-x-auto overflow-y-visible hide-scrollbar px-6 py-4 snap-x snap-mandatory relative z-20" style={{ scrollPaddingLeft: 'max(1.5rem, calc((100vw - 1200px) / 2 + 1.5rem))' }}>
-        {splits.map((split, i) => (
-          <SplitCard key={split.name} split={split} index={i} />
-        ))}
+      <div className="max-w-[1200px] mx-auto mt-8 px-6">
+        <div className="flex gap-6 overflow-x-auto overflow-y-visible hide-scrollbar py-4 snap-x snap-mandatory relative z-20">
+          {splits.map((split, i) => (
+            <SplitCard key={split.name} split={split} index={i} />
+          ))}
+        </div>
       </div>
 
-      <p className="text-center text-muted-foreground text-sm mt-2">
+      <p className="text-center text-muted-foreground text-sm mt-2 px-6">
         Or build your own custom split — day by day, exercise by exercise.
       </p>
     </section>

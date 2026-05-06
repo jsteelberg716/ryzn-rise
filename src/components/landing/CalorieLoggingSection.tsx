@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Camera,
@@ -141,6 +141,95 @@ const PHASE_DURATION: Record<SceneType, number[]> = {
   food:  [1200, 1300, 3000, 1600],
   water: [1100, 1100, 1500, 1300],
   beer:  [1100, 1100, 1700, 1400],
+};
+
+/* =============================================================================
+   VideoPhoneMock — looping fuel-demo video in phone frame with hover tilt
+============================================================================ */
+const VideoPhoneMock = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
+  const [hovered, setHovered] = useState(false);
+
+  const handleMove = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ rotateY: x * 18, rotateX: -y * 14 });
+  };
+
+  return (
+    <div
+      ref={ref}
+      className="relative"
+      style={{ perspective: 1100 }}
+      onMouseMove={handleMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setTilt({ rotateX: 0, rotateY: 0 }); }}
+    >
+      {/* Ambient glow behind phone */}
+      <div
+        className="absolute -inset-10 -z-10 blur-3xl pointer-events-none transition-opacity duration-500"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34, 197, 94,0.22) 0%, rgba(69,183,209,0.08) 45%, transparent 70%)',
+          opacity: hovered ? 1.15 : 1,
+        }}
+      />
+
+      {/* Phone outer bezel — receives tilt transform */}
+      <div
+        className={`relative rounded-[44px] p-[3px] ${hovered ? '' : 'phone-float-slow'}`}
+        style={{
+          width: 320,
+          background:
+            'linear-gradient(145deg, rgba(255,255,255,0.15), rgba(34, 197, 94,0.12) 40%, rgba(255,255,255,0.05))',
+          transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
+          transformStyle: 'preserve-3d',
+          transition: hovered ? 'transform 0.08s ease-out' : 'transform 0.5s ease-out',
+          boxShadow: hovered
+            ? `${-tilt.rotateY * 1.8}px ${tilt.rotateX * 1.8 + 36}px 70px rgba(0,0,0,0.55), 0 0 70px rgba(34,197,94,0.22)`
+            : '0 40px 80px -20px rgba(0,0,0,0.6)',
+        }}
+      >
+        {/* Phone screen */}
+        <div
+          className="relative rounded-[41px] overflow-hidden"
+          style={{
+            background: '#0a0d12',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+          }}
+        >
+          <div className="relative w-full" style={{ aspectRatio: '9/19.5' }}>
+            <video
+              src="/video/fuel-demo.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            {/* Dynamic Island */}
+            <div
+              className="absolute top-2 left-1/2 -translate-x-1/2 z-30 rounded-full bg-black"
+              style={{ width: 100, height: 28 }}
+            />
+            {/* Specular sheen — shifts with tilt */}
+            <div
+              className="absolute inset-0 pointer-events-none rounded-[41px] transition-opacity duration-300"
+              style={{
+                background: `linear-gradient(${135 + tilt.rotateY * 4}deg, rgba(255,255,255,0.16) 0%, transparent 35%, transparent 65%, rgba(34,197,94,0.10) 100%)`,
+                opacity: hovered ? 0.9 : 0.4,
+                mixBlendMode: 'overlay',
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const CalorieLoggingSection = () => {
@@ -292,7 +381,7 @@ const CalorieLoggingSection = () => {
           </motion.div>
         </motion.div>
 
-        {/* ────── Right: animated phone mockup ────── */}
+        {/* ────── Right: looping demo video in phone mock ────── */}
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -300,7 +389,7 @@ const CalorieLoggingSection = () => {
           transition={{ duration: 0.7, ease: EASING.smooth }}
           className="flex-1 flex justify-center w-full"
         >
-          <PhoneDemo scene={scene} phase={phase} totals={totals} sceneIdx={sceneIdx} />
+          <VideoPhoneMock />
         </motion.div>
       </div>
     </section>

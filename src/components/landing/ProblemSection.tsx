@@ -56,7 +56,7 @@ const ProblemSection = () => {
         >
           <div className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
           <span className="text-muted-foreground text-sm">
-            <strong className="text-foreground">Patent Pending</strong> — USPTO #64/021,144 · Validated within 1% of lab calorimetry data
+            <strong className="text-foreground">Patent Pending</strong> — USPTO #64/021,144 · Physics-based, not heart-rate proxy
           </span>
         </motion.div>
 
