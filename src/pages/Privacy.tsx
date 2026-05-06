@@ -88,8 +88,14 @@ const sections = [
     body: (
       <>
         <p>AI inputs are routed through our server-side proxy (<code className="text-xs bg-primary/10 px-1.5 py-0.5 rounded">functions/v1/ai-proxy</code>) to OpenAI (GPT-4.1, primary) or Anthropic (Claude Haiku 4.5, fallback).</p>
-        <p className="mt-2"><strong className="text-foreground">What is sent:</strong> the photo / transcript / message, the last 24 hours of conversation history, condensed profile context, and food memories.</p>
-        <p className="mt-2"><strong className="text-foreground">API keys are server-side only.</strong> AI request metadata (model, latency, cost, success) is logged for reliability — but the content of photos, transcripts, and replies is not. AI data is never sold or shared.</p>
+        <p className="mt-2">The <strong className="text-foreground">first time you use any AI feature</strong>, the app will explicitly ask for your permission before sending anything. You can revoke that consent at any time in <strong className="text-foreground">Settings → Account → Reset AI Consent</strong>. Declining disables AI features; you can still type meals, log macros manually, and use the rest of the app.</p>
+        <p className="mt-2"><strong className="text-foreground">What is sent:</strong> the photo / transcript / message, the last 24 hours of conversation history, a condensed profile summary (calorie target, fitness goal), and food memories.</p>
+        <p className="mt-2"><strong className="text-foreground">Third-party protections.</strong> OpenAI and Anthropic are <strong className="text-foreground">SOC 2 Type II compliant</strong>. Both providers are bound by their commercial API terms not to train models on data submitted through their API and not to retain inputs beyond the immediate response window. They provide privacy and security protections equivalent to or stronger than ours. Their respective data-use policies:</p>
+        <ul className="mt-2 space-y-1.5 list-disc list-inside text-muted-foreground">
+          <li><a href="https://openai.com/policies/api-data-usage-policies/" target="_blank" rel="noopener noreferrer" className="text-accent-green hover:underline">OpenAI API data usage policy</a></li>
+          <li><a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-green hover:underline">Anthropic privacy policy</a></li>
+        </ul>
+        <p className="mt-2"><strong className="text-foreground">API keys live server-side only</strong> — never embedded in the app binary. AI request metadata (model name, latency, token count, success/failure) is logged for reliability and cost monitoring, but the content of photos, transcripts, and replies is not logged. AI data is never sold or shared with anyone other than the named providers above.</p>
       </>
     ),
   },
