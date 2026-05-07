@@ -12,6 +12,7 @@ import Analytics from "./pages/Analytics.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Reviews from "./pages/Reviews.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ChatBubble from "./components/ChatBubble.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,10 @@ const App = () => {
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          {/* Floating "Ask RYZN" widget — mounted outside Routes so it
+              renders on every page (including /reviews, /privacy, etc.).
+              Backed by /api/chat (Edge runtime → OpenAI gpt-4o-mini). */}
+          <ChatBubble />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
