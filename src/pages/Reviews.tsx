@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, MessageSquare, Sparkles } from 'lucide-react';
+import { ArrowLeft, Star, MessageSquare, Sparkles, Search, ChevronUp, X as XIcon } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 import RyznWordLogo from '@/components/RyznWordLogo';
-import { supabase, type PublicReview } from '@/lib/supabase';
+import {
+  supabase,
+  getOrCreateDeviceId,
+  getVotedReviewIds,
+  markReviewVoted,
+  type PublicReview,
+} from '@/lib/supabase';
 
 // ─────────────────────────────────────────────────────────────────────
 // Reviews page — `/reviews`
@@ -25,6 +31,49 @@ const Reviews = () => {
   const [reviews, setReviews] = useState<PublicReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  // Voted set is per-browser-device (backed by localStorage). Initialized
+  // here, then mutated optimistically when the user upvotes — the DB
+  // upsert is async and we don't want the heart to wait for it.
+  const [voted, setVoted] = useState<Set<string>>(() => getVotedReviewIds());
+
+  /** Optimistic upvote — bumps the local count + voted set, then fires
+      the Supabase insert in the background. The UNIQUE (review_id,
+      device_id) constraint stops dupes server-side; we don't roll back
+      on failure because a 409 just means "already voted," which we
+      already reflect in the UI. */
+  const upvote = async (reviewId: string) => {
+    if (voted.has(reviewId)) return;
+    // Mark voted + bump count immediately for snappy UX.
+    setVoted((prev) => new Set(prev).add(reviewId));
+    setReviews((prev) =>
+      prev.map((r) =>
+        r.id === reviewId ? { ...r, upvote_count: r.upvote_count + 1 } : r,
+      ),
+    );
+    markReviewVoted(reviewId);
+
+    const deviceId = getOrCreateDeviceId();
+    const { error: upErr } = await supabase
+      .from('review_upvotes')
+      .insert({ review_id: reviewId, device_id: deviceId });
+    if (upErr && !upErr.message.includes('duplicate')) {
+      console.warn('[Reviews] upvote failed:', upErr.message);
+    }
+  };
+
+  /** In-memory keyword filter. Matches body OR display name; case-
+      insensitive; whitespace-tolerant. Cheap up to a few hundred
+      reviews — when we outgrow that, swap in a Postgres tsvector. */
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return reviews;
+    return reviews.filter(
+      (r) =>
+        r.body.toLowerCase().includes(q) ||
+        (r.display_name ?? '').toLowerCase().includes(q),
+    );
+  }, [reviews, query]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -75,6 +124,8 @@ const Reviews = () => {
               star_rating: row.star_rating ?? null,
               display_name: row.display_name ?? null,
               sentiment: row.sentiment ?? null,
+              image_urls: row.image_urls ?? [],
+              upvote_count: row.upvote_count ?? 0,
               created_at: row.created_at ?? new Date().toISOString(),
             },
             ...prev,
@@ -164,10 +215,51 @@ const Reviews = () => {
           </motion.div>
         )}
 
+        {/* Search bar — only shown once there's something to search.
+            Filters in-memory (cheap up to a few hundred reviews); when
+            we outgrow that, swap in a Postgres tsvector. */}
+        {!loading && reviews.length > 0 && (
+          <motion.div
+            variants={fadeUpVariant}
+            initial="hidden"
+            animate="visible"
+            className="mt-8"
+          >
+            <div className="relative max-w-[520px]">
+              <Search
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+              />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search reviews…"
+                className="w-full pl-11 pr-10 py-3 rounded-pill glass-card border border-primary/[0.1] text-[0.9375rem] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-accent-green/50 transition-colors"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-colors"
+                  aria-label="Clear search"
+                >
+                  <XIcon size={14} />
+                </button>
+              )}
+            </div>
+            {query && (
+              <p className="mt-3 text-xs text-muted-foreground/70 ml-2">
+                {filtered.length} match{filtered.length === 1 ? '' : 'es'} for{' '}
+                <span className="text-foreground/80">"{query}"</span>
+              </p>
+            )}
+          </motion.div>
+        )}
+
         {/* Grid — populated reviews OR loading skeletons */}
         {(loading || reviews.length > 0) && (
           <motion.section
-            className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+            className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
@@ -175,8 +267,29 @@ const Reviews = () => {
           >
             {loading
               ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-              : reviews.map((r) => <ReviewCard key={r.id} review={r} />)}
+              : filtered.map((r) => (
+                  <ReviewCard
+                    key={r.id}
+                    review={r}
+                    voted={voted.has(r.id)}
+                    onUpvote={() => upvote(r.id)}
+                  />
+                ))}
           </motion.section>
+        )}
+
+        {/* Search returned nothing — gentle prompt to clear it. */}
+        {!loading && reviews.length > 0 && filtered.length === 0 && (
+          <div className="mt-12 text-center text-muted-foreground">
+            No reviews match{' '}
+            <span className="text-foreground/80">"{query}"</span>.{' '}
+            <button
+              onClick={() => setQuery('')}
+              className="text-accent-green hover:underline"
+            >
+              Clear search
+            </button>
+          </div>
         )}
 
         {/* Empty state — error and "no reviews yet" both land here.
@@ -194,7 +307,17 @@ const Reviews = () => {
 // Subcomponents
 // ──────────────────────────────────────────────────────────────────
 
-function ReviewCard({ review }: { review: PublicReview }) {
+function ReviewCard({
+  review,
+  voted,
+  onUpvote,
+}: {
+  review: PublicReview;
+  voted: boolean;
+  onUpvote: () => void;
+}) {
+  const images = review.image_urls ?? [];
+
   return (
     <motion.article
       variants={fadeUpVariant}
@@ -217,21 +340,111 @@ function ReviewCard({ review }: { review: PublicReview }) {
         </div>
       )}
 
+      {/* Before/after image strip — when the user attached photos in
+          the iOS feedback flow, they show here. Two photos = side-by-
+          side (the canonical "before / after" layout); one or 3+ =
+          a horizontal scroll strip. Click to open lightbox. */}
+      {images.length > 0 && <ImageStrip images={images} />}
+
       {/* Body */}
       <p className="text-foreground leading-relaxed text-[0.95rem] flex-1">
         {trimQuotes(review.body)}
       </p>
 
-      {/* Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-primary/[0.06]">
-        <span className="text-xs font-medium text-muted-foreground">
-          {review.display_name?.trim() || 'RYZN user'}
-        </span>
-        <span className="text-xs text-muted-foreground/70">
-          {timeAgo(review.created_at)}
-        </span>
+      {/* Footer — upvote pill on the left, name + time on the right */}
+      <div className="flex items-center justify-between gap-3 pt-2 border-t border-primary/[0.06]">
+        <button
+          onClick={onUpvote}
+          disabled={voted}
+          aria-label={voted ? 'Upvoted' : 'Upvote this review'}
+          className={`group flex items-center gap-1.5 px-2.5 py-1.5 rounded-pill text-xs font-medium transition-all ${
+            voted
+              ? 'bg-accent-green/15 text-accent-green cursor-default'
+              : 'text-muted-foreground hover:bg-primary/10 hover:text-foreground'
+          }`}
+        >
+          <ChevronUp
+            size={14}
+            className={`transition-transform ${
+              voted ? '' : 'group-hover:-translate-y-0.5'
+            }`}
+          />
+          <span className="tabular-nums">{review.upvote_count}</span>
+        </button>
+
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xs font-medium text-muted-foreground truncate">
+            {review.display_name?.trim() || 'RYZN user'}
+          </span>
+          <span className="text-muted-foreground/40">·</span>
+          <span className="text-xs text-muted-foreground/70 whitespace-nowrap">
+            {timeAgo(review.created_at)}
+          </span>
+        </div>
       </div>
     </motion.article>
+  );
+}
+
+/** Renders attached progress photos. Two images get the canonical
+    before/after side-by-side; anything else gets a horizontal scroll
+    strip. Click any image to open a fullscreen lightbox. */
+function ImageStrip({ images }: { images: string[] }) {
+  const [lightbox, setLightbox] = useState<string | null>(null);
+
+  const layout =
+    images.length === 2
+      ? 'grid grid-cols-2 gap-2'
+      : 'flex gap-2 overflow-x-auto -mx-1 px-1 snap-x';
+
+  return (
+    <>
+      <div className={layout}>
+        {images.map((url, i) => (
+          <button
+            key={url + i}
+            onClick={() => setLightbox(url)}
+            className={`relative overflow-hidden rounded-xl bg-primary/5 ${
+              images.length === 2 ? 'aspect-[3/4]' : 'aspect-[3/4] min-w-[140px] snap-start'
+            }`}
+            aria-label={`Open image ${i + 1}`}
+          >
+            <img
+              src={url}
+              alt=""
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform hover:scale-[1.03]"
+            />
+            {images.length === 2 && (
+              <span className="absolute top-2 left-2 px-2 py-0.5 rounded-pill bg-black/60 backdrop-blur-sm text-[0.625rem] font-bold text-white tracking-wider uppercase">
+                {i === 0 ? 'Before' : 'After'}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[2000] bg-black/85 backdrop-blur-sm flex items-center justify-center p-6 cursor-zoom-out"
+          onClick={() => setLightbox(null)}
+        >
+          <img
+            src={lightbox}
+            alt=""
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            onClick={() => setLightbox(null)}
+            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center text-white"
+            aria-label="Close"
+          >
+            <XIcon size={20} />
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 

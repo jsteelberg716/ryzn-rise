@@ -30,5 +30,51 @@ export interface PublicReview {
   star_rating: number | null;
   display_name: string | null;
   sentiment: string | null;
+  image_urls: string[] | null;
+  upvote_count: number;
   created_at: string;
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Per-browser device id used by the upvote system. Stored in
+// localStorage so a visitor's vote sticks across reloads. The DB
+// has a UNIQUE (review_id, device_id) constraint that caps a single
+// device to one upvote per review — clearing localStorage lets the
+// same human vote again, but that's an acceptable abuse ceiling
+// for an MVP marketing surface.
+// ──────────────────────────────────────────────────────────────────
+
+const DEVICE_ID_KEY = 'ryzn.reviews.deviceId';
+
+export function getOrCreateDeviceId(): string {
+  if (typeof window === 'undefined') return '';
+  let id = window.localStorage.getItem(DEVICE_ID_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    window.localStorage.setItem(DEVICE_ID_KEY, id);
+  }
+  return id;
+}
+
+const VOTED_REVIEWS_KEY = 'ryzn.reviews.votedIds';
+
+/** Returns the set of review ids this device has already upvoted. */
+export function getVotedReviewIds(): Set<string> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = window.localStorage.getItem(VOTED_REVIEWS_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw) as string[];
+    return new Set(arr);
+  } catch {
+    return new Set();
+  }
+}
+
+/** Marks a review id as voted for in localStorage. */
+export function markReviewVoted(reviewId: string) {
+  if (typeof window === 'undefined') return;
+  const set = getVotedReviewIds();
+  set.add(reviewId);
+  window.localStorage.setItem(VOTED_REVIEWS_KEY, JSON.stringify([...set]));
 }
