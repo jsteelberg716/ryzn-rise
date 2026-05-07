@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { EASING, DURATION } from '@/lib/animations';
@@ -6,7 +7,12 @@ import RyznWordLogo from '@/components/RyznWordLogo';
 import RyznIconLogo from '@/components/RyznIconLogo';
 import { useIsWildcats } from '@/hooks/useIsWildcats';
 
-const navLinks = ['Features', 'How It Works', 'Pricing', 'FAQ'];
+// Hash-anchor links jump to in-page sections; route links navigate to
+// dedicated pages. Reviews lives on its own page so it can host the
+// live-from-Supabase grid + realtime subscription without bloating
+// the homepage.
+const hashLinks = ['Features', 'How It Works', 'Pricing', 'FAQ'];
+const routeLinks = [{ label: 'Reviews', to: '/reviews' }];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -24,7 +30,7 @@ const Navbar = () => {
         </a>
 
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+          {hashLinks.map((link) => (
             <a
               key={link}
               href={`#${link.toLowerCase().replace(/\s/g, '-')}`}
@@ -32,6 +38,15 @@ const Navbar = () => {
             >
               {link}
             </a>
+          ))}
+          {routeLinks.map((link) => (
+            <Link
+              key={link.label}
+              to={link.to}
+              className="text-muted-foreground text-[0.875rem] font-medium tracking-wide hover:text-foreground transition-colors duration-200 relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+            >
+              {link.label}
+            </Link>
           ))}
         </div>
 
@@ -58,7 +73,7 @@ const Navbar = () => {
             <button className="absolute top-5 right-6 text-foreground" onClick={() => setMobileOpen(false)}>
               <X size={28} />
             </button>
-            {navLinks.map((link, i) => (
+            {hashLinks.map((link, i) => (
               <motion.a
                 key={link}
                 href={`#${link.toLowerCase().replace(/\s/g, '-')}`}
@@ -70,6 +85,25 @@ const Navbar = () => {
               >
                 {link}
               </motion.a>
+            ))}
+            {routeLinks.map((link, i) => (
+              <motion.div
+                key={link.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: (hashLinks.length + i) * 0.1,
+                  ease: EASING.smooth,
+                }}
+              >
+                <Link
+                  to={link.to}
+                  className="text-2xl font-semibold text-foreground"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
             <div className="mb-4">
               <RyznIconLogo size={40} />

@@ -10,6 +10,7 @@ import Index from "./pages/Index.tsx";
 import Validation from "./pages/Validation.tsx";
 import Analytics from "./pages/Analytics.tsx";
 import Privacy from "./pages/Privacy.tsx";
+import Reviews from "./pages/Reviews.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="/validation" element={<Validation />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/reviews" element={<Reviews />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
