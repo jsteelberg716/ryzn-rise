@@ -39,7 +39,15 @@ const Reviews = () => {
 
       if (!alive) return;
       if (error) {
+        // Log for the developer (visible in browser DevTools) but
+        // don't surface a "broken" message to visitors. An empty
+        // result reads the same as the genuine "no reviews yet"
+        // state — that's the intentional UX. We're either not yet
+        // wired to the DB or there's nothing to show; both deserve
+        // the welcoming "Be the first" treatment, not an error card.
+        console.warn('[Reviews] Supabase query failed:', error.message);
         setError(error.message);
+        setReviews([]);
         setLoading(false);
         return;
       }
@@ -156,30 +164,27 @@ const Reviews = () => {
           </motion.div>
         )}
 
-        {/* Grid */}
-        <motion.section
-          className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-        >
-          {loading
-            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-            : reviews.map((r) => <ReviewCard key={r.id} review={r} />)}
-        </motion.section>
-
-        {/* Empty / error states */}
-        {!loading && error && (
-          <div className="mt-16 glass-card rounded-[20px] p-8 text-center">
-            <p className="text-muted-foreground">
-              Couldn't load reviews right now.
-              <br />
-              <span className="text-xs text-muted-foreground/60">{error}</span>
-            </p>
-          </div>
+        {/* Grid — populated reviews OR loading skeletons */}
+        {(loading || reviews.length > 0) && (
+          <motion.section
+            className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+          >
+            {loading
+              ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+              : reviews.map((r) => <ReviewCard key={r.id} review={r} />)}
+          </motion.section>
         )}
-        {!loading && !error && reviews.length === 0 && <EmptyState />}
+
+        {/* Empty state — error and "no reviews yet" both land here.
+            The page intentionally celebrates being un-reviewed: a big
+            "Be the first" CTA sits above ghost skeleton cards so the
+            visitor immediately understands the format AND that they
+            could be the one to fill it in. */}
+        {!loading && reviews.length === 0 && <EmptyState />}
       </main>
     </div>
   );
@@ -230,9 +235,13 @@ function ReviewCard({ review }: { review: PublicReview }) {
   );
 }
 
-function SkeletonCard() {
+function SkeletonCard({ pulse = true }: { pulse?: boolean }) {
   return (
-    <div className="glass-card rounded-[20px] p-6 flex flex-col gap-4 animate-pulse">
+    <div
+      className={`glass-card rounded-[20px] p-6 flex flex-col gap-4 ${
+        pulse ? 'animate-pulse' : ''
+      }`}
+    >
       <div className="flex items-center gap-1">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="w-4 h-4 rounded bg-muted-foreground/15" />
@@ -251,18 +260,75 @@ function SkeletonCard() {
   );
 }
 
+// Empty-state surface. The page is brand new — celebrate that. A big
+// "Be the first!" CTA card up top, followed by a faded skeleton grid
+// that previews the layout once reviews arrive. No "couldn't load" or
+// "no reviews yet" copy — the whole page reads as a deliberate
+// invitation, not a broken state.
 function EmptyState() {
   return (
-    <div className="mt-20 flex flex-col items-center text-center gap-4 max-w-[480px] mx-auto">
-      <div className="w-14 h-14 rounded-full glass-card flex items-center justify-center border-l-2 border-accent-green">
-        <MessageSquare size={22} className="text-accent-green" />
+    <div className="mt-12">
+      {/* Hero CTA — the centerpiece */}
+      <motion.div
+        variants={fadeUpVariant}
+        initial="hidden"
+        animate="visible"
+        className="relative overflow-hidden rounded-[24px] p-10 md:p-14 text-center glass-card border border-accent-green/30"
+      >
+        {/* Soft accent glow on the card */}
+        <div
+          className="absolute inset-0 -z-10 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 60% at 50% 0%, rgba(34, 197, 94, 0.18) 0%, transparent 70%)',
+          }}
+        />
+
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent-green/10 border border-accent-green/30 mb-5">
+          <Star size={22} className="text-accent-green fill-accent-green" />
+        </div>
+
+        <h2
+          className="font-extrabold tracking-[-0.02em] leading-[1.05]"
+          style={{ fontSize: 'clamp(1.875rem, 4vw, 3rem)' }}
+        >
+          Be the first!
+        </h2>
+
+        <p className="mt-4 text-muted-foreground max-w-[520px] mx-auto leading-relaxed">
+          No reviews on the wall yet — you could be the one to start it. Open
+          RYZN on your phone, head to{' '}
+          <span className="text-foreground font-medium">
+            Settings → Dynamic Feedback
+          </span>
+          , write a quick line about how the app's working, and your card lands
+          here the second you hit submit.
+        </p>
+
+        {/* Mini visual: how a single card will look */}
+        <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-pill glass-card border-l-2 border-accent-green text-xs text-muted-foreground">
+          <Sparkles size={12} className="text-accent-green" />
+          <span>Reviews update live, no refresh needed</span>
+        </div>
+      </motion.div>
+
+      {/* Ghost preview grid — shows the visitor what the layout looks
+          like once reviews start landing. No pulse animation (this is
+          a deliberate placeholder, not a loading state) and reduced
+          opacity so they read as "future cards" not "broken state". */}
+      <div className="mt-12 mb-4 flex items-center gap-3">
+        <div className="h-px flex-1 bg-muted-foreground/15" />
+        <span className="text-[0.6875rem] uppercase tracking-[0.18em] text-muted-foreground/60">
+          Preview of how reviews will appear
+        </span>
+        <div className="h-px flex-1 bg-muted-foreground/15" />
       </div>
-      <h2 className="text-2xl font-bold tracking-tight">No reviews yet.</h2>
-      <p className="text-muted-foreground">
-        Be the first. Open RYZN on your phone, tap{' '}
-        <span className="text-foreground font-medium">Dynamic Feedback</span> in
-        Settings, and your review lands here the moment you hit submit.
-      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 opacity-40">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SkeletonCard key={i} pulse={false} />
+        ))}
+      </div>
     </div>
   );
 }
