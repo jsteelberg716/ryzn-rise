@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["B684A5GN6W.com.jacksteelberg.BetterM3"],
+        "components": [
+          {
+            "/": "/scan",
+            "comment": "RyznScan — NFC tag taps route into RYZN"
+          },
+          {
+            "/": "/scan/*",
+            "comment": "RyznScan — trailing path + query routes too"
+          }
+        ]
+      }
+    ]
+  }
+}
