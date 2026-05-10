@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- iOS reads this <title> for the NFC banner heading when a
+         paired tag is tapped on a device that has RYZN installed.
+         Keep it short, action-oriented, and brand-forward — it's
+         the first line of the system banner above "Open in RYZN". -->
+    <title>RYZN tag — Tap to start workout</title>
+    <meta name="description" content="RyznScan: tap an NFC puck to instantly start a workout with that exercise pre-loaded. Your weights from last time load automatically.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="theme-color" content="#08091a">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+            background: linear-gradient(160deg, #08091a 0%, #0c0d20 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 380px;
+            text-align: center;
+        }
+        /* Off-white puck with a sharper corner (radius 8) — Jack
+           picked variant B from the design grid. The pulse rings
+           match the brand accent green (#18CC8B). */
+        .puck {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 28px;
+            border-radius: 8px;
+            background: #f7f7f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+            position: relative;
+        }
+        .puck::before, .puck::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            border: 2px solid rgba(24, 204, 139, 0.55);
+            animation: pulse 2.1s ease-out infinite;
+        }
+        .puck::after { animation-delay: 1.05s; }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.65); opacity: 0; }
+        }
+        .puck svg { display: block; }
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 12px;
+        }
+        p {
+            color: #aaa;
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 0 0 24px;
+        }
+        .cta {
+            display: inline-block;
+            background: #18CC8B;
+            color: #08091a;
+            padding: 14px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .footnote {
+            margin-top: 32px;
+            color: #555;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <!-- The puck visual mirrors the real-world NFC sticker: an
+             off-white rounded square with the RYZN R glyph inside.
+             Four black paths form the R; one green accent triangle
+             in the bottom-left is the brand mark (lifted from
+             RyznIconLogo.tsx's color variant). Pulse rings cue
+             "active scanning" outward. -->
+        <div class="puck" aria-hidden="true">
+            <svg viewBox="220 110 520 500" width="50" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- R glyph — four black paths -->
+                <path fill="#0a0a0a" d="m595.1308 595.992l-356.10382 -349.38617l0 -123.46658l481.94427 472.85272z" />
+                <path fill="#0a0a0a" d="m239.02696 123.12427l481.94427 0l0 89.47565l-481.94427 0z" />
+                <path fill="#0a0a0a" d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z" />
+                <path fill="#0a0a0a" d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z" />
+                <!-- Green accent — bottom-left diagonal triangle -->
+                <path fill="#18CC8B" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z" />
+            </svg>
+        </div>
+        <h1>You scanned a RYZN tag</h1>
+        <p>If you have the RYZN app installed, this tag opens the app and starts a workout with the right exercise pre-loaded.</p>
+        <a class="cta" href="https://apps.apple.com/app/ryzn">Get RYZN on the App Store</a>
+        <p class="footnote">Each RYZN puck pairs to a piece of gym equipment. Tap once to start a workout, tap again to add the next exercise — your weights from last time load automatically.</p>
+    </main>
+</body>
+</html>
