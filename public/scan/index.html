@@ -3,111 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- iOS reads this <title> for the NFC banner heading when a
-         paired tag is tapped on a device that has RYZN installed.
-         Keep it short, action-oriented, and brand-forward — it's
-         the first line of the system banner above "Open in RYZN". -->
     <title>RYZN tag — Tap to start workout</title>
-    <meta name="description" content="RyznScan: tap an NFC puck to instantly start a workout with that exercise pre-loaded. Your weights from last time load automatically.">
+    <meta name="description" content="RyznTag: tap an NFC puck on any gym machine to instantly start a workout. Your weights load automatically. Built into RYZN for iPhone.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <meta name="theme-color" content="#08091a">
     <style>
+        :root {
+            --bg: #08091a;
+            --bg-elevated: #0c0d20;
+            --fg: #ffffff;
+            --muted: #888;
+            --dim: #555;
+            --border: #1f1f33;
+            --green: #18CC8B;
+            --puck: #f7f7f4;
+        }
+        * { box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
-            background: linear-gradient(160deg, #08091a 0%, #0c0d20 100%);
-            color: #ffffff;
+            background: linear-gradient(160deg, var(--bg) 0%, var(--bg-elevated) 100%);
+            color: var(--fg);
             min-height: 100vh;
             margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ───────── Nav ───────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 64px;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(8, 9, 26, 0.8);
+            border-bottom: 1px solid rgba(24, 204, 139, 0.1);
+            z-index: 1000;
+        }
+        nav .inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100%;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 24px;
-            box-sizing: border-box;
+            justify-content: space-between;
+            padding: 0 24px;
         }
-        .container {
-            max-width: 380px;
+        nav .brand {
+            display: flex;
+            align-items: center;
+            color: var(--fg);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+        nav .links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        nav .links a {
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        nav .links a:hover, nav .links a.active {
+            color: var(--fg);
+        }
+        nav .cta {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--green) 0%, #22D69E 100%);
+            color: var(--bg);
+            padding: 9px 18px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        @media (max-width: 720px) {
+            nav .links { display: none; }
+        }
+
+        /* ───────── Layout ───────── */
+        main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 112px 24px 80px;
+        }
+        section { margin-bottom: 64px; }
+
+        /* ───────── Hero ───────── */
+        .hero {
             text-align: center;
         }
-        /* Off-white puck with a sharper corner (radius 8) — Jack
-           picked variant B from the design grid. The pulse rings
-           match the brand accent green (#18CC8B). */
         .puck {
-            width: 96px;
-            height: 96px;
-            margin: 0 auto 28px;
-            border-radius: 8px;
-            background: #f7f7f4;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 32px;
+            border-radius: 10px;
+            background: var(--puck);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
             position: relative;
         }
         .puck::before, .puck::after {
             content: "";
             position: absolute;
             inset: 0;
-            border-radius: 8px;
-            border: 2px solid rgba(24, 204, 139, 0.55);
+            border-radius: 10px;
+            border: 2px solid rgba(24, 204, 139, 0.5);
             animation: pulse 2.1s ease-out infinite;
         }
         .puck::after { animation-delay: 1.05s; }
         @keyframes pulse {
             0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.65); opacity: 0; }
+            100% { transform: scale(1.55); opacity: 0; }
         }
         .puck svg { display: block; }
         h1 {
-            font-size: 26px;
-            font-weight: 700;
-            margin: 0 0 12px;
+            font-size: clamp(32px, 6vw, 44px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0 0 16px;
+            letter-spacing: -0.02em;
         }
-        p {
-            color: #aaa;
-            font-size: 15px;
-            line-height: 1.5;
-            margin: 0 0 24px;
+        .hero p {
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.55;
+            max-width: 540px;
+            margin: 0 auto 28px;
         }
-        .cta {
+        .cta-primary {
             display: inline-block;
-            background: #18CC8B;
-            color: #08091a;
-            padding: 14px 28px;
-            border-radius: 12px;
+            background: var(--green);
+            color: var(--bg);
+            padding: 15px 30px;
+            border-radius: 14px;
             text-decoration: none;
             font-weight: 700;
             font-size: 16px;
         }
-        .footnote {
-            margin-top: 32px;
-            color: #555;
+
+        /* ───────── How it works ───────── */
+        h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 28px;
+            letter-spacing: -0.01em;
+        }
+        .steps {
+            display: grid;
+            gap: 16px;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 22px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .step-num {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(24, 204, 139, 0.15);
+            color: var(--green);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+        .step h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+        .step p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* ───────── Why ───────── */
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        @media (max-width: 540px) {
+            .why-grid { grid-template-columns: 1fr; }
+        }
+        .why-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+        }
+        .why-card h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .why-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--dim);
+            padding-bottom: 40px;
             font-size: 13px;
         }
+        footer a { color: var(--muted); }
     </style>
 </head>
 <body>
-    <main class="container">
-        <!-- The puck visual mirrors the real-world NFC sticker: an
-             off-white rounded square with the RYZN R glyph inside.
-             Four black paths form the R; one green accent triangle
-             in the bottom-left is the brand mark (lifted from
-             RyznIconLogo.tsx's color variant). Pulse rings cue
-             "active scanning" outward. -->
-        <div class="puck" aria-hidden="true">
-            <svg viewBox="220 110 520 500" width="50" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- R glyph — four black paths -->
-                <path fill="#0a0a0a" d="m595.1308 595.992l-356.10382 -349.38617l0 -123.46658l481.94427 472.85272z" />
-                <path fill="#0a0a0a" d="m239.02696 123.12427l481.94427 0l0 89.47565l-481.94427 0z" />
-                <path fill="#0a0a0a" d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z" />
-                <path fill="#0a0a0a" d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z" />
-                <!-- Green accent — bottom-left diagonal triangle -->
-                <path fill="#18CC8B" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z" />
-            </svg>
+    <!-- Mirrors the React Navbar visually so users on /scan can
+         navigate back to the rest of the site. "Scan" is highlighted
+         as the current page. The CTA on the right matches the Start
+         Free Trial pill on the homepage. -->
+    <nav>
+        <div class="inner">
+            <a href="/" class="brand">RYZN</a>
+            <div class="links">
+                <a href="/#features">Features</a>
+                <a href="/#how-it-works">How It Works</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/scan" class="active">Scan</a>
+                <a href="/reviews">Reviews</a>
+            </div>
+            <a href="/" class="cta">Start Free Trial</a>
         </div>
-        <h1>You scanned a RYZN tag</h1>
-        <p>If you have the RYZN app installed, this tag opens the app and starts a workout with the right exercise pre-loaded.</p>
-        <a class="cta" href="https://apps.apple.com/app/ryzn">Get RYZN on the App Store</a>
-        <p class="footnote">Each RYZN puck pairs to a piece of gym equipment. Tap once to start a workout, tap again to add the next exercise — your weights from last time load automatically.</p>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="puck" aria-hidden="true">
+                <svg viewBox="220 110 520 500" width="62" height="60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#0a0a0a" d="m595.1308 595.992l-356.10382 -349.38617l0 -123.46658l481.94427 472.85272z" />
+                    <path fill="#0a0a0a" d="m239.02696 123.12427l481.94427 0l0 89.47565l-481.94427 0z" />
+                    <path fill="#0a0a0a" d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z" />
+                    <path fill="#0a0a0a" d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z" />
+                    <path fill="#18CC8B" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z" />
+                </svg>
+            </div>
+            <h1>One tap. Workout starts.</h1>
+            <p>RyznTags are NFC pucks that pair to gym equipment. Tap your phone, the right exercise loads, your weights from last time pre-fill — you just lift. No typing, no scrolling, no tracking friction.</p>
+            <a href="https://apps.apple.com/app/ryzn" class="cta-primary">Get RYZN on the App Store</a>
+        </section>
+
+        <section>
+            <h2>How it works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div>
+                        <h3>Tags go on equipment</h3>
+                        <p>Small NFC pucks stick on machines, racks, mats, anywhere you train. Each tag pairs to an exercise once — every user benefits forever.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div>
+                        <h3>Tap your phone</h3>
+                        <p>Hold your iPhone to the puck. iOS shows a banner — tap it. RYZN opens, the right exercise is pre-loaded with your last weights.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div>
+                        <h3>Tap the next one</h3>
+                        <p>Between exercises, tap the next machine. Set, rep, weight, all auto-filled. The whole workout builds itself as you move through the gym.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Why it matters</h2>
+            <div class="why-grid">
+                <div class="why-card">
+                    <h3>Zero typing</h3>
+                    <p>Stop fumbling with picker lists between sets. Your gym becomes the interface.</p>
+                </div>
+                <div class="why-card">
+                    <h3>Last weights, ready</h3>
+                    <p>RYZN pre-fills the bar from your last session on that exercise. No guessing what you did last week.</p>
+                </div>
+                <div class="why-card">
+                    <h3>Works in any gym</h3>
+                    <p>Tags pair once, work for every RYZN user who scans them. Your home gym, a hotel, a chain — the system follows.</p>
+                </div>
+                <div class="why-card">
+                    <h3>No batteries</h3>
+                    <p>NFC pucks are passive. No charging, no replacing. Stick once, last a decade.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Need RYZN? <a href="https://apps.apple.com/app/ryzn">Download on the App Store</a> · <a href="/">Back to home</a></p>
+        </footer>
     </main>
 </body>
 </html>

@@ -12,7 +12,14 @@ import { useIsWildcats } from '@/hooks/useIsWildcats';
 // live-from-Supabase grid + realtime subscription without bloating
 // the homepage.
 const hashLinks = ['Features', 'How It Works', 'Pricing', 'FAQ'];
-const routeLinks = [{ label: 'Reviews', to: '/reviews' }];
+// Order matters — sits left-to-right in the rendered nav. Scan
+// goes between the hash anchors and Reviews so users discover the
+// RyznTag info page in the obvious "see what else this product
+// has" path. Reviews stays anchored far-right per Jack's spec.
+const routeLinks = [
+  { label: 'Scan', to: '/scan' },
+  { label: 'Reviews', to: '/reviews' },
+];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
