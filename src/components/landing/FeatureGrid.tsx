@@ -5,7 +5,7 @@ const features = [
   { icon: '📊', name: 'Real-Time Muscle Map', desc: 'Front & back body, 16 muscle groups, live color coding' },
   { icon: '🤖', name: 'AI Progression Engine', desc: '4-rail safety system that thinks like a coach' },
   { icon: '⏱️', name: 'Smart Rest Timer', desc: 'Immersive or compact mode with haptic countdown' },
-  { icon: '🏋️', name: '200+ Exercises', desc: 'Full library with muscle activation data and instructions' },
+  { icon: '🏋️', name: '150+ Exercises', desc: 'Full library with muscle activation data and instructions' },
   { icon: '📅', name: 'Workout Programs', desc: '5 template splits + custom split builder' },
   { icon: '🔥', name: 'Streak Tracker', desc: 'Consecutive training days with milestone celebrations' },
   { icon: '🎯', name: 'Goals System', desc: '5 goal types: strength, consistency, volume, weight, streak' },

@@ -6,7 +6,7 @@ import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 const proFeatures = [
   "Smart weight tracking with auto-increments",
   "Real-time muscle map visualization",
-  "100+ exercises with activation data",
+  "150+ exercises with activation data",
   "All workout split programs",
   "Shareable post-workout cards",
   "Progress photos & workout history",
