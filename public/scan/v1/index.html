@@ -145,50 +145,57 @@
         .stage {
             position: relative;
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
             /* Bottom padding reserves clear space below the phone so
                the caption sits well clear of any animation extreme. */
             margin: 0 auto 8px;
             padding-bottom: 14px;
-            aspect-ratio: 1 / 1.36;
+            aspect-ratio: 1 / 1.55;
             perspective: 1400px;
-            perspective-origin: 50% 32%;
+            perspective-origin: 50% 35%;
         }
-        /* Soft "table" surface line where the puck rests */
+        /* Subtle glow halo behind the puck — replaces the old
+           "surface line" since the puck is now floating in the upper
+           half of the composition rather than resting on a table. */
         .stage .surface {
             position: absolute;
-            left: -10%; right: -10%;
-            bottom: 24%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, hsla(145, 72%, 50%, 0.55), transparent);
-            box-shadow: 0 0 26px hsla(145, 72%, 50%, 0.45);
+            left: 50%; top: 14%;
+            transform: translateX(-50%);
+            width: 75%; height: 240px;
+            background:
+                radial-gradient(ellipse 60% 50% at 50% 50%,
+                    hsla(145, 72%, 50%, 0.18) 0%, transparent 70%);
             pointer-events: none;
+            filter: blur(2px);
         }
-        .stage .surface::after {
-            content: ""; position: absolute;
-            top: 0; left: -8%; right: -8%; height: 90px;
-            background: linear-gradient(180deg, hsla(145, 72%, 50%, 0.10), transparent);
-        }
+        .stage .surface::after { content: none; }
 
-        /* The square puck — sized up so it reads as the focal point
-           of the scan, with a thicker rim and a deeper soft shadow. */
+        /* ── The puck — sized up dramatically so it reads as the
+              focal point of the page. Roughly the width of the
+              phone bezel below it, parked in the TOP half of the
+              stage so the phone has somewhere to reach up to. */
         .puck-on-surface {
             position: absolute;
-            left: 50%;
-            bottom: calc(24% - 6px);
+            left: 50%; top: 6%;
             transform: translateX(-50%);
-            width: 84px;
-            height: 84px;
-            border-radius: 16px;
-            background: linear-gradient(180deg, hsl(40, 18%, 96%) 0%, hsl(40, 18%, 82%) 100%);
+            width: 180px;
+            height: 180px;
+            border-radius: 28px;
+            background: linear-gradient(180deg, hsl(40, 18%, 96%) 0%, hsl(40, 18%, 80%) 100%);
             display: flex; align-items: center; justify-content: center;
             box-shadow:
-                0 14px 28px rgba(0,0,0,0.6),
-                inset 0 1px 0 rgba(255,255,255,0.95),
-                0 0 0 1px rgba(0,0,0,0.18);
+                0 28px 50px rgba(0,0,0,0.55),
+                inset 0 2px 0 rgba(255,255,255,0.95),
+                0 0 0 1px rgba(0,0,0,0.16);
             z-index: 3;
         }
-        .puck-on-surface svg { width: 46px; height: 44px; display: block; }
+        .puck-on-surface svg { width: 104px; height: 100px; display: block; }
+        /* Slight breathe so the puck reads as alive even off-cycle */
+        .puck-on-surface { animation: puckBreathe 4s ease-in-out infinite; }
+        @keyframes puckBreathe {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50%      { transform: translateX(-50%) scale(1.012); }
+        }
         /* Puck pulses brightly at the tap moment */
         .puck-on-surface::after {
             content: ""; position: absolute; inset: 0;
@@ -204,14 +211,14 @@
         }
 
         /* Scan ripple — circles burst outward from the puck at tap.
-           Anchored to the puck's vertical center so any future puck
-           size tweak stays in sync. */
+           Anchored to the (now upper) puck's center via top:
+           6% + 90 px (puck top offset + half its height). */
         .scan-ripple {
             position: absolute;
             left: 50%;
-            bottom: calc(24% - 6px + 42px); /* puck bottom + half its height = center */
-            transform: translateX(-50%) translateY(50%);
-            width: 110px; height: 110px;
+            top: calc(6% + 90px);
+            transform: translate(-50%, -50%);
+            width: 220px; height: 220px;
             pointer-events: none;
             z-index: 2;
         }
@@ -222,23 +229,24 @@
             opacity: 0;
             animation: rippleBurst 7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
         }
-        .scan-ripple::after { animation-delay: 0.25s; }
+        .scan-ripple::after { animation-delay: 0.3s; }
         @keyframes rippleBurst {
             0%, 25%   { transform: scale(0.25); opacity: 0; }
-            26%       { transform: scale(0.4);  opacity: 0.95; }
-            36%       { transform: scale(2.2);  opacity: 0; }
-            100%      { transform: scale(2.2);  opacity: 0; }
+            26%       { transform: scale(0.45); opacity: 0.95; }
+            38%       { transform: scale(2.4);  opacity: 0; }
+            100%      { transform: scale(2.4);  opacity: 0; }
         }
 
-        /* Phone rig — enters right, taps, centers, exits right.
-           Narrower than before so even at peak tap-translateY the
-           phone stays clear of the caption flowing below the stage. */
+        /* Phone rig — enters right, slides under the puck, reaches
+           UP to tap it, then settles back down so the iOS sheet can
+           rise into view. Anchored to the stage bottom so the rest
+           position stays predictable. */
         .phone-rig {
             position: absolute;
-            top: 6px;
+            bottom: 14px;
             left: 50%;
-            width: 55%;
-            max-width: 196px;
+            width: 44%;
+            max-width: 168px;
             aspect-ratio: 9 / 19.5;
             transform-style: preserve-3d;
             transform-origin: 50% 100%;
@@ -246,23 +254,23 @@
             z-index: 4;
         }
         @keyframes phoneSeq {
-            /* 0% Off-screen right, tilted */
-            0%   { transform: translate(80%, 8px) rotateZ(14deg) rotateX(18deg); }
-            /* 14% Mid-flight from right */
-            14%  { transform: translate(20%, 4px) rotateZ(6deg) rotateX(24deg); }
-            /* 22% Hovering over puck, tilting down */
-            22%  { transform: translate(-50%, 30px) rotateZ(0deg) rotateX(32deg); }
-            /* 28% Tap contact — slight squish */
-            28%  { transform: translate(-50%, 42px) rotateZ(0deg) rotateX(36deg) scale(0.995); }
-            /* 34% Lifting back */
-            34%  { transform: translate(-50%, 30px) rotateZ(0deg) rotateX(32deg); }
-            /* 48% Moving to center, leveling out */
-            48%  { transform: translate(-50%, -20px) rotateZ(0deg) rotateX(8deg); }
-            /* 80% Hold at center while sheet sits */
-            80%  { transform: translate(-50%, -20px) rotateZ(0deg) rotateX(6deg); }
-            /* 92% Exiting back to the right */
-            92%  { transform: translate(80%, 8px) rotateZ(14deg) rotateX(18deg); }
-            100% { transform: translate(80%, 8px) rotateZ(14deg) rotateX(18deg); }
+            /* Off-screen right, tilted */
+            0%   { transform: translate(85%, 0) rotateZ(14deg) rotateX(18deg); }
+            /* Mid-flight from right */
+            14%  { transform: translate(20%, 0) rotateZ(6deg)  rotateX(24deg); }
+            /* Rest position, centered under puck */
+            22%  { transform: translate(-50%, 0) rotateZ(0deg) rotateX(20deg); }
+            /* Reach UP to tap the puck */
+            30%  { transform: translate(-50%, -54px) rotateZ(0deg) rotateX(26deg) scale(1.01); }
+            /* Hold contact briefly */
+            36%  { transform: translate(-50%, -46px) rotateZ(0deg) rotateX(24deg); }
+            /* Settle back down to center, leveling out for the sheet */
+            48%  { transform: translate(-50%, 0)   rotateZ(0deg) rotateX(6deg); }
+            /* Hold while the sheet is up */
+            80%  { transform: translate(-50%, 0)   rotateZ(0deg) rotateX(4deg); }
+            /* Exit back to the right */
+            92%  { transform: translate(85%, 0)  rotateZ(14deg) rotateX(18deg); }
+            100% { transform: translate(85%, 0)  rotateZ(14deg) rotateX(18deg); }
         }
 
         .phone-rig .bezel {
