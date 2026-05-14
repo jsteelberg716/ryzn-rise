@@ -146,8 +146,11 @@
             position: relative;
             width: 100%;
             max-width: 360px;
-            margin: 0 auto 22px;
-            aspect-ratio: 1 / 1.18;
+            /* Bottom padding reserves clear space below the phone so
+               the caption sits well clear of any animation extreme. */
+            margin: 0 auto 8px;
+            padding-bottom: 14px;
+            aspect-ratio: 1 / 1.36;
             perspective: 1400px;
             perspective-origin: 50% 32%;
         }
@@ -155,7 +158,7 @@
         .stage .surface {
             position: absolute;
             left: -10%; right: -10%;
-            bottom: 22%;
+            bottom: 24%;
             height: 1px;
             background: linear-gradient(90deg, transparent, hsla(145, 72%, 50%, 0.55), transparent);
             box-shadow: 0 0 26px hsla(145, 72%, 50%, 0.45);
@@ -163,28 +166,29 @@
         }
         .stage .surface::after {
             content: ""; position: absolute;
-            top: 0; left: -8%; right: -8%; height: 80px;
+            top: 0; left: -8%; right: -8%; height: 90px;
             background: linear-gradient(180deg, hsla(145, 72%, 50%, 0.10), transparent);
         }
 
-        /* The little square puck sitting on the surface */
+        /* The square puck — sized up so it reads as the focal point
+           of the scan, with a thicker rim and a deeper soft shadow. */
         .puck-on-surface {
             position: absolute;
             left: 50%;
-            bottom: calc(22% - 4px);
+            bottom: calc(24% - 6px);
             transform: translateX(-50%);
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
+            width: 84px;
+            height: 84px;
+            border-radius: 16px;
             background: linear-gradient(180deg, hsl(40, 18%, 96%) 0%, hsl(40, 18%, 82%) 100%);
             display: flex; align-items: center; justify-content: center;
             box-shadow:
-                0 10px 22px rgba(0,0,0,0.55),
+                0 14px 28px rgba(0,0,0,0.6),
                 inset 0 1px 0 rgba(255,255,255,0.95),
                 0 0 0 1px rgba(0,0,0,0.18);
             z-index: 3;
         }
-        .puck-on-surface svg { width: 30px; height: 28px; display: block; }
+        .puck-on-surface svg { width: 46px; height: 44px; display: block; }
         /* Puck pulses brightly at the tap moment */
         .puck-on-surface::after {
             content: ""; position: absolute; inset: 0;
@@ -199,13 +203,15 @@
             26%, 32%           { opacity: 1; }
         }
 
-        /* Scan ripple — circles burst outward from the puck at tap */
+        /* Scan ripple — circles burst outward from the puck at tap.
+           Anchored to the puck's vertical center so any future puck
+           size tweak stays in sync. */
         .scan-ripple {
             position: absolute;
             left: 50%;
-            bottom: calc(22% - 4px + 28px); /* puck center */
+            bottom: calc(24% - 6px + 42px); /* puck bottom + half its height = center */
             transform: translateX(-50%) translateY(50%);
-            width: 70px; height: 70px;
+            width: 110px; height: 110px;
             pointer-events: none;
             z-index: 2;
         }
@@ -220,17 +226,19 @@
         @keyframes rippleBurst {
             0%, 25%   { transform: scale(0.25); opacity: 0; }
             26%       { transform: scale(0.4);  opacity: 0.95; }
-            36%       { transform: scale(2.0);  opacity: 0; }
-            100%      { transform: scale(2.0);  opacity: 0; }
+            36%       { transform: scale(2.2);  opacity: 0; }
+            100%      { transform: scale(2.2);  opacity: 0; }
         }
 
-        /* Phone rig — enters right, taps, centers, exits right */
+        /* Phone rig — enters right, taps, centers, exits right.
+           Narrower than before so even at peak tap-translateY the
+           phone stays clear of the caption flowing below the stage. */
         .phone-rig {
             position: absolute;
-            top: 0;
+            top: 6px;
             left: 50%;
-            width: 60%;
-            max-width: 200px;
+            width: 55%;
+            max-width: 196px;
             aspect-ratio: 9 / 19.5;
             transform-style: preserve-3d;
             transform-origin: 50% 100%;
@@ -308,6 +316,38 @@
         .phone-rig .signal .battery::after {
             content: ""; position: absolute; inset: 1.5px; right: 3px;
             background: rgba(255,255,255,0.9); border-radius: 1px;
+        }
+
+        /* RYZN logo "wallpaper" on the phone screen — sits centered
+           behind everything else so the screen never reads as blank.
+           Gets darkened slightly when the sheet covers the bottom. */
+        .phone-rig .wallpaper {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .phone-rig .wallpaper .mark {
+            width: 58%;
+            max-width: 96px;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 24px hsla(145, 72%, 50%, 0.35));
+        }
+        .phone-rig .wallpaper .mark svg { display: block; width: 100%; height: auto; }
+        .phone-rig .wallpaper .label {
+            position: absolute;
+            bottom: 22%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8.5px;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            white-space: nowrap;
         }
 
         /* ── The "Exercise detected" sheet rising halfway up ── */
@@ -409,7 +449,8 @@
             color: var(--muted);
             text-align: center;
             position: relative;
-            min-height: 16px;
+            min-height: 18px;
+            margin-top: 18px;
         }
         .caption span {
             position: absolute; inset: 0;
@@ -576,6 +617,21 @@
                             <div class="signal">
                                 <span class="bars"><span></span><span></span><span></span><span></span></span>
                                 <span class="battery"></span>
+                            </div>
+
+                            <!-- RYZN home-screen "wallpaper" so the screen
+                                 isn't blank between sheet rises -->
+                            <div class="wallpaper" aria-hidden="true">
+                                <div class="mark">
+                                    <svg viewBox="220 110 520 500" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill="#ffffff" d="m595.13 595.99l-356.10 -349.38l0 -123.46l481.94 472.85z"/>
+                                        <path fill="#ffffff" d="m239.02 123.12l481.94 0l0 89.47l-481.94 0z"/>
+                                        <path fill="#ffffff" d="m720.96 123.13l0 275.71l-89.47 0l0 -275.71z"/>
+                                        <path fill="#ffffff" d="m631.61 399.00l-88.84 -88.84l176.97 0.72z"/>
+                                        <path fill="hsl(145, 72%, 50%)" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
+                                    </svg>
+                                </div>
+                                <div class="label">RYZN</div>
                             </div>
 
                             <!-- "Exercise detected" sheet pops halfway up -->
