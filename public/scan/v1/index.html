@@ -173,8 +173,9 @@
         /* ── The puck — sized up dramatically so it reads as the
               focal point of the page. Roughly the width of the
               phone bezel below it, parked in the TOP half of the
-              stage. Z-index above the phone so it visibly stays
-              "on top" when the phone parks with matching top edge. */
+              stage. Sits behind the phone so the phone is visibly
+              in front during the steady-state; the puck shows in
+              full during slide-in / slide-out and brief tap moments. */
         .puck-on-surface {
             position: absolute;
             left: 50%; top: 6%;
@@ -188,7 +189,7 @@
                 0 28px 50px rgba(0,0,0,0.55),
                 inset 0 2px 0 rgba(255,255,255,0.95),
                 0 0 0 1px rgba(0,0,0,0.16);
-            z-index: 6;
+            z-index: 3;
         }
         .puck-on-surface svg { width: 104px; height: 100px; display: block; }
         /* Slight breathe so the puck reads as alive even off-cycle */
@@ -620,12 +621,7 @@
                 <div class="phone-rig" aria-hidden="true">
                     <div class="bezel">
                         <div class="screen">
-                            <div class="clock phone-time">9:41</div>
                             <div class="dyn-island"></div>
-                            <div class="signal">
-                                <span class="bars"><span></span><span></span><span></span><span></span></span>
-                                <span class="battery"></span>
-                            </div>
 
                             <!-- RYZN home-screen "wallpaper" so the screen
                                  isn't blank between sheet rises -->
