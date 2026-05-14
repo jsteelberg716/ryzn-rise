@@ -131,61 +131,62 @@ const Mobile = () => {
         <div className="hero-grid pointer-events-none" />
 
         <div className="relative z-10 text-center">
-          {/* Hero "tag" — rounded-square card that visually quotes the
-              physical NFC sticker the user can tap with the iOS app.
-              Off-white surface, dark green R, brand-green accent
-              triangle. Pulsing rounded-square rings (not circular)
-              emanate outward in the same shape as the tag silhouette
-              so the motion reads as the tag itself broadcasting. */}
-          <div className="relative inline-flex items-center justify-center mb-6">
+          {/* Hero icon — gently swaying in 3D space. CSS perspective +
+              animated rotateY on framer-motion makes the flat SVG read
+              as a solid object being presented. Heavy drop-shadow with
+              a faint green underglow gives it weight and "lifts" it
+              off the page. */}
+          <div
+            className="relative inline-flex items-center justify-center mb-6"
+            style={{
+              width: 160,
+              height: 160,
+              perspective: '900px',
+              perspectiveOrigin: '50% 40%',
+            }}
+          >
+            {/* (Green halo behind icon removed per Jack — the page's
+                ambient top glow handles atmosphere; a second pulse
+                right under the logo was reading as muddy.) */}
+
+            {/* The icon — tilts back-and-forth on the Y axis (a touch
+                of X for liveliness). Plain dark drop-shadow gives
+                the floating 3D feel without the green wash. */}
             <motion.div
-              className="absolute inset-0 rounded-3xl"
+              className="relative"
               style={{
-                boxShadow: '0 0 0 0 rgba(34, 197, 94, 0.5)',
+                transformStyle: 'preserve-3d',
+                filter: 'drop-shadow(0 18px 22px rgba(0,0,0,0.6))',
               }}
               animate={{
-                boxShadow: [
-                  '0 0 0 0 rgba(34, 197, 94, 0.5)',
-                  '0 0 0 36px rgba(34, 197, 94, 0)',
-                ],
+                rotateY: [-22, 22, -22],
+                rotateX: [6, -4, 6],
               }}
               transition={{
-                duration: 2.4,
+                duration: 7,
                 repeat: Infinity,
-                ease: 'easeOut',
-              }}
-            />
-            <motion.div
-              className="absolute inset-0 rounded-3xl"
-              style={{
-                boxShadow: '0 0 0 0 rgba(34, 197, 94, 0.35)',
-              }}
-              animate={{
-                boxShadow: [
-                  '0 0 0 0 rgba(34, 197, 94, 0.35)',
-                  '0 0 0 24px rgba(34, 197, 94, 0)',
-                ],
-              }}
-              transition={{
-                duration: 2.4,
-                repeat: Infinity,
-                ease: 'easeOut',
-                delay: 0.8,
-              }}
-            />
-            <div
-              className="relative flex items-center justify-center rounded-3xl"
-              style={{
-                width: 96,
-                height: 96,
-                background:
-                  'linear-gradient(160deg, #f5f3ee 0%, #e8e5dc 100%)',
-                boxShadow:
-                  '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -2px 4px rgba(0, 0, 0, 0.08)',
+                ease: 'easeInOut',
               }}
             >
-              <RyznIconLogo size={56} mainFill="#0a3d20" />
-            </div>
+              <RyznIconLogo size={104} />
+            </motion.div>
+
+            {/* Subtle floor reflection — increases the floating-object
+                read on darker phone backgrounds. */}
+            <div
+              aria-hidden
+              className="absolute pointer-events-none"
+              style={{
+                bottom: -2,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 110,
+                height: 10,
+                background:
+                  'radial-gradient(ellipse, rgba(0,0,0,0.55), transparent 70%)',
+                filter: 'blur(4px)',
+              }}
+            />
           </div>
 
           {/* Headline — clamped tighter for mobile */}
@@ -404,6 +405,122 @@ const Mobile = () => {
             </Link>
           </div>
         </motion.div>
+      </section>
+
+      {/* ── Scan-tag CTA ───────────────────────────────────────────
+            Pulsing replica of the physical RyznTag. Hover/tap fades
+            the icon out and reveals "Click here". Tap navigates to
+            /scan (the post-NFC-tap explainer page). Plain anchor
+            (not Link) — /scan is a static file, not a React route. */}
+      <section className="px-5 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-5"
+        >
+          <p className="text-[0.65rem] font-bold tracking-[0.18em] uppercase text-muted-foreground/70 mb-2">
+            Have a RyznTag?
+          </p>
+          <h3 className="text-xl font-extrabold tracking-tight">
+            Tap it. <span className="gradient-text">Lift starts.</span>
+          </h3>
+        </motion.div>
+
+        <motion.a
+          href="/scan/"
+          aria-label="See what happens when you tap a RyznTag"
+          className="relative mx-auto block"
+          style={{ width: 140, height: 140 }}
+          initial="rest"
+          animate="rest"
+          whileHover="active"
+          whileTap="active"
+          variants={{ rest: {}, active: {} }}
+        >
+          {/* Pulsing rings — read as the tag broadcasting */}
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 rounded-3xl"
+            style={{ boxShadow: '0 0 0 0 rgba(34,197,94,0.55)' }}
+            animate={{
+              boxShadow: [
+                '0 0 0 0 rgba(34,197,94,0.55)',
+                '0 0 0 36px rgba(34,197,94,0)',
+              ],
+            }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut' }}
+          />
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 rounded-3xl"
+            style={{ boxShadow: '0 0 0 0 rgba(34,197,94,0.35)' }}
+            animate={{
+              boxShadow: [
+                '0 0 0 0 rgba(34,197,94,0.35)',
+                '0 0 0 24px rgba(34,197,94,0)',
+              ],
+            }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay: 0.8 }}
+          />
+
+          {/* The tag card itself — same off-white surface as the
+              physical sticker. Holds both the icon and the "click
+              here" overlay; they cross-fade on hover/tap. */}
+          <div
+            className="relative flex items-center justify-center rounded-3xl w-full h-full overflow-hidden"
+            style={{
+              background:
+                'linear-gradient(160deg, #f5f3ee 0%, #e8e5dc 100%)',
+              boxShadow:
+                '0 12px 28px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.9), inset 0 -2px 4px rgba(0,0,0,0.08)',
+            }}
+          >
+            {/* Icon — fades out on hover/tap.
+                mainFill stays neutral black so the icon doesn't read
+                as green-tinted against the off-white tag surface. */}
+            <motion.div
+              className="absolute"
+              variants={{
+                rest:   { opacity: 1, scale: 1 },
+                active: { opacity: 0, scale: 0.88 },
+              }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <RyznIconLogo size={70} mainFill="#0a0a0a" />
+            </motion.div>
+
+            {/* "Click here" — fades up from below on hover/tap */}
+            <motion.div
+              className="absolute flex flex-col items-center gap-1"
+              variants={{
+                rest:   { opacity: 0, y: 14 },
+                active: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span
+                className="text-[0.95rem] font-extrabold tracking-tight"
+                style={{ color: '#0a3d20' }}
+              >
+                Click here
+              </span>
+              <span
+                className="text-[0.6rem] font-bold tracking-[0.16em] uppercase"
+                style={{ color: 'rgba(10,61,32,0.55)' }}
+              >
+                See how it works
+              </span>
+            </motion.div>
+          </div>
+        </motion.a>
+
+        {/* Small static hint under the tag so touch users without a
+            hover state still know it's interactive. */}
+        <p className="mt-4 text-center text-xs text-muted-foreground/70">
+          Tap the tag to see what RYZN does.
+        </p>
       </section>
 
       {/* ── Pricing ─────────────────────────────────────────────── */}

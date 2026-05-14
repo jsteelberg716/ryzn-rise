@@ -16,9 +16,14 @@ const hashLinks = ['Features', 'How It Works', 'Pricing', 'FAQ'];
 // goes between the hash anchors and Reviews so users discover the
 // RyznTag info page in the obvious "see what else this product
 // has" path. Reviews stays anchored far-right per Jack's spec.
+// `external: true` means the destination is a static file served by
+// Vercel (e.g. public/scan/index.html), not a React Router route.
+// React Router would otherwise client-side-navigate to /scan, miss
+// the route table, and render NotFound (404). Use a plain anchor so
+// the browser does a full page load and hits the static file.
 const routeLinks = [
-  { label: 'Scan', to: '/scan' },
-  { label: 'Reviews', to: '/reviews' },
+  { label: 'Scan',    to: '/scan/',   external: true },
+  { label: 'Reviews', to: '/reviews', external: false },
 ];
 
 const Navbar = () => {
@@ -46,15 +51,14 @@ const Navbar = () => {
               {link}
             </a>
           ))}
-          {routeLinks.map((link) => (
-            <Link
-              key={link.label}
-              to={link.to}
-              className="text-muted-foreground text-[0.875rem] font-medium tracking-wide hover:text-foreground transition-colors duration-200 relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {routeLinks.map((link) => {
+            const className = "text-muted-foreground text-[0.875rem] font-medium tracking-wide hover:text-foreground transition-colors duration-200 relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 hover:after:w-full";
+            return link.external ? (
+              <a key={link.label} href={link.to} className={className}>{link.label}</a>
+            ) : (
+              <Link key={link.label} to={link.to} className={className}>{link.label}</Link>
+            );
+          })}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
@@ -103,13 +107,23 @@ const Navbar = () => {
                   ease: EASING.smooth,
                 }}
               >
-                <Link
-                  to={link.to}
-                  className="text-2xl font-semibold text-foreground"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {link.label}
-                </Link>
+                {link.external ? (
+                  <a
+                    href={link.to}
+                    className="text-2xl font-semibold text-foreground"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    to={link.to}
+                    className="text-2xl font-semibold text-foreground"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                )}
               </motion.div>
             ))}
             <div className="mb-4">

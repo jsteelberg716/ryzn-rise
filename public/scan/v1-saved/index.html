@@ -25,21 +25,13 @@
             --puck: hsl(40, 18%, 96%);
         }
         * { box-sizing: border-box; }
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-            /* clip is stronger than hidden — it stops the page from
-               growing horizontally when the off-stage phone animation
-               extends to translate(±150%). Without this the fixed
-               nav's right edge gets pushed past the visible viewport. */
-            overflow-x: clip;
-        }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
             background: var(--bg); color: var(--fg);
             margin: 0; min-height: 100vh;
             -webkit-font-smoothing: antialiased; line-height: 1.5;
-            overflow-x: clip;
+            overflow-x: hidden;
         }
         .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
         .ambient::before {
@@ -276,25 +268,26 @@
             z-index: 4;
         }
         @keyframes phoneSeq {
-            /* Off-screen LEFT, tilted toward direction of travel.
-               Single ease-out curve into rest = one continuous slide. */
-            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(16deg);
+            /* Off-screen right, tilted — single ease-out curve all the
+               way into rest so the slide-in reads as one continuous
+               motion, no mid-flight pause. */
+            0%   { transform: translate(90%, 14px) rotateZ(14deg) rotateX(16deg);
                    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
             /* Rest position — top aligned with puck */
-            22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(14deg);
+            22%  { transform: translate(-50%, 0)   rotateZ(0deg)  rotateX(14deg);
                    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
             /* Tap pulse — small lift + tilt as it makes contact */
-            30%  { transform: translate(-50%, -10px) rotateZ(0deg)   rotateX(16deg) scale(1.012); }
+            30%  { transform: translate(-50%, -10px) rotateZ(0deg) rotateX(16deg) scale(1.012); }
             /* Hold contact briefly */
-            36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(14deg); }
+            36%  { transform: translate(-50%, -4px)  rotateZ(0deg) rotateX(14deg); }
             /* Level out for the sheet rise */
-            48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); }
-            /* Hold while the sheet is up — give it a real beat */
-            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg);
+            48%  { transform: translate(-50%, 0)   rotateZ(0deg)  rotateX(4deg); }
+            /* Hold while the sheet is up */
+            80%  { transform: translate(-50%, 0)   rotateZ(0deg)  rotateX(3deg);
                    animation-timing-function: cubic-bezier(0.5, 0, 1, 1); }
-            /* Exit OFF to the right (fully clear of the viewport) */
-            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(16deg); }
-            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(16deg); }
+            /* Exit back to the right */
+            92%  { transform: translate(90%, 14px) rotateZ(14deg) rotateX(16deg); }
+            100% { transform: translate(90%, 14px) rotateZ(14deg) rotateX(16deg); }
         }
 
         .phone-rig .bezel {
@@ -403,13 +396,11 @@
             z-index: 8;
         }
         @keyframes sheetRise {
-            /* Sheet rises with the phone, then holds. Stays UP all the
-               way through the phone's exit so it visually slides off
-               WITH the phone. Snaps hidden between iterations so the
-               next loop's slide-in starts clean. */
             0%, 48%  { transform: translateY(105%); opacity: 0; }
             56%      { transform: translateY(0);    opacity: 1; }
-            100%     { transform: translateY(0);    opacity: 1; }
+            85%      { transform: translateY(0);    opacity: 1; }
+            92%      { transform: translateY(105%); opacity: 0; }
+            100%     { transform: translateY(105%); opacity: 0; }
         }
         .sheet .handle {
             width: 30px; height: 4px; border-radius: 999px;
@@ -514,42 +505,6 @@
             transition: transform 0.18s, box-shadow 0.18s;
         }
         .cta-primary:active { transform: translateY(1px); }
-
-        /* Secondary CTA for the final card — links out to the rest
-           of ryznrise.com so visitors who landed here from an NFC
-           tap can see what else is on the site. */
-        .cta-secondary {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: transparent;
-            color: var(--fg);
-            padding: 15px 22px;
-            border-radius: 14px;
-            border: 1px solid var(--border-strong);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14.5px;
-            letter-spacing: -0.005em;
-            transition: border-color 0.18s, color 0.18s, transform 0.18s;
-        }
-        .cta-secondary:hover { border-color: var(--primary); color: var(--primary); }
-        .cta-secondary:active { transform: translateY(1px); }
-
-        /* Stacks the two CTAs vertically on phones, side-by-side once
-           the card has room. */
-        .cta-row {
-            position: relative;
-            display: inline-flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: stretch;
-        }
-        .cta-row .cta-primary,
-        .cta-row .cta-secondary {
-            justify-content: center;
-        }
-        @media (min-width: 460px) {
-            .cta-row { flex-direction: row; align-items: center; }
-        }
 
         h2 {
             font-size: clamp(22px, 6vw, 30px);
@@ -658,7 +613,8 @@
     <main>
         <section class="hero">
             <span class="eyebrow reveal"><span class="dot"></span>You just tapped a tag</span>
-            <h1 class="reveal">Tap. Lift. <span class="accent">Repeat.</span></h1>
+            <h1 class="reveal">Place. Tap. <span class="accent">Lift.</span></h1>
+            <p class="lede reveal">Tap a RyznTag and your iPhone scans it like a key card. The sheet rises with the exercise already loaded — you just lift.</p>
 
             <div class="stage reveal" aria-label="Animation: iPhone slides in, taps an NFC puck, and an Exercise Detected sheet rises" role="img">
                 <div class="surface" aria-hidden="true"></div>
@@ -698,22 +654,19 @@
                                 <div class="label">RYZN</div>
                             </div>
 
-                            <!-- "Exercise detected" sheet pops halfway up.
-                                 Exercise text + set rows get swapped each
-                                 loop iteration by the script at the
-                                 bottom — IDs anchor those swaps. -->
+                            <!-- "Exercise detected" sheet pops halfway up -->
                             <div class="sheet">
                                 <div class="handle"></div>
                                 <div class="kicker">Exercise detected</div>
-                                <div class="ex-name" id="ex-name">Bench Press</div>
-                                <div class="ex-meta" id="ex-meta">Last session · 4 sets</div>
-                                <div class="ex-card" id="ex-card-1">
+                                <div class="ex-name">Bench Press</div>
+                                <div class="ex-meta">Last session · 4 sets</div>
+                                <div class="ex-card">
                                     <div class="left">
                                         <span class="reps">8<small>× 3</small></span>
                                     </div>
                                     <span class="lbs">185<small>lb</small></span>
                                 </div>
-                                <div class="ex-card" id="ex-card-2">
+                                <div class="ex-card">
                                     <div class="left">
                                         <span class="reps">6<small>× 1</small></span>
                                     </div>
@@ -727,7 +680,7 @@
             </div>
 
             <div class="caption reveal" aria-hidden="true">
-                <span>Phone slides over the tag</span>
+                <span>Phone slides over the puck</span>
                 <span>Tap — the scan ripples out</span>
                 <span>Sheet rises — exercise loaded</span>
             </div>
@@ -743,9 +696,19 @@
         <section>
             <h2 class="reveal">What just <span class="accent">happened</span>?</h2>
             <div class="timeline">
-                <div class="step reveal"><div class="step-num">1</div><div><h3>Phone met the tag</h3><p>Your iPhone read the NFC sticker — no app needed.</p></div></div>
-                <div class="step reveal"><div class="step-num">2</div><div><h3>iOS showed the URL</h3><p>Same banner any NFC tag triggers. Built into every iPhone since 2016.</p></div></div>
-                <div class="step reveal"><div class="step-num">3</div><div><h3>RYZN opens to your lift</h3><p>Last weights, sets, and reps already filled. You just lift.</p></div></div>
+                <div class="step reveal"><div class="step-num">1</div><div><h3>Phone met the puck</h3><p>RyznTags are passive NFC stickers stuck to gym equipment. Your iPhone powers them with a magnetic field the second it gets within an inch.</p></div></div>
+                <div class="step reveal"><div class="step-num">2</div><div><h3>iOS read the URL on the tag</h3><p>Built into every iPhone since the iPhone 7 — no app needed for the read. The sheet you saw is the same OS UI any NFC sticker triggers.</p></div></div>
+                <div class="step reveal"><div class="step-num">3</div><div><h3>RYZN opens to the right lift</h3><p>The tag carries which machine you tapped. RYZN pulls your last weights for that exercise, pre-fills the bar. You just lift.</p></div></div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="reveal">Why it <span class="accent">matters</span></h2>
+            <div class="why">
+                <div class="why-card reveal"><div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><h3>Zero typing</h3><p>The gym becomes the interface.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h3>Last weights, ready</h3><p>RYZN pre-fills the bar from your last session.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><h3>Works in any gym</h3><p>Tags pair once for every RYZN user.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="14" height="10" rx="2" ry="2"/><line x1="22" y1="11" x2="22" y2="13"/><line x1="2" y1="9" x2="2" y2="15"/></svg></div><div><h3>No batteries</h3><p>Passive NFC. Stick once, last forever.</p></div></div>
             </div>
         </section>
 
@@ -771,18 +734,12 @@
                         <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
                     </svg>
                 </div>
-                <h2>The next tap opens <span class="accent">your workout</span>.</h2>
-                <p>Install RYZN once. From then on, every tap drops you straight into the lift.</p>
-                <div class="cta-row">
-                    <a href="https://apps.apple.com/app/ryzn" class="cta-primary">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/></svg>
-                        Download now
-                    </a>
-                    <a href="/mobile" class="cta-secondary">
-                        View full site
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                    </a>
-                </div>
+                <h2>Get the <span class="accent">app</span>. Tap the tag again.</h2>
+                <p>Without RYZN installed, this page is all you'll see. Once it's on your phone, the next tap takes you straight into the workout.</p>
+                <a href="https://apps.apple.com/app/ryzn" class="cta-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/></svg>
+                    Get RYZN on the App Store
+                </a>
                 <span class="small">iPhone · iOS 15.0+ · $10/month</span>
             </div>
         </section>
@@ -795,57 +752,16 @@
     </main>
 
     <script>
-        // Cycle the in-sheet exercise on each phone-animation iteration.
-        // animationiteration fires while the phone is off-screen left at
-        // 0 % / 100 % so the swap is never visible.
         (function () {
-            var exercises = [
-                { name: 'Bench Press',    meta: 'Last session · 4 sets',
-                  s1: { reps: '8',  rxr: '× 3', lbs: '185', unit: 'lb' },
-                  s2: { reps: '6',  rxr: '× 1', lbs: '205', unit: 'lb' } },
-                { name: 'Back Squat',     meta: 'Last session · 5 sets',
-                  s1: { reps: '5',  rxr: '× 5', lbs: '275', unit: 'lb' },
-                  s2: { reps: '3',  rxr: '× 1', lbs: '315', unit: 'lb' } },
-                { name: 'Deadlift',       meta: 'Last session · 3 sets',
-                  s1: { reps: '5',  rxr: '× 1', lbs: '365', unit: 'lb' },
-                  s2: { reps: '3',  rxr: '× 2', lbs: '405', unit: 'lb' } },
-                { name: 'Overhead Press', meta: 'Last session · 4 sets',
-                  s1: { reps: '8',  rxr: '× 3', lbs: '115', unit: 'lb' },
-                  s2: { reps: '5',  rxr: '× 1', lbs: '135', unit: 'lb' } },
-                { name: 'Pull-up',        meta: 'Last session · 4 sets',
-                  s1: { reps: '8',  rxr: '× 3', lbs: 'BW',  unit: ''   },
-                  s2: { reps: '6',  rxr: '× 1', lbs: '+25', unit: 'lb' } },
-                { name: 'Barbell Row',    meta: 'Last session · 4 sets',
-                  s1: { reps: '8',  rxr: '× 3', lbs: '155', unit: 'lb' },
-                  s2: { reps: '6',  rxr: '× 1', lbs: '175', unit: 'lb' } },
-            ];
-            var idx = 0;
-            var nameEl = document.getElementById('ex-name');
-            var metaEl = document.getElementById('ex-meta');
-            var card1  = document.getElementById('ex-card-1');
-            var card2  = document.getElementById('ex-card-2');
-            var phone  = document.querySelector('.phone-rig');
-            function setCard(card, s) {
-                card.querySelector('.reps').innerHTML = s.reps + '<small>' + s.rxr + '</small>';
-                card.querySelector('.lbs').innerHTML  = s.lbs  + (s.unit ? '<small>' + s.unit + '</small>' : '');
+            function tick() {
+                var d = new Date();
+                var h = d.getHours();
+                var m = d.getMinutes();
+                var s = (h % 12 || 12) + ':' + (m < 10 ? '0' : '') + m;
+                document.querySelectorAll('.phone-time').forEach(function (el) { el.textContent = s; });
             }
-            function apply() {
-                var ex = exercises[idx];
-                nameEl.textContent = ex.name;
-                metaEl.textContent = ex.meta;
-                setCard(card1, ex.s1);
-                setCard(card2, ex.s2);
-            }
-            apply();
-            if (phone) {
-                phone.addEventListener('animationiteration', function () {
-                    idx = (idx + 1) % exercises.length;
-                    apply();
-                });
-            }
+            tick(); setInterval(tick, 30000);
         })();
-
-        // Reveal-on-scroll
         (function () {
             if (!('IntersectionObserver' in window)) {
                 document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
