@@ -150,9 +150,9 @@
                the caption sits well clear of any animation extreme. */
             margin: 0 auto 8px;
             padding-bottom: 14px;
-            aspect-ratio: 1 / 1.78;
+            aspect-ratio: 1 / 1.40;
             perspective: 1400px;
-            perspective-origin: 50% 38%;
+            perspective-origin: 50% 35%;
         }
         /* Subtle glow halo behind the puck — replaces the old
            "surface line" since the puck is now floating in the upper
@@ -173,7 +173,8 @@
         /* ── The puck — sized up dramatically so it reads as the
               focal point of the page. Roughly the width of the
               phone bezel below it, parked in the TOP half of the
-              stage so the phone has somewhere to reach up to. */
+              stage. Z-index above the phone so it visibly stays
+              "on top" when the phone parks with matching top edge. */
         .puck-on-surface {
             position: absolute;
             left: 50%; top: 6%;
@@ -187,7 +188,7 @@
                 0 28px 50px rgba(0,0,0,0.55),
                 inset 0 2px 0 rgba(255,255,255,0.95),
                 0 0 0 1px rgba(0,0,0,0.16);
-            z-index: 3;
+            z-index: 6;
         }
         .puck-on-surface svg { width: 104px; height: 100px; display: block; }
         /* Slight breathe so the puck reads as alive even off-cycle */
@@ -237,39 +238,39 @@
             100%      { transform: scale(2.4);  opacity: 0; }
         }
 
-        /* Phone rig — bigger now, and reaches further up to meet
-           the puck during the tap. Anchored to the stage bottom so
-           the rest position stays predictable. */
+        /* Phone rig — top-anchored to the same 6% as the puck so at
+           rest the top edges align. Puck z-index sits above this so
+           it shows as the tag stuck on the upper half of the phone. */
         .phone-rig {
             position: absolute;
-            bottom: 14px;
+            top: 6%;
             left: 50%;
             width: 54%;
             max-width: 206px;
             aspect-ratio: 9 / 19.5;
             transform-style: preserve-3d;
-            transform-origin: 50% 100%;
+            transform-origin: 50% 50%;
             animation: phoneSeq 7s cubic-bezier(0.5, 0, 0.25, 1) infinite;
             z-index: 4;
         }
         @keyframes phoneSeq {
             /* Off-screen right, tilted */
-            0%   { transform: translate(90%, 0) rotateZ(14deg) rotateX(18deg); }
+            0%   { transform: translate(90%, 14px) rotateZ(14deg) rotateX(16deg); }
             /* Mid-flight from right */
-            14%  { transform: translate(20%, 0) rotateZ(6deg)  rotateX(24deg); }
-            /* Rest position, centered under puck */
-            22%  { transform: translate(-50%, 0) rotateZ(0deg) rotateX(18deg); }
-            /* Reach UP, hard, to tap the puck */
-            30%  { transform: translate(-50%, -118px) rotateZ(0deg) rotateX(22deg) scale(1.015); }
-            /* Hold contact briefly, slight settle */
-            36%  { transform: translate(-50%, -102px) rotateZ(0deg) rotateX(20deg); }
-            /* Settle back down to center, leveling out for the sheet */
-            48%  { transform: translate(-50%, 0)   rotateZ(0deg) rotateX(6deg); }
+            14%  { transform: translate(20%, 8px)  rotateZ(6deg)  rotateX(20deg); }
+            /* Sliding into rest position — top aligned with puck */
+            22%  { transform: translate(-50%, 0)   rotateZ(0deg)  rotateX(14deg); }
+            /* Tap pulse — small lift + tilt as it makes contact */
+            30%  { transform: translate(-50%, -10px) rotateZ(0deg) rotateX(16deg) scale(1.012); }
+            /* Hold contact briefly */
+            36%  { transform: translate(-50%, -4px)  rotateZ(0deg) rotateX(14deg); }
+            /* Level out for the sheet rise */
+            48%  { transform: translate(-50%, 0)   rotateZ(0deg)  rotateX(4deg); }
             /* Hold while the sheet is up */
-            80%  { transform: translate(-50%, 0)   rotateZ(0deg) rotateX(4deg); }
+            80%  { transform: translate(-50%, 0)   rotateZ(0deg)  rotateX(3deg); }
             /* Exit back to the right */
-            92%  { transform: translate(90%, 0)  rotateZ(14deg) rotateX(18deg); }
-            100% { transform: translate(90%, 0)  rotateZ(14deg) rotateX(18deg); }
+            92%  { transform: translate(90%, 14px) rotateZ(14deg) rotateX(16deg); }
+            100% { transform: translate(90%, 14px) rotateZ(14deg) rotateX(16deg); }
         }
 
         .phone-rig .bezel {
