@@ -212,11 +212,15 @@
             transform-origin: 50% 50%;
         }
         @keyframes puckScan {
+            /* Hold full size all the way through the phone's slide-in,
+               then snap shrunk between 26 % (ripple appears) and 30 %
+               (peak tap). No upward pulse — clean shrink only. Re-
+               grows when the phone exits between 92 % and 100 %. */
             0%      { transform: translateX(-50%) scale(1); }
-            18%     { transform: translateX(-50%) scale(1.02); }
-            32%     { transform: translateX(-50%) scale(0.15); }
+            26%     { transform: translateX(-50%) scale(1); }
+            30%     { transform: translateX(-50%) scale(0.15); }
             80%     { transform: translateX(-50%) scale(0.15); }
-            92%     { transform: translateX(-50%) scale(1.02); }
+            92%     { transform: translateX(-50%) scale(1); }
             100%    { transform: translateX(-50%) scale(1); }
         }
         /* Puck pulses brightly at the tap moment */
@@ -278,23 +282,23 @@
         @keyframes phoneSeq {
             /* Off-screen LEFT, tilted toward direction of travel.
                Single ease-out curve into rest = one continuous slide. */
-            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(16deg);
+            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg);
                    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
-            /* Rest position — top aligned with puck */
-            22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(14deg);
+            /* Rest position — top aligned with puck, mid-tilt */
+            22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(18deg);
                    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-            /* Tap pulse — small lift + tilt as it makes contact */
-            30%  { transform: translate(-50%, -10px) rotateZ(0deg)   rotateX(16deg) scale(1.012); }
-            /* Hold contact briefly */
-            36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(14deg); }
+            /* Tap — phone tips forward HARD as it makes contact */
+            30%  { transform: translate(-50%, -10px) rotateZ(0deg)   rotateX(34deg) scale(1.015); }
+            /* Hold contact, easing tilt back */
+            36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(26deg); }
             /* Level out for the sheet rise */
             48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); }
             /* Hold while the sheet is up — give it a real beat */
             80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg);
                    animation-timing-function: cubic-bezier(0.5, 0, 1, 1); }
             /* Exit OFF to the right (fully clear of the viewport) */
-            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(16deg); }
-            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(16deg); }
+            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
+            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
         }
 
         .phone-rig .bezel {
