@@ -12,332 +12,413 @@
     <style>
         :root {
             --bg: hsl(225, 8%, 7%);
-            --bg-2: hsl(225, 8%, 10%);
             --fg: hsl(0, 0%, 100%);
             --muted: hsl(0, 0%, 64%);
-            --tertiary: hsl(0, 0%, 38%);
             --primary: hsl(145, 72%, 50%);
             --primary-deep: hsl(160, 70%, 42%);
-            --card: hsla(0, 0%, 100%, 0.04);
-            --border: hsla(0, 0%, 100%, 0.1);
+            --border: hsla(0, 0%, 100%, 0.12);
             --mono: 'JetBrains Mono', monospace;
         }
         * { box-sizing: border-box; }
-        body {
+        html, body {
+            margin: 0; padding: 0;
+            height: 100%;
+            background: var(--bg);
+            color: var(--fg);
             font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg); color: var(--fg);
-            margin: 0; min-height: 100vh;
-            -webkit-font-smoothing: antialiased; line-height: 1.5;
-        }
-        .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .ambient::before {
-            content: ""; position: absolute;
-            top: -20%; left: 50%; transform: translateX(-50%);
-            width: min(800px, 140vw); height: min(800px, 140vw);
-            background: radial-gradient(circle at center, hsla(145, 72%, 50%, 0.18) 0%, transparent 60%);
-        }
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; height: 56px;
-            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
-            background: hsla(225, 8%, 5%, 0.82);
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
-        }
-        nav .inner {
-            max-width: 1200px; margin: 0 auto; height: 100%;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 18px; gap: 12px;
-        }
-        nav .brand { display: inline-flex; align-items: center; text-decoration: none; }
-        nav .brand svg { display: block; height: 22px; width: auto; }
-        nav .back {
-            color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 600;
-        }
-        nav .back:hover { color: var(--fg); }
-
-        main {
-            max-width: 1100px; margin: 0 auto;
-            padding: 80px 18px 56px;
-            position: relative; z-index: 1;
-        }
-        .hero {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-        .hero .pill {
-            display: inline-block;
-            font-family: var(--mono);
-            font-size: 11px; font-weight: 600;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--primary);
-            background: hsla(145, 72%, 50%, 0.08);
-            border: 1px solid hsla(145, 72%, 50%, 0.22);
-            padding: 7px 13px;
-            border-radius: 999px;
-            margin-bottom: 18px;
-        }
-        h1 {
-            font-size: clamp(34px, 8vw, 52px);
-            font-weight: 800; line-height: 1.0;
-            letter-spacing: -0.035em;
-            margin: 0 0 12px;
-        }
-        h1 .accent {
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
-            -webkit-background-clip: text; background-clip: text; color: transparent;
-        }
-        .hero p {
-            color: var(--muted);
-            font-size: 16px;
-            line-height: 1.5;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 18px;
-        }
-        @media (min-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1000px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 22px; } }
-
-        .card {
-            position: relative;
-            background: var(--bg-2);
-            border: 1px solid var(--border);
-            border-radius: 18px;
+            -webkit-font-smoothing: antialiased;
             overflow: hidden;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
-            display: flex;
-            flex-direction: column;
+            overscroll-behavior: none;
         }
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: hsla(145, 72%, 50%, 0.45);
-            box-shadow: 0 16px 36px rgba(0,0,0,0.45), 0 0 24px hsla(145, 72%, 50%, 0.15);
-        }
-        .card .preview {
+
+        /* The swiper viewport */
+        .swiper {
             position: relative;
             width: 100%;
-            aspect-ratio: 16 / 11;
+            height: 100dvh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+        .swiper::-webkit-scrollbar { display: none; }
+        .swiper { scrollbar-width: none; }
+
+        .slide {
+            position: relative;
+            width: 100%;
+            height: 100dvh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
             background: var(--bg);
             overflow: hidden;
         }
-        .card .preview iframe {
+
+        /* The variant iframe — fills the slide, animations run live */
+        .slide iframe {
             position: absolute;
             top: 0; left: 0;
-            width: 1600px;
-            height: calc(1600px * 11 / 16);
+            width: 100%;
+            height: 100%;
             border: 0;
-            transform: scale(0.25);
-            transform-origin: top left;
-            pointer-events: none;
             background: var(--bg);
+            display: block;
         }
-        @media (min-width: 700px) {
-            .card .preview iframe {
-                width: 1400px;
-                height: calc(1400px * 11 / 16);
-                transform: scale(0.32);
-            }
-        }
-        .card .preview::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 0%, transparent 60%, rgba(0,0,0,0.6) 100%);
+
+        /* Top floating bar — variant title + counter */
+        .topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 50;
+            background: linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.30) 70%, transparent 100%);
+            padding: 14px 14px 28px;
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 12px;
             pointer-events: none;
         }
-        .card .preview .num {
-            position: absolute;
-            top: 12px; left: 14px;
-            font-family: var(--mono);
-            font-size: 10.5px;
-            font-weight: 700;
-            color: var(--primary);
-            letter-spacing: 0.14em;
-            background: rgba(0, 0, 0, 0.62);
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid hsla(145, 72%, 50%, 0.4);
-            z-index: 2;
+        .topbar > * { pointer-events: auto; }
+        .topbar .info {
+            flex: 1; min-width: 0;
+            display: flex; flex-direction: column;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.7);
         }
-        .card .meta {
-            padding: 16px 18px 18px;
-            position: relative;
-        }
-        .card .meta h3 {
+        .topbar .info .name {
             font-size: 18px;
             font-weight: 800;
-            letter-spacing: -0.015em;
-            margin: 0 0 4px;
+            letter-spacing: -0.01em;
+            line-height: 1.1;
         }
-        .card .meta .tagline {
-            font-size: 13.5px;
-            color: var(--muted);
-            margin: 0 0 12px;
-            line-height: 1.4;
-        }
-        .card .meta .keys {
-            display: flex; gap: 6px; flex-wrap: wrap;
-        }
-        .card .meta .keys span {
+        .topbar .info .name .v {
             font-family: var(--mono);
-            font-size: 10px; font-weight: 600;
-            color: var(--muted);
-            background: hsla(0, 0%, 100%, 0.05);
-            border: 1px solid var(--border);
-            padding: 3px 8px;
-            border-radius: 4px;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-        }
-        .card .meta .open {
-            position: absolute;
-            top: 16px; right: 18px;
             font-size: 11px;
             font-weight: 700;
             color: var(--primary);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
+            background: hsla(145, 72%, 50%, 0.12);
+            border: 1px solid hsla(145, 72%, 50%, 0.35);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 8px;
+            vertical-align: 2px;
         }
-        .card .meta .open svg {
-            margin-left: 2px; vertical-align: -2px;
+        .topbar .info .tagline {
+            font-size: 12px;
+            color: rgba(255,255,255,0.78);
+            line-height: 1.35;
+            margin-top: 4px;
+            max-width: 360px;
+        }
+        .topbar .actions {
+            display: flex; gap: 8px;
+            flex-shrink: 0;
+        }
+        .topbar .actions a, .topbar .actions button {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--fg);
+            background: rgba(0,0,0,0.55);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 7px 10px;
+            border-radius: 999px;
+            text-decoration: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .topbar .actions .open {
+            color: var(--primary);
+            border-color: hsla(145, 72%, 50%, 0.5);
+            background: hsla(145, 72%, 50%, 0.1);
         }
 
-        footer {
-            text-align: center;
-            color: var(--tertiary);
-            padding: 36px 0 28px;
-            font-size: 12.5px;
+        /* Right-side dot column showing which slide is active */
+        .dots {
+            position: fixed;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            z-index: 50;
+            display: flex; flex-direction: column;
+            gap: 8px;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 10px 6px;
         }
-        footer a { color: var(--muted); text-decoration: none; }
+        .dots .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            display: block;
+            cursor: pointer;
+            border: 0;
+            padding: 0;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .dots .dot:hover { background: rgba(255,255,255,0.55); }
+        .dots .dot.on {
+            background: var(--primary);
+            transform: scale(1.6);
+            box-shadow: 0 0 8px hsla(145, 72%, 50%, 0.7);
+        }
+
+        /* Bottom hint — only on slide 1, fades away after first scroll */
+        .hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            display: flex; align-items: center; gap: 8px;
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: rgba(255,255,255,0.85);
+            text-transform: uppercase;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 14px;
+            pointer-events: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            transition: opacity 0.4s;
+        }
+        .hint.hide { opacity: 0; }
+        .hint .arrow {
+            animation: bounce 1.6s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(3px); }
+        }
+
+        /* Intro slide — title card before V1 */
+        .intro {
+            position: relative;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center;
+            padding: 24px;
+            background: radial-gradient(ellipse at top, hsla(145, 72%, 50%, 0.18), transparent 60%), var(--bg);
+        }
+        .intro .pill {
+            font-family: var(--mono);
+            font-size: 10px; font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: hsla(145, 72%, 50%, 0.08);
+            border: 1px solid hsla(145, 72%, 50%, 0.25);
+            padding: 6px 12px;
+            border-radius: 999px;
+            margin-bottom: 18px;
+        }
+        .intro .brand svg { display: block; height: 28px; width: auto; margin: 0 auto 22px; }
+        .intro h1 {
+            font-size: clamp(36px, 11vw, 56px);
+            font-weight: 800;
+            line-height: 0.96;
+            letter-spacing: -0.04em;
+            margin: 0 0 14px;
+        }
+        .intro h1 .accent {
+            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .intro p {
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--muted);
+            max-width: 380px;
+            margin: 0 auto 26px;
+        }
+        .intro .startbtn {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            color: #052414;
+            padding: 14px 24px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 10px 28px hsla(145, 72%, 50%, 0.45);
+            cursor: pointer;
+            border: 0;
+        }
+        .intro .swipe-hint {
+            position: absolute;
+            bottom: 28px; left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px;
+            text-align: center;
+        }
+        .intro .swipe-hint .arrow {
+            animation: bounce 1.6s ease-in-out infinite;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
-    <div class="ambient" aria-hidden="true"></div>
-
-    <nav>
-        <div class="inner">
-            <a href="/" class="brand">
-                <svg viewBox="100 240 770 190" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#ffffff" d="m230.7223 418.38058l-124.59897 -122.248474l0 -43.200348l168.62993 165.44882z"/>
-                    <path fill="#ffffff" d="m106.123344 252.92651l168.62991 0l0 31.307068l-168.62991 0z"/>
-                    <path fill="#ffffff" d="m274.75235 252.93175l0 96.47243l-31.307068 0l0 -96.47243z"/>
-                    <path fill="#ffffff" d="m344.04776 419.14566l127.81052 -122.993164l0 -43.463516l-172.97638 166.45668z"/>
-                    <path fill="#ffffff" d="m243.4865 349.45587l-31.086609 -31.086609l61.92125 0.25198364z"/>
-                    <path fill="#ffffff" d="m542.53723 418.8832l127.81055 -122.993195l0 -43.4635l-172.97638 166.4567z"/>
-                    <path fill="#ffffff" d="m670.3478 387.57742l-134.96063 0l0 31.307098l134.96063 0z"/>
-                    <path fill="#ffffff" d="m695.8642 294.59564l122.993164 127.81052l43.4635 0l-166.45667 -172.97636z"/>
-                    <path fill="#ffffff" d="m727.1699 422.40616l0 -134.96063l-31.307068 0l0 134.96063z"/>
-                    <path fill="#ffffff" d="m497.20206 284.15747l109.60629 0l0 -31.307083l-109.60629 0z"/>
-                    <path fill="#ffffff" d="m606.81757 284.23343l-31.40155 -31.401566l62.677124 0.12597656z"/>
-                    <path fill="#ffffff" d="m830.48645 249.44894l0 109.60629l31.307129 0l0 -109.60629z"/>
-                    <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
-                    <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
-                    <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
-                    <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
-                </svg>
-            </a>
-            <a href="/scan/" class="back">← Live /scan</a>
-        </div>
-    </nav>
-
-    <main>
-        <div class="hero">
-            <span class="pill">/scan · 8 variants</span>
-            <h1>Pick a <span class="accent">design.</span></h1>
-            <p>Eight full redesigns of the post-tap landing page. Each one ships independent of the others. Click any card to open it full-screen on your phone, then come back and pick.</p>
-        </div>
-
-        <div class="grid">
-            <a class="card" href="/scan/v1/" target="_blank">
-                <div class="preview"><span class="num">V1</span><iframe src="/scan/v1/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
-                <div class="meta">
-                    <h3>Drop &amp; Tap</h3>
-                    <span class="open">Open ↗</span>
-                    <p class="tagline">Phone slides in from the right, taps the puck on a surface, scan bursts outward, then the sheet rises halfway with "Exercise detected".</p>
-                    <div class="keys"><span>3D phone tilt</span><span>iOS sheet</span><span>Cinematic</span></div>
+    <div class="swiper" id="swiper">
+        <!-- Slide 0 — intro -->
+        <div class="slide" data-slide="0" data-name="Welcome" data-tagline="">
+            <div class="intro">
+                <div class="brand">
+                    <svg viewBox="100 240 770 190" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#ffffff" d="m230.7223 418.38058l-124.59897 -122.248474l0 -43.200348l168.62993 165.44882z"/>
+                        <path fill="#ffffff" d="m106.123344 252.92651l168.62991 0l0 31.307068l-168.62991 0z"/>
+                        <path fill="#ffffff" d="m274.75235 252.93175l0 96.47243l-31.307068 0l0 -96.47243z"/>
+                        <path fill="#ffffff" d="m344.04776 419.14566l127.81052 -122.993164l0 -43.463516l-172.97638 166.45668z"/>
+                        <path fill="#ffffff" d="m243.4865 349.45587l-31.086609 -31.086609l61.92125 0.25198364z"/>
+                        <path fill="#ffffff" d="m542.53723 418.8832l127.81055 -122.993195l0 -43.4635l-172.97638 166.4567z"/>
+                        <path fill="#ffffff" d="m670.3478 387.57742l-134.96063 0l0 31.307098l134.96063 0z"/>
+                        <path fill="#ffffff" d="m695.8642 294.59564l122.993164 127.81052l43.4635 0l-166.45667 -172.97636z"/>
+                        <path fill="#ffffff" d="m727.1699 422.40616l0 -134.96063l-31.307068 0l0 134.96063z"/>
+                        <path fill="#ffffff" d="m497.20206 284.15747l109.60629 0l0 -31.307083l-109.60629 0z"/>
+                        <path fill="#ffffff" d="m606.81757 284.23343l-31.40155 -31.401566l62.677124 0.12597656z"/>
+                        <path fill="#ffffff" d="m830.48645 249.44894l0 109.60629l31.307129 0l0 -109.60629z"/>
+                        <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
+                        <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
+                        <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
+                        <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                    </svg>
                 </div>
-            </a>
-
-            <a class="card" href="/scan/v2/" target="_blank">
-                <div class="preview"><span class="num">V2</span><iframe src="/scan/v2/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
-                <div class="meta">
-                    <h3>Field Lines</h3>
-                    <span class="open">Open ↗</span>
-                    <p class="tagline">No phone — an abstract NFC physics diagram. Concentric rings emanate from the puck while a phone silhouette is drawn in. Spec sheet + chapter handshake.</p>
-                    <div class="keys"><span>Abstract</span><span>Technical</span><span>Cyan</span></div>
-                </div>
-            </a>
-
-            <a class="card" href="/scan/v3/" target="_blank">
-                <div class="preview"><span class="num">V3</span><iframe src="/scan/v3/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
-                <div class="meta">
-                    <h3>Field Guide</h3>
-                    <span class="open">Open ↗</span>
-                    <p class="tagline">Editorial magazine. Big italic serif headlines, pull quotes, numbered chapters. The tag sits on a barbell in an annotated "Fig. 01" illustration.</p>
-                    <div class="keys"><span>Editorial</span><span>Serif</span><span>Long-form</span></div>
-                </div>
-            </a>
-
-            <a class="card" href="/scan/v4/" target="_blank">
-                <div class="preview"><span class="num">V4</span><iframe src="/scan/v4/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
-                <div class="meta">
-                    <h3>Brutalist Board</h3>
-                    <span class="open">Open ↗</span>
-                    <p class="tagline">Black, white, neon green. Huge uppercase. A grid stamp board for the hero. Hard edges, drop-shadow buttons, exposed structure.</p>
-                    <div class="keys"><span>Brutalist</span><span>High contrast</span><span>Bold</span></div>
-                </div>
-            </a>
-
-            <a class="card" href="/scan/v5/" target="_blank">
-                <div class="preview"><span class="num">V5</span><iframe src="/scan/v5/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
-                <div class="meta">
-                    <h3>Apple Keynote</h3>
-                    <span class="open">Open ↗</span>
-                    <p class="tagline">The same 3D-phone-tilt animation as V1, but with massive product-page typography. Big slab sections with the green halo treatment.</p>
-                    <div class="keys"><span>Keynote</span><span>Big type</span><span>Premium</span></div>
-                </div>
-            </a>
-
-            <a class="card" href="/scan/v6/" target="_blank">
-                <div class="preview"><span class="num">V6</span><iframe src="/scan/v6/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
-                <div class="meta">
-                    <h3>Sketchbook</h3>
-                    <span class="open">Open ↗</span>
-                    <p class="tagline">Hand-drawn stroke art of a hand holding a phone over the barbell. Caveat-script annotations, paper-grid backdrop, warm orange accent.</p>
-                    <div class="keys"><span>Illustrated</span><span>Playful</span><span>Hand-drawn</span></div>
-                </div>
-            </a>
-
-            <a class="card" href="/scan/v7/" target="_blank">
-                <div class="preview"><span class="num">V7</span><iframe src="/scan/v7/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
-                <div class="meta">
-                    <h3>Arcade Terminal</h3>
-                    <span class="open">Open ↗</span>
-                    <p class="tagline">80s synthwave. Animated scan-log terminal in the hero, Press Start pixel type, neon green &amp; pink glow, perspective grid floor.</p>
-                    <div class="keys"><span>Retro</span><span>Neon</span><span>Synthwave</span></div>
-                </div>
-            </a>
-
-            <a class="card" href="/scan/v8/" target="_blank">
-                <div class="preview"><span class="num">V8</span><iframe src="/scan/v8/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
-                <div class="meta">
-                    <h3>Receipt</h3>
-                    <span class="open">Open ↗</span>
-                    <p class="tagline">The post-tap page styled as a thermal-printed receipt with tag ID, exercise, total. "PAID · 0 W" stamp, dashed rules, barcode footer.</p>
-                    <div class="keys"><span>Print</span><span>Concept</span><span>Mono</span></div>
-                </div>
-            </a>
+                <span class="pill">/scan · 8 variants</span>
+                <h1>Pick a <span class="accent">design.</span></h1>
+                <p>Swipe up to flip through all 8 designs. Each one runs live, with the real animations. Tap the "Open" pill at the top to view any variant full-screen on its own.</p>
+                <button class="startbtn" onclick="document.querySelectorAll('.slide')[1].scrollIntoView({behavior:'smooth'})">
+                    Start
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                </button>
+                <div class="swipe-hint"><span class="arrow">↓</span> Swipe up to start <span class="arrow">↓</span></div>
+            </div>
         </div>
 
-        <footer>
-            <a href="/scan/">← Back to live /scan</a>
-        </footer>
-    </main>
+        <!-- 8 variants -->
+        <div class="slide" data-slide="1" data-name="Drop &amp; Tap"      data-tagline="Phone slides in from the right, taps the puck, scan ripples burst, sheet rises halfway." data-url="/scan/v1/">
+            <iframe src="/scan/v1/index.html" loading="lazy" title="Variant 1"></iframe>
+        </div>
+        <div class="slide" data-slide="2" data-name="Field Lines"        data-tagline="Abstract NFC physics — no phone. Concentric rings emanate from the puck. Spec sheet + handshake." data-url="/scan/v2/">
+            <iframe src="/scan/v2/index.html" loading="lazy" title="Variant 2"></iframe>
+        </div>
+        <div class="slide" data-slide="3" data-name="Field Guide"        data-tagline="Editorial magazine. Italic serif headlines, pull quotes, annotated Fig. 01 illustration." data-url="/scan/v3/">
+            <iframe src="/scan/v3/index.html" loading="lazy" title="Variant 3"></iframe>
+        </div>
+        <div class="slide" data-slide="4" data-name="Brutalist Board"    data-tagline="Black/white/neon-green. Huge uppercase. Grid stamp board hero. Hard-edge buttons." data-url="/scan/v4/">
+            <iframe src="/scan/v4/index.html" loading="lazy" title="Variant 4"></iframe>
+        </div>
+        <div class="slide" data-slide="5" data-name="Apple Keynote"      data-tagline="Same 3D phone tilt as V1, but with massive product-page typography and halo slabs." data-url="/scan/v5/">
+            <iframe src="/scan/v5/index.html" loading="lazy" title="Variant 5"></iframe>
+        </div>
+        <div class="slide" data-slide="6" data-name="Sketchbook"         data-tagline="Hand-drawn stroke art. Hand holding phone over the bar, Caveat-script annotations." data-url="/scan/v6/">
+            <iframe src="/scan/v6/index.html" loading="lazy" title="Variant 6"></iframe>
+        </div>
+        <div class="slide" data-slide="7" data-name="Arcade Terminal"    data-tagline="80s synthwave. Animated scan-log terminal, Press Start pixel type, neon green + magenta." data-url="/scan/v7/">
+            <iframe src="/scan/v7/index.html" loading="lazy" title="Variant 7"></iframe>
+        </div>
+        <div class="slide" data-slide="8" data-name="Receipt"            data-tagline="Thermal-printed receipt concept. Tag ID, exercise totals, PAID · 0W stamp, barcode footer." data-url="/scan/v8/">
+            <iframe src="/scan/v8/index.html" loading="lazy" title="Variant 8"></iframe>
+        </div>
+    </div>
+
+    <!-- Floating UI -->
+    <div class="topbar" id="topbar" style="display:none;">
+        <div class="info">
+            <div class="name"><span class="v" id="v-label">V0</span><span id="v-name">Welcome</span></div>
+            <div class="tagline" id="v-tagline"></div>
+        </div>
+        <div class="actions">
+            <a href="#" class="open" id="open-btn" target="_blank">Open ↗</a>
+            <a href="/scan/" class="back">/scan</a>
+        </div>
+    </div>
+
+    <div class="dots" id="dots"></div>
+    <div class="hint" id="hint"><span class="arrow">↓</span> Swipe up</div>
+
+    <script>
+        (function () {
+            var swiper = document.getElementById('swiper');
+            var slides = Array.from(document.querySelectorAll('.slide'));
+            var topbar = document.getElementById('topbar');
+            var vLabel = document.getElementById('v-label');
+            var vName  = document.getElementById('v-name');
+            var vTag   = document.getElementById('v-tagline');
+            var openBtn = document.getElementById('open-btn');
+            var dotsEl = document.getElementById('dots');
+            var hint = document.getElementById('hint');
+
+            // Build the dots — 8 of them (skip the intro)
+            for (var i = 1; i <= 8; i++) {
+                (function (idx) {
+                    var b = document.createElement('button');
+                    b.className = 'dot';
+                    b.dataset.target = idx;
+                    b.setAttribute('aria-label', 'Variant ' + idx);
+                    b.addEventListener('click', function () {
+                        slides[idx].scrollIntoView({ behavior: 'smooth' });
+                    });
+                    dotsEl.appendChild(b);
+                })(i);
+            }
+
+            var dotButtons = Array.from(dotsEl.children);
+
+            function update(idx) {
+                var slide = slides[idx];
+                if (!slide) return;
+                var name = slide.dataset.name || '';
+                var tagline = slide.dataset.tagline || '';
+                var url = slide.dataset.url || '';
+                var n = parseInt(slide.dataset.slide, 10);
+
+                if (idx === 0) {
+                    topbar.style.display = 'none';
+                    dotsEl.style.display = 'none';
+                    hint.classList.remove('hide');
+                } else {
+                    topbar.style.display = 'flex';
+                    dotsEl.style.display = 'flex';
+                    hint.classList.add('hide');
+                    vLabel.textContent = 'V' + n;
+                    vName.textContent  = name;
+                    vTag.textContent   = tagline;
+                    openBtn.href = url || '#';
+                    dotButtons.forEach(function (d, i) {
+                        d.classList.toggle('on', i + 1 === n);
+                    });
+                }
+            }
+
+            // Track which slide is centered. IntersectionObserver is the
+            // cleanest hook with scroll-snap — fires when each slide
+            // becomes ≥ 60 % visible.
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        var idx = slides.indexOf(entry.target);
+                        update(idx);
+                    }
+                });
+            }, { root: swiper, threshold: 0.6 });
+
+            slides.forEach(function (s) { io.observe(s); });
+
+            // Init
+            update(0);
+        })();
+    </script>
 </body>
 </html>
