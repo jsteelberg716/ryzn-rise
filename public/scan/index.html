@@ -477,27 +477,38 @@
             box-shadow: 0 4px 12px hsla(145, 72%, 50%, 0.35);
         }
 
-        .caption {
-            font-size: 10.5px; font-weight: 600;
-            letter-spacing: 0.18em; text-transform: uppercase;
+        /* Scroll-down hint that lives under the stage. Disappears the
+           moment the visitor starts scrolling — its only job is to
+           tell them "there's more below" before they've made the
+           gesture. */
+        .hero-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
             color: var(--muted);
-            text-align: center;
-            position: relative;
-            min-height: 18px;
-            margin-top: 18px;
+            transition: opacity 0.45s ease, transform 0.45s ease;
+            pointer-events: none;
         }
-        .caption span {
-            position: absolute; inset: 0;
+        .hero-hint .arrow {
+            display: inline-block;
+            animation: hintBounce 1.6s ease-in-out infinite;
+        }
+        .hero-hint .arrow:last-child { animation-delay: 0.2s; }
+        @keyframes hintBounce {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(3px); }
+        }
+        .hero-hint.hide {
             opacity: 0;
-            animation: cap 7s linear infinite;
+            transform: translateY(-6px);
         }
-        .caption span:nth-child(1) { animation-delay: 0s; }
-        .caption span:nth-child(2) { animation-delay: 1.8s; }
-        .caption span:nth-child(3) { animation-delay: 3.8s; }
-        @keyframes cap {
-            0%, 1%      { opacity: 0; transform: translateY(6px); }
-            5%, 23%     { opacity: 1; transform: translateY(0); }
-            27%, 100%   { opacity: 0; transform: translateY(-4px); }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-hint .arrow { animation: none; }
         }
 
         .cta-primary {
@@ -726,10 +737,10 @@
                 </div>
             </div>
 
-            <div class="caption reveal" aria-hidden="true">
-                <span>Phone slides over the tag</span>
-                <span>Tap — the scan ripples out</span>
-                <span>Sheet rises — exercise loaded</span>
+            <div class="hero-hint reveal" id="hero-hint" aria-hidden="true">
+                <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <span>Scroll to learn more</span>
+                <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
 
             <div class="reveal" style="margin-top: 32px;">
@@ -843,6 +854,21 @@
                     apply();
                 });
             }
+        })();
+
+        // Hide the "scroll to learn more" hint the moment the user
+        // makes the gesture. It never comes back — it only exists
+        // to nudge first-time visitors below the fold.
+        (function () {
+            var hint = document.getElementById('hero-hint');
+            if (!hint) return;
+            function onScroll() {
+                if (window.scrollY > 32) {
+                    hint.classList.add('hide');
+                    window.removeEventListener('scroll', onScroll);
+                }
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
         })();
 
         // Reveal-on-scroll
