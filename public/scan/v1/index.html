@@ -150,9 +150,9 @@
                the caption sits well clear of any animation extreme. */
             margin: 0 auto 8px;
             padding-bottom: 14px;
-            aspect-ratio: 1 / 1.55;
+            aspect-ratio: 1 / 1.78;
             perspective: 1400px;
-            perspective-origin: 50% 35%;
+            perspective-origin: 50% 38%;
         }
         /* Subtle glow halo behind the puck — replaces the old
            "surface line" since the puck is now floating in the upper
@@ -237,16 +237,15 @@
             100%      { transform: scale(2.4);  opacity: 0; }
         }
 
-        /* Phone rig — enters right, slides under the puck, reaches
-           UP to tap it, then settles back down so the iOS sheet can
-           rise into view. Anchored to the stage bottom so the rest
-           position stays predictable. */
+        /* Phone rig — bigger now, and reaches further up to meet
+           the puck during the tap. Anchored to the stage bottom so
+           the rest position stays predictable. */
         .phone-rig {
             position: absolute;
             bottom: 14px;
             left: 50%;
-            width: 44%;
-            max-width: 168px;
+            width: 54%;
+            max-width: 206px;
             aspect-ratio: 9 / 19.5;
             transform-style: preserve-3d;
             transform-origin: 50% 100%;
@@ -255,22 +254,22 @@
         }
         @keyframes phoneSeq {
             /* Off-screen right, tilted */
-            0%   { transform: translate(85%, 0) rotateZ(14deg) rotateX(18deg); }
+            0%   { transform: translate(90%, 0) rotateZ(14deg) rotateX(18deg); }
             /* Mid-flight from right */
             14%  { transform: translate(20%, 0) rotateZ(6deg)  rotateX(24deg); }
             /* Rest position, centered under puck */
-            22%  { transform: translate(-50%, 0) rotateZ(0deg) rotateX(20deg); }
-            /* Reach UP to tap the puck */
-            30%  { transform: translate(-50%, -54px) rotateZ(0deg) rotateX(26deg) scale(1.01); }
-            /* Hold contact briefly */
-            36%  { transform: translate(-50%, -46px) rotateZ(0deg) rotateX(24deg); }
+            22%  { transform: translate(-50%, 0) rotateZ(0deg) rotateX(18deg); }
+            /* Reach UP, hard, to tap the puck */
+            30%  { transform: translate(-50%, -118px) rotateZ(0deg) rotateX(22deg) scale(1.015); }
+            /* Hold contact briefly, slight settle */
+            36%  { transform: translate(-50%, -102px) rotateZ(0deg) rotateX(20deg); }
             /* Settle back down to center, leveling out for the sheet */
             48%  { transform: translate(-50%, 0)   rotateZ(0deg) rotateX(6deg); }
             /* Hold while the sheet is up */
             80%  { transform: translate(-50%, 0)   rotateZ(0deg) rotateX(4deg); }
             /* Exit back to the right */
-            92%  { transform: translate(85%, 0)  rotateZ(14deg) rotateX(18deg); }
-            100% { transform: translate(85%, 0)  rotateZ(14deg) rotateX(18deg); }
+            92%  { transform: translate(90%, 0)  rotateZ(14deg) rotateX(18deg); }
+            100% { transform: translate(90%, 0)  rotateZ(14deg) rotateX(18deg); }
         }
 
         .phone-rig .bezel {
