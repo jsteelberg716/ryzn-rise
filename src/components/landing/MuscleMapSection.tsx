@@ -4,7 +4,7 @@ import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 
 /* ── Real muscle map SVG paths from the RYZN app ── */
 
-const MUSCLE_PATHS = [
+export const MUSCLE_PATHS = [
   { id: "m_delt_right", group: "shoulders", d: "m372.48596 203.93178c-3.5957947 -0.6938019 -5.6671143 -4.3372803 -5.968506 -10.40683c-0.3013916 -6.0695496 1.444458 -18.554245 4.160095 -26.010498c2.7156677 -7.456253 5.891083 -14.912079 12.133881 -18.727036c6.2427673 -3.8149567 18.546783 -4.509186 25.322815 -4.162735c6.7760315 0.34646606 14.639557 3.8136597 15.3333435 6.2414703c0.6937866 2.427826 -7.355652 5.2038574 -11.170593 8.32547c-3.814972 3.1215973 -8.552063 6.4160004 -11.719177 10.40419c-3.1670837 3.9881897 -5.202545 8.842957 -7.2834473 13.524933c-2.0809326 4.6819763 -1.7340393 11.098434 -5.202118 14.56694c-3.468048 3.4685059 -12.010498 6.9378815 -15.606293 6.244095z" },
   { id: "m_delt_left", group: "shoulders", d: "m579.852 204.67784c3.5958252 -0.6937866 5.6671143 -4.3372803 5.968506 -10.40683c0.3013916 -6.0695496 -1.444458 -18.554245 -4.160095 -26.010498c-2.7156372 -7.456253 -5.8910522 -14.912064 -12.13385 -18.727036c-6.242798 -3.8149567 -18.546814 -4.509186 -25.322815 -4.1627197c-6.776062 0.3464508 -14.639587 3.8136444 -15.333374 6.2414703c-0.6937866 2.4278107 7.355652 5.203842 11.170593 8.325455c3.8150024 3.1216125 8.552063 6.4160156 11.719177 10.40419c3.1671143 3.9881897 5.2025146 8.842972 7.2834473 13.524948c2.0809326 4.6819763 1.7340698 11.098419 5.2021484 14.566925c3.4680176 3.4685059 12.010498 6.9378815 15.606262 6.244095z" },
   { id: "m_chest_right", group: "chest", d: "m407.8607 189.3659c1.2139282 6.5892487 6.0695496 19.940948 14.566925 23.929138c8.4973755 3.9881897 28.440521 1.7340393 36.417328 0c7.976837 -1.7340393 9.6640625 -3.2948456 11.443573 -10.404205c1.779541 -7.1093597 0.92214966 -24.622482 -0.76638794 -32.25197c-1.6885376 -7.629486 -2.948822 -11.097107 -9.364838 -13.524933c-6.4160156 -2.4278107 -21.629059 -3.816269 -29.131226 -1.0419922c-7.5021973 2.7742767 -12.020996 12.138672 -15.881897 17.687668c-3.8609009 5.548996 -8.4973755 9.017059 -7.283478 15.606293z" },
@@ -49,7 +49,7 @@ const features = [
 ];
 
 /* Cycle through states to show the heatmap filling up */
-const STATES: Record<string, number>[] = [
+export const STATES: Record<string, number>[] = [
   { shoulders: 0, chest: 0, arms: 0, forearms: 0, core: 0, upper_back: 0, quads: 0 },
   { shoulders: 1, chest: 0, arms: 1, forearms: 0, core: 0, upper_back: 0, quads: 0 },
   { shoulders: 2, chest: 1, arms: 2, forearms: 1, core: 0, upper_back: 1, quads: 0 },
@@ -79,15 +79,23 @@ const BACK_STATES: Record<string, number>[] = [
   { lats: 3, rear_delts: 3, triceps: 2, forearms: 2, lower_back: 2, upper_back: 3, hamstrings: 2 },
 ];
 
-function getColor(level: number) {
+export function getColor(level: number) {
   if (level === 3) return COLOR_RED;
   if (level === 2) return COLOR_GREEN;
   if (level === 1) return COLOR_BLUE;
   return COLOR_GRAY;
 }
 
-const RealMuscleMap = ({ state, remap }: { state: Record<string, number>; remap?: Record<string, string> }) => (
-  <svg viewBox="330 80 300 440" className="w-full h-auto max-w-[320px]">
+export const RealMuscleMap = ({
+  state,
+  remap,
+  className = 'w-full h-auto max-w-[320px]',
+}: {
+  state: Record<string, number>;
+  remap?: Record<string, string>;
+  className?: string;
+}) => (
+  <svg viewBox="330 80 300 440" className={className}>
     {MUSCLE_PATHS.map(m => {
       const group = remap ? (remap[m.group] ?? m.group) : m.group;
       const level = state[group] ?? 0;
