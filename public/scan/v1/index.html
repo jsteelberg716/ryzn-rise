@@ -192,11 +192,24 @@
             z-index: 3;
         }
         .puck-on-surface svg { width: 104px; height: 100px; display: block; }
-        /* Slight breathe so the puck reads as alive even off-cycle */
-        .puck-on-surface { animation: puckBreathe 4s ease-in-out infinite; }
-        @keyframes puckBreathe {
-            0%, 100% { transform: translateX(-50%) scale(1); }
-            50%      { transform: translateX(-50%) scale(1.012); }
+        /* Synced to the phone's 7-second cycle:
+            0–22 %  full size, slight breathe while phone slides in
+            22–32 % shrink into nothing as the phone parks on top
+            32–80 % held tiny + hidden behind the phone
+            80–92 % grow back out as the phone exits to the right
+           transform-origin is centered so the shrink reads as
+           pulling INTO the phone rather than collapsing to a corner. */
+        .puck-on-surface {
+            animation: puckScan 7s cubic-bezier(0.5, 0, 0.25, 1) infinite;
+            transform-origin: 50% 50%;
+        }
+        @keyframes puckScan {
+            0%      { transform: translateX(-50%) scale(1); }
+            18%     { transform: translateX(-50%) scale(1.02); }
+            32%     { transform: translateX(-50%) scale(0.15); }
+            80%     { transform: translateX(-50%) scale(0.15); }
+            92%     { transform: translateX(-50%) scale(1.02); }
+            100%    { transform: translateX(-50%) scale(1); }
         }
         /* Puck pulses brightly at the tap moment */
         .puck-on-surface::after {
