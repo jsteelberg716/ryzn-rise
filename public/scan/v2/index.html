@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RYZN tag — Tap to start workout</title>
+    <meta name="description" content="RyznTag: passive NFC pucks that turn any gym machine into a one-tap workout starter. Built into RYZN for iPhone.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="theme-color" content="#070a0c">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: hsl(200, 25%, 5%);
+            --bg-2: hsl(200, 25%, 8%);
+            --fg: hsl(0, 0%, 100%);
+            --muted: hsl(0, 0%, 64%);
+            --tertiary: hsl(0, 0%, 38%);
+            --primary: hsl(145, 72%, 50%);
+            --primary-deep: hsl(160, 70%, 42%);
+            --accent: hsl(195, 92%, 60%);
+            --accent-deep: hsl(210, 85%, 55%);
+            --card: hsla(195, 30%, 40%, 0.06);
+            --border: hsla(195, 30%, 70%, 0.10);
+            --border-strong: hsla(195, 30%, 70%, 0.22);
+            --puck: hsl(40, 18%, 96%);
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg); color: var(--fg);
+            margin: 0; min-height: 100vh;
+            -webkit-font-smoothing: antialiased; line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Ambient — cyan/teal vignette */
+        .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .ambient::before {
+            content: ""; position: absolute;
+            top: 4%; left: 50%;
+            width: min(900px, 160vw); height: min(900px, 160vw);
+            background: radial-gradient(circle at center, hsla(195, 92%, 50%, 0.18) 0%, hsla(145, 72%, 50%, 0.05) 35%, transparent 60%);
+            transform: translateX(-50%);
+            animation: ambientShift 8s ease-in-out infinite;
+        }
+        @keyframes ambientShift {
+            0%, 100% { opacity: 0.65; }
+            50%      { opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .ambient::before, .ring, .puck-core, .phone-icon, .field-pulse, .scan-line { animation: none !important; }
+        }
+
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 56px;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: hsla(200, 25%, 4%, 0.82);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+        nav .inner {
+            max-width: 1100px; margin: 0 auto; height: 100%;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; gap: 12px;
+        }
+        nav .brand { display: inline-flex; align-items: center; text-decoration: none; flex-shrink: 0; }
+        nav .brand svg { display: block; height: 22px; width: auto; }
+        nav .cta {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-deep));
+            color: hsl(200, 50%, 8%);
+            padding: 9px 16px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 12.5px;
+            white-space: nowrap;
+            letter-spacing: -0.005em;
+            box-shadow: 0 6px 18px hsla(195, 92%, 50%, 0.3);
+            flex-shrink: 0;
+        }
+        nav .cta:active { transform: translateY(1px); }
+
+        main {
+            max-width: 720px; margin: 0 auto;
+            padding: 70px 16px 56px;
+            position: relative; z-index: 1;
+        }
+        section { margin-bottom: 56px; }
+
+        .reveal {
+            opacity: 0; transform: translateY(18px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.in { opacity: 1; transform: translateY(0); }
+
+        /* ───────── Hero: field-lines + puck core ───────── */
+        .hero { text-align: center; }
+        .chapter-pill {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: hsla(195, 92%, 50%, 0.08);
+            border: 1px solid hsla(195, 92%, 50%, 0.22);
+            font-family: var(--mono);
+            font-size: 10.5px; font-weight: 700;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 18px;
+        }
+        .chapter-pill .chno {
+            color: rgba(255,255,255,0.95);
+            background: hsla(195, 92%, 50%, 0.2);
+            padding: 1px 7px;
+            border-radius: 4px;
+        }
+        h1 {
+            font-size: clamp(36px, 9.5vw, 58px);
+            font-weight: 800; line-height: 0.98;
+            letter-spacing: -0.038em;
+            margin: 0 0 14px;
+        }
+        h1 .accent {
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .hero .lede {
+            color: var(--muted);
+            font-size: clamp(14.5px, 4vw, 16.5px);
+            line-height: 1.55; max-width: 460px;
+            margin: 0 auto 28px;
+        }
+
+        /* The "physics diagram" */
+        .field-stage {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto 24px;
+            aspect-ratio: 1 / 1;
+        }
+        /* Big concentric magnetic field rings */
+        .ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid hsla(195, 92%, 60%, 0.5);
+            box-shadow: 0 0 20px hsla(195, 92%, 50%, 0.15), inset 0 0 20px hsla(195, 92%, 50%, 0.05);
+            opacity: 0;
+            animation: ringExpand 4s ease-out infinite;
+        }
+        .ring.r1 { width: 30%;  height: 30%;  animation-delay: 0s; }
+        .ring.r2 { width: 30%;  height: 30%;  animation-delay: 1s; }
+        .ring.r3 { width: 30%;  height: 30%;  animation-delay: 2s; }
+        .ring.r4 { width: 30%;  height: 30%;  animation-delay: 3s; }
+        @keyframes ringExpand {
+            0%   { transform: translate(-50%, -50%) scale(0.55); opacity: 0; border-color: hsla(195, 92%, 70%, 0.95); }
+            15%  { opacity: 0.95; }
+            100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; border-color: hsla(195, 92%, 60%, 0.2); }
+        }
+
+        /* The puck at the center */
+        .puck-core {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 84px; height: 84px;
+            border-radius: 18px;
+            background: linear-gradient(160deg, hsl(40, 18%, 96%) 0%, hsl(40, 18%, 84%) 100%);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow:
+                0 20px 50px rgba(0,0,0,0.55),
+                0 0 60px hsla(195, 92%, 50%, 0.55),
+                inset 0 1px 0 rgba(255,255,255,0.95);
+            z-index: 5;
+            animation: puckBreathe 3.5s ease-in-out infinite;
+        }
+        @keyframes puckBreathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50%      { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        .puck-core svg { width: 44px; height: 42px; display: block; }
+        /* Tiny rotating sweeper around the puck */
+        .scan-line {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 116px; height: 116px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border-top: 2px solid var(--accent);
+            border-left: 2px solid transparent;
+            border-right: 2px solid transparent;
+            border-bottom: 2px solid transparent;
+            opacity: 0.8;
+            animation: sweep 2.5s linear infinite;
+            z-index: 4;
+            filter: drop-shadow(0 0 8px var(--accent));
+        }
+        @keyframes sweep {
+            0%   { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* The phone silhouette pulled toward the field */
+        .phone-icon {
+            position: absolute;
+            top: 6%; right: 6%;
+            width: 56px; height: auto;
+            aspect-ratio: 9/19.5;
+            border-radius: 10px;
+            background: linear-gradient(150deg, hsla(0, 0%, 100%, 0.1), hsla(195, 92%, 50%, 0.15));
+            border: 1px solid hsla(195, 92%, 60%, 0.4);
+            box-shadow: 0 8px 22px rgba(0,0,0,0.5), 0 0 22px hsla(195, 92%, 50%, 0.35);
+            animation: phoneAttract 4s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .phone-icon::before {
+            content: ""; width: 60%; height: 4px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 999px;
+            position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+        }
+        .phone-icon::after {
+            content: ""; width: 24px; height: 24px;
+            border-radius: 5px;
+            background: linear-gradient(160deg, hsl(40, 18%, 96%), hsl(40, 18%, 84%));
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        @keyframes phoneAttract {
+            0%, 100% { transform: translate(0, 0) rotate(-4deg); }
+            50%      { transform: translate(-12px, 8px) rotate(2deg); }
+        }
+
+        /* Labels around the diagram */
+        .label {
+            position: absolute;
+            font-family: var(--mono);
+            font-size: 9.5px; font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--accent);
+            background: hsla(195, 92%, 50%, 0.10);
+            border: 1px solid hsla(195, 92%, 50%, 0.25);
+            border-radius: 4px;
+            padding: 4px 7px;
+            white-space: nowrap;
+        }
+        .label .v { color: rgba(255,255,255,0.95); margin-left: 4px; }
+        .label.lbl-1 { top: 4%; left: 0; }
+        .label.lbl-2 { top: 42%; left: -2%; }
+        .label.lbl-3 { bottom: 22%; left: 8%; }
+        .label.lbl-4 { bottom: 4%; right: 6%; }
+        @media (max-width: 380px) {
+            .label { font-size: 8.5px; padding: 3px 5px; }
+        }
+
+        /* Connector dashes from labels to puck (decorative) */
+        .field-stage::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at center, transparent 30%, rgba(255,255,255,0.02) 30.5%, transparent 31%),
+                radial-gradient(circle at center, transparent 50%, rgba(255,255,255,0.018) 50.3%, transparent 50.6%);
+            pointer-events: none;
+        }
+
+        /* Pulse waveform under hero */
+        .field-pulse {
+            display: flex; align-items: flex-end; justify-content: center;
+            gap: 3px;
+            height: 24px;
+            margin: 4px auto 22px;
+        }
+        .field-pulse span {
+            display: inline-block;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent), var(--primary));
+            border-radius: 999px;
+            animation: bar 1.2s ease-in-out infinite;
+            transform-origin: bottom;
+        }
+        .field-pulse span:nth-child(1)  { animation-delay: 0.0s;   height: 30%; }
+        .field-pulse span:nth-child(2)  { animation-delay: 0.05s;  height: 55%; }
+        .field-pulse span:nth-child(3)  { animation-delay: 0.10s;  height: 80%; }
+        .field-pulse span:nth-child(4)  { animation-delay: 0.15s;  height: 100%; }
+        .field-pulse span:nth-child(5)  { animation-delay: 0.20s;  height: 80%; }
+        .field-pulse span:nth-child(6)  { animation-delay: 0.25s;  height: 55%; }
+        .field-pulse span:nth-child(7)  { animation-delay: 0.30s;  height: 30%; }
+        @keyframes bar {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+            50%      { transform: scaleY(1.2); opacity: 1; }
+        }
+
+        /* CTA */
+        .cta-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            color: #042029;
+            padding: 16px 26px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 15px;
+            letter-spacing: -0.005em;
+            box-shadow: 0 10px 28px hsla(195, 92%, 50%, 0.45);
+        }
+        .cta-primary:active { transform: translateY(1px); }
+
+        /* Sections */
+        h2 {
+            font-size: clamp(22px, 6vw, 30px);
+            font-weight: 700;
+            margin: 0 0 8px;
+            letter-spacing: -0.025em;
+            text-align: center;
+        }
+        h2 .accent {
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .section-chapter {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 0.18em;
+            text-align: center;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        /* Spec grid */
+        .specs {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            margin-top: 20px;
+        }
+        .spec {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .spec::after {
+            content: ""; position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+        .spec .k {
+            font-family: var(--mono);
+            font-size: 10px; font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.12em; text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .spec .v {
+            font-size: 22px; font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        .spec .v small {
+            font-size: 12px; font-weight: 600; color: var(--muted);
+            margin-left: 4px;
+        }
+
+        /* Handshake timeline (horizontal) */
+        .handshake {
+            position: relative;
+            display: grid; grid-template-columns: 1fr; gap: 14px;
+            margin-top: 16px;
+        }
+        .hs-row {
+            display: flex; gap: 14px; align-items: flex-start;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-left: 2px solid var(--accent);
+            border-radius: 0 14px 14px 0;
+            padding: 14px 16px;
+        }
+        .hs-row .t {
+            font-family: var(--mono);
+            font-size: 10.5px; font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+            min-width: 56px;
+        }
+        .hs-row p {
+            margin: 0; color: rgba(255,255,255,0.92);
+            font-size: 13.5px; line-height: 1.5;
+        }
+        .hs-row p strong { color: var(--fg); font-weight: 700; }
+
+        /* Why grid */
+        .why { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 16px; }
+        @media (min-width: 540px) { .why { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+        .why-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 16px;
+            display: flex; gap: 12px; align-items: flex-start;
+        }
+        .why-card .icon {
+            width: 34px; height: 34px; border-radius: 10px;
+            background: hsla(195, 92%, 50%, 0.16);
+            color: var(--accent);
+            display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .why-card h3 { margin: 0 0 4px; font-size: 14.5px; font-weight: 700; }
+        .why-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+        /* Final CTA */
+        .final-cta {
+            position: relative; text-align: center;
+            background:
+                linear-gradient(135deg, hsla(195, 92%, 50%, 0.10), hsla(145, 72%, 50%, 0.06)),
+                var(--card);
+            border: 1px solid hsla(195, 92%, 50%, 0.22);
+            border-radius: 24px;
+            padding: 28px 22px;
+            overflow: hidden;
+        }
+        .final-cta::before {
+            content: ""; position: absolute;
+            top: -40%; left: 50%; transform: translateX(-50%);
+            width: 120%; height: 180%;
+            background: radial-gradient(ellipse, hsla(195, 92%, 50%, 0.2), transparent 60%);
+            pointer-events: none;
+        }
+        .final-cta .brand-large svg { display: inline-block; height: 26px; width: auto; position: relative; }
+        .final-cta h2 { position: relative; font-size: clamp(22px, 6.5vw, 28px); margin: 14px 0 10px; }
+        .final-cta p { position: relative; color: var(--muted); font-size: 14.5px; margin: 0 auto 22px; max-width: 420px; }
+        .final-cta .small { position: relative; display: block; color: var(--tertiary); font-size: 11.5px; margin-top: 14px; }
+
+        footer { text-align: center; color: var(--tertiary); padding-bottom: 28px; font-size: 12.5px; }
+        footer a { color: var(--muted); text-decoration: none; }
+        footer .dot-sep { opacity: 0.4; margin: 0 6px; }
+    </style>
+</head>
+<body>
+    <div class="ambient" aria-hidden="true"></div>
+
+    <nav>
+        <div class="inner">
+            <a href="/" class="brand" aria-label="RYZN home">
+                <svg viewBox="100 240 770 190" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#ffffff" d="m230.7223 418.38058l-124.59897 -122.248474l0 -43.200348l168.62993 165.44882z"/>
+                    <path fill="#ffffff" d="m106.123344 252.92651l168.62991 0l0 31.307068l-168.62991 0z"/>
+                    <path fill="#ffffff" d="m274.75235 252.93175l0 96.47243l-31.307068 0l0 -96.47243z"/>
+                    <path fill="#ffffff" d="m344.04776 419.14566l127.81052 -122.993164l0 -43.463516l-172.97638 166.45668z"/>
+                    <path fill="#ffffff" d="m243.4865 349.45587l-31.086609 -31.086609l61.92125 0.25198364z"/>
+                    <path fill="#ffffff" d="m542.53723 418.8832l127.81055 -122.993195l0 -43.4635l-172.97638 166.4567z"/>
+                    <path fill="#ffffff" d="m670.3478 387.57742l-134.96063 0l0 31.307098l134.96063 0z"/>
+                    <path fill="#ffffff" d="m695.8642 294.59564l122.993164 127.81052l43.4635 0l-166.45667 -172.97636z"/>
+                    <path fill="#ffffff" d="m727.1699 422.40616l0 -134.96063l-31.307068 0l0 134.96063z"/>
+                    <path fill="#ffffff" d="m497.20206 284.15747l109.60629 0l0 -31.307083l-109.60629 0z"/>
+                    <path fill="#ffffff" d="m606.81757 284.23343l-31.40155 -31.401566l62.677124 0.12597656z"/>
+                    <path fill="#ffffff" d="m830.48645 249.44894l0 109.60629l31.307129 0l0 -109.60629z"/>
+                    <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
+                    <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
+                    <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
+                    <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                </svg>
+            </a>
+            <a href="https://apps.apple.com/app/ryzn" class="cta">Get App</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <span class="chapter-pill reveal"><span class="chno">00</span>The physics</span>
+            <h1 class="reveal">Magnetism, but for <span class="accent">your gym</span>.</h1>
+            <p class="lede reveal">The tag you just tapped has no battery. It's a tiny copper coil. Your iPhone powers it the second you get within an inch, then reads what it has to say.</p>
+
+            <div class="field-stage reveal" aria-label="Diagram of an iPhone being drawn toward an NFC puck's magnetic field" role="img">
+                <div class="ring r1" aria-hidden="true"></div>
+                <div class="ring r2" aria-hidden="true"></div>
+                <div class="ring r3" aria-hidden="true"></div>
+                <div class="ring r4" aria-hidden="true"></div>
+                <div class="scan-line" aria-hidden="true"></div>
+
+                <div class="puck-core" aria-hidden="true">
+                    <svg viewBox="220 110 520 500" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#0a0a0a" d="m595.13 595.99l-356.10 -349.38l0 -123.46l481.94 472.85z"/>
+                        <path fill="#0a0a0a" d="m239.02 123.12l481.94 0l0 89.47l-481.94 0z"/>
+                        <path fill="#0a0a0a" d="m720.96 123.13l0 275.71l-89.47 0l0 -275.71z"/>
+                        <path fill="#0a0a0a" d="m631.61 399.00l-88.84 -88.84l176.97 0.72z"/>
+                        <path fill="hsl(145, 72%, 50%)" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
+                    </svg>
+                </div>
+
+                <div class="phone-icon" aria-hidden="true"></div>
+
+                <span class="label lbl-1">FREQ<span class="v">13.56 MHz</span></span>
+                <span class="label lbl-2">RANGE<span class="v">≈ 4 cm</span></span>
+                <span class="label lbl-3">POWER<span class="v">0 W</span></span>
+                <span class="label lbl-4">READ<span class="v">&lt; 1 s</span></span>
+            </div>
+
+            <div class="field-pulse reveal" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="reveal" style="margin-top: 8px;">
+                <a href="https://apps.apple.com/app/ryzn" class="cta-primary">
+                    Get RYZN on the App Store
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-chapter reveal">Chapter 01</div>
+            <h2 class="reveal">The <span class="accent">spec sheet</span></h2>
+            <p class="reveal" style="text-align: center; color: var(--muted); font-size: 14px; margin: 6px auto 0; max-width: 460px;">Every RyznTag is the same passive NFC sticker built into hotel keys, transit cards, and contactless payments. The numbers below are why it just works.</p>
+            <div class="specs">
+                <div class="spec reveal"><div class="k">Standard</div><div class="v">NFC-A<small>ISO 14443</small></div></div>
+                <div class="spec reveal"><div class="k">Battery</div><div class="v">None<small>· passive</small></div></div>
+                <div class="spec reveal"><div class="k">Range</div><div class="v">~ 4<small>cm</small></div></div>
+                <div class="spec reveal"><div class="k">Read time</div><div class="v">&lt; 1<small>s</small></div></div>
+                <div class="spec reveal"><div class="k">iPhone support</div><div class="v">7+<small>· iOS 11+</small></div></div>
+                <div class="spec reveal"><div class="k">Tag lifespan</div><div class="v">∞<small>· no power</small></div></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-chapter reveal">Chapter 02</div>
+            <h2 class="reveal">The <span class="accent">handshake</span></h2>
+            <p class="reveal" style="text-align: center; color: var(--muted); font-size: 14px; margin: 6px auto 0; max-width: 460px;">From the moment your phone gets within an inch, here's what happens in under a second.</p>
+            <div class="handshake">
+                <div class="hs-row reveal"><div class="t">T+0ms</div><p><strong>Field on.</strong> Your iPhone emits a 13.56 MHz radio field looking for a tag.</p></div>
+                <div class="hs-row reveal"><div class="t">T+80ms</div><p><strong>Coil energized.</strong> The puck's copper antenna picks up energy and wakes up.</p></div>
+                <div class="hs-row reveal"><div class="t">T+200ms</div><p><strong>URL sent.</strong> The puck broadcasts the link <code style="font-family: var(--mono); font-size: 12px; color: var(--accent);">ryznrise.com/scan</code>.</p></div>
+                <div class="hs-row reveal"><div class="t">T+450ms</div><p><strong>Sheet shown.</strong> iOS surfaces the URL preview at the bottom of your screen.</p></div>
+                <div class="hs-row reveal"><div class="t">T+&lt;1s</div><p><strong>RYZN opens.</strong> The right lift is pre-loaded with your last weights.</p></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-chapter reveal">Chapter 03</div>
+            <h2 class="reveal">Why it <span class="accent">matters</span></h2>
+            <div class="why">
+                <div class="why-card reveal"><div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><h3>Zero typing</h3><p>The gym becomes the interface.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h3>Last weights, ready</h3><p>RYZN pre-fills the bar from your last session.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><h3>Works in any gym</h3><p>Tags pair once for every RYZN user.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="14" height="10" rx="2" ry="2"/><line x1="22" y1="11" x2="22" y2="13"/><line x1="2" y1="9" x2="2" y2="15"/></svg></div><div><h3>No batteries</h3><p>Passive NFC. Stick once, last forever.</p></div></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="final-cta reveal">
+                <div class="brand-large">
+                    <svg viewBox="100 240 770 190" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#ffffff" d="m230.7223 418.38058l-124.59897 -122.248474l0 -43.200348l168.62993 165.44882z"/>
+                        <path fill="#ffffff" d="m106.123344 252.92651l168.62991 0l0 31.307068l-168.62991 0z"/>
+                        <path fill="#ffffff" d="m274.75235 252.93175l0 96.47243l-31.307068 0l0 -96.47243z"/>
+                        <path fill="#ffffff" d="m344.04776 419.14566l127.81052 -122.993164l0 -43.463516l-172.97638 166.45668z"/>
+                        <path fill="#ffffff" d="m243.4865 349.45587l-31.086609 -31.086609l61.92125 0.25198364z"/>
+                        <path fill="#ffffff" d="m542.53723 418.8832l127.81055 -122.993195l0 -43.4635l-172.97638 166.4567z"/>
+                        <path fill="#ffffff" d="m670.3478 387.57742l-134.96063 0l0 31.307098l134.96063 0z"/>
+                        <path fill="#ffffff" d="m695.8642 294.59564l122.993164 127.81052l43.4635 0l-166.45667 -172.97636z"/>
+                        <path fill="#ffffff" d="m727.1699 422.40616l0 -134.96063l-31.307068 0l0 134.96063z"/>
+                        <path fill="#ffffff" d="m497.20206 284.15747l109.60629 0l0 -31.307083l-109.60629 0z"/>
+                        <path fill="#ffffff" d="m606.81757 284.23343l-31.40155 -31.401566l62.677124 0.12597656z"/>
+                        <path fill="#ffffff" d="m830.48645 249.44894l0 109.60629l31.307129 0l0 -109.60629z"/>
+                        <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
+                        <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
+                        <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
+                        <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                    </svg>
+                </div>
+                <h2>Engineered, not <span class="accent">marketed</span>.</h2>
+                <p>RYZN was built on the physics — passive NFC, OS-level URLs, no app required for the read. Once it's installed, the next tap opens straight to the lift.</p>
+                <a href="https://apps.apple.com/app/ryzn" class="cta-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/></svg>
+                    Get RYZN on the App Store
+                </a>
+                <span class="small">iPhone · iOS 15.0+ · $10/month</span>
+            </div>
+        </section>
+
+        <footer class="reveal">
+            <a href="https://apps.apple.com/app/ryzn">Download on the App Store</a>
+            <span class="dot-sep">·</span>
+            <a href="/">Back to home</a>
+        </footer>
+    </main>
+
+    <script>
+        (function () {
+            if (!('IntersectionObserver' in window)) {
+                document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+                return;
+            }
+            var io = new IntersectionObserver(function(entries){
+                entries.forEach(function(entry){
+                    if (entry.isIntersecting) {
+                        var sibs = Array.from(entry.target.parentElement?.querySelectorAll(':scope > .reveal') || []);
+                        var delay = Math.max(0, sibs.indexOf(entry.target)) * 80;
+                        setTimeout(function(){ entry.target.classList.add('in'); }, delay);
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+            document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RYZN tag — Tap to start workout</title>
+    <meta name="description" content="A receipt for the lift you're about to do. Built into RYZN for iPhone.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="theme-color" content="#0b0d10">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: hsl(220, 8%, 6%);
+            --bg-2: hsl(220, 8%, 9%);
+            --fg: hsl(0, 0%, 100%);
+            --muted: hsl(0, 0%, 65%);
+            --tertiary: hsl(0, 0%, 38%);
+            --primary: hsl(145, 72%, 50%);
+            --paper: hsl(40, 18%, 95%);
+            --paper-ink: hsl(220, 12%, 12%);
+            --paper-faint: hsl(220, 10%, 38%);
+            --paper-rule: hsl(220, 8%, 78%);
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg); color: var(--fg);
+            margin: 0; min-height: 100vh;
+            -webkit-font-smoothing: antialiased; line-height: 1.55;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: ""; position: fixed; inset: 0;
+            pointer-events: none; z-index: 0;
+            background: radial-gradient(ellipse at top, hsla(145, 72%, 50%, 0.1), transparent 65%);
+        }
+
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 56px;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: hsla(220, 8%, 4%, 0.85);
+            border-bottom: 1px solid hsla(0, 0%, 100%, 0.08);
+            z-index: 100;
+        }
+        nav .inner {
+            max-width: 1100px; margin: 0 auto; height: 100%;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 18px; gap: 12px;
+        }
+        nav .brand { display: inline-flex; align-items: center; text-decoration: none; flex-shrink: 0; }
+        nav .brand svg { display: block; height: 22px; width: auto; }
+        nav .cta {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--primary); color: hsl(145, 80%, 8%);
+            padding: 9px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 800;
+            font-family: var(--mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        nav .cta:active { transform: translateY(1px); }
+
+        main {
+            max-width: 720px; margin: 0 auto;
+            padding: 76px 18px 56px;
+            position: relative; z-index: 1;
+        }
+
+        .reveal {
+            opacity: 0; transform: translateY(18px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.in { opacity: 1; transform: translateY(0); }
+
+        /* ── Hero ── */
+        .hero { text-align: center; padding-bottom: 8px; }
+        .hero .pre {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--primary);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        h1 {
+            font-size: clamp(34px, 9vw, 54px);
+            font-weight: 800;
+            line-height: 1.0;
+            letter-spacing: -0.04em;
+            margin: 0 0 14px;
+        }
+        h1 .accent {
+            background: linear-gradient(90deg, var(--primary), hsl(165, 70%, 42%));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .hero .lede {
+            font-size: clamp(14.5px, 4vw, 16.5px);
+            line-height: 1.55;
+            color: var(--muted);
+            max-width: 460px;
+            margin: 0 auto 26px;
+        }
+
+        /* ── The receipt (the centerpiece) ── */
+        .receipt-wrap {
+            position: relative;
+            margin: 32px auto;
+            max-width: 340px;
+        }
+        .receipt {
+            background: var(--paper);
+            color: var(--paper-ink);
+            padding: 22px 22px 18px;
+            font-family: var(--mono);
+            font-size: 12px;
+            line-height: 1.55;
+            position: relative;
+            box-shadow:
+                0 30px 50px -10px rgba(0,0,0,0.55),
+                0 0 0 1px rgba(0,0,0,0.12);
+            transform: rotate(-1deg);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .receipt-wrap:hover .receipt { transform: rotate(0deg); }
+        /* Torn top + bottom edges */
+        .receipt::before, .receipt::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0;
+            height: 12px;
+            background:
+                radial-gradient(circle at 5px 0, transparent 4px, var(--paper) 4.5px),
+                radial-gradient(circle at 15px 12px, transparent 4px, var(--paper) 4.5px);
+            background-size: 20px 12px;
+            background-repeat: repeat-x;
+        }
+        .receipt::before { top: -12px; }
+        .receipt::after  { bottom: -12px; transform: rotate(180deg); }
+
+        .receipt .top {
+            text-align: center;
+            border-bottom: 1px dashed var(--paper-rule);
+            padding-bottom: 14px;
+            margin-bottom: 12px;
+        }
+        .receipt .top .logo svg { display: inline-block; height: 18px; }
+        .receipt .top .logo svg path[fill="#ffffff"] { fill: var(--paper-ink) !important; }
+        .receipt .top .logo svg path[fill="#22c55e"] { fill: var(--primary) !important; }
+        .receipt .top .ad {
+            font-size: 10px;
+            color: var(--paper-faint);
+            margin-top: 6px;
+            letter-spacing: 0.06em;
+        }
+        .receipt .top .ad strong { color: var(--paper-ink); }
+        .receipt .top .ts {
+            font-size: 10px;
+            color: var(--paper-faint);
+            margin-top: 4px;
+        }
+        .receipt .lh {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--paper-faint);
+            border-bottom: 1px dashed var(--paper-rule);
+            padding-bottom: 4px;
+            margin: 14px 0 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .receipt .row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            font-size: 12.5px;
+            padding: 3px 0;
+        }
+        .receipt .row .l { color: var(--paper-ink); }
+        .receipt .row .r { color: var(--paper-ink); font-weight: 700; }
+        .receipt .ex {
+            margin: 10px 0;
+        }
+        .receipt .ex .row { padding: 2px 0; }
+        .receipt .total {
+            border-top: 1px solid var(--paper-rule);
+            margin-top: 10px;
+            padding-top: 8px;
+        }
+        .receipt .total .row {
+            font-weight: 800;
+            font-size: 13.5px;
+        }
+        .receipt .total .row .r { color: var(--primary); }
+        .receipt .footer {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 10.5px;
+            color: var(--paper-faint);
+        }
+        .receipt .footer .url {
+            font-weight: 700; color: var(--paper-ink);
+        }
+        .receipt .barcode {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1px;
+            height: 28px;
+        }
+        .receipt .barcode span {
+            display: inline-block;
+            width: 1.5px;
+            background: var(--paper-ink);
+            height: 100%;
+        }
+        .receipt .barcode span:nth-child(2n) { width: 1px; opacity: 0.5; }
+        .receipt .barcode span:nth-child(3n) { width: 2.5px; }
+        .receipt .barcode span:nth-child(5n) { width: 1px; opacity: 0.3; }
+        .receipt .stamp {
+            position: absolute;
+            top: 64px; right: -10px;
+            transform: rotate(12deg);
+            border: 2.5px solid var(--primary);
+            color: var(--primary);
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 6px 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.85;
+            background: hsla(145, 72%, 50%, 0.08);
+        }
+
+        /* CTA */
+        .cta-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--primary); color: hsl(145, 80%, 8%);
+            padding: 16px 26px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: var(--mono);
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            box-shadow: 0 8px 24px hsla(145, 72%, 50%, 0.4);
+        }
+        .cta-primary:active { transform: translateY(1px); }
+
+        /* ── Sections ── */
+        section { margin-bottom: 56px; }
+        h2 {
+            font-family: var(--mono);
+            font-size: clamp(16px, 4.8vw, 22px);
+            font-weight: 800;
+            margin: 0 0 18px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        h2 .accent {
+            color: var(--primary);
+        }
+        h2 .ln {
+            display: inline-block;
+            color: var(--tertiary);
+            margin: 0 8px;
+        }
+
+        /* Step rows — invoice line items */
+        .steps {
+            background: var(--bg-2);
+            border: 1px solid hsla(0, 0%, 100%, 0.08);
+            border-radius: 12px;
+            padding: 8px 0;
+        }
+        .row-step {
+            display: grid; grid-template-columns: 50px 1fr auto; gap: 14px;
+            align-items: flex-start;
+            padding: 16px 18px;
+            border-bottom: 1px dashed hsla(0, 0%, 100%, 0.08);
+        }
+        .row-step:last-child { border-bottom: none; }
+        .row-step .sku {
+            font-family: var(--mono);
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.06em;
+        }
+        .row-step h3 { font-size: 16px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.005em; }
+        .row-step p { font-size: 13.5px; color: var(--muted); margin: 0; line-height: 1.5; }
+        .row-step .dur {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--muted);
+            white-space: nowrap;
+            letter-spacing: 0.04em;
+            padding-top: 2px;
+        }
+
+        /* Why grid */
+        .why { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 16px; }
+        @media (min-width: 540px) { .why { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+        .why-card {
+            background: var(--bg-2); border: 1px solid hsla(0, 0%, 100%, 0.08);
+            border-radius: 12px; padding: 16px;
+            display: flex; gap: 12px; align-items: flex-start;
+        }
+        .why-card .icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            background: hsla(145, 72%, 50%, 0.14);
+            color: var(--primary);
+            display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .why-card h3 { margin: 0 0 4px; font-size: 14.5px; font-weight: 700; letter-spacing: -0.005em; }
+        .why-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+        /* Final CTA */
+        .final-cta {
+            position: relative; text-align: center;
+            background:
+                radial-gradient(ellipse at top, hsla(145, 72%, 50%, 0.14), transparent 70%),
+                var(--bg-2);
+            border: 1px solid hsla(145, 72%, 50%, 0.2);
+            border-radius: 18px;
+            padding: 32px 22px;
+            overflow: hidden;
+        }
+        .final-cta .brand-large svg { display: inline-block; height: 26px; width: auto; margin-bottom: 14px; }
+        .final-cta h2 { margin: 0 0 10px; }
+        .final-cta p { color: var(--muted); font-size: 14.5px; margin: 0 auto 22px; max-width: 420px; }
+        .final-cta .small { display: block; color: var(--tertiary); font-size: 11px; margin-top: 14px; font-family: var(--mono); letter-spacing: 0.06em; }
+
+        footer { text-align: center; color: var(--tertiary); padding-bottom: 28px; font-size: 12.5px; }
+        footer a { color: var(--muted); text-decoration: none; }
+        footer .dot-sep { opacity: 0.4; margin: 0 6px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="inner">
+            <a href="/" class="brand" aria-label="RYZN home">
+                <svg viewBox="100 240 770 190" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#ffffff" d="m230.7223 418.38058l-124.59897 -122.248474l0 -43.200348l168.62993 165.44882z"/>
+                    <path fill="#ffffff" d="m106.123344 252.92651l168.62991 0l0 31.307068l-168.62991 0z"/>
+                    <path fill="#ffffff" d="m274.75235 252.93175l0 96.47243l-31.307068 0l0 -96.47243z"/>
+                    <path fill="#ffffff" d="m344.04776 419.14566l127.81052 -122.993164l0 -43.463516l-172.97638 166.45668z"/>
+                    <path fill="#ffffff" d="m243.4865 349.45587l-31.086609 -31.086609l61.92125 0.25198364z"/>
+                    <path fill="#ffffff" d="m542.53723 418.8832l127.81055 -122.993195l0 -43.4635l-172.97638 166.4567z"/>
+                    <path fill="#ffffff" d="m670.3478 387.57742l-134.96063 0l0 31.307098l134.96063 0z"/>
+                    <path fill="#ffffff" d="m695.8642 294.59564l122.993164 127.81052l43.4635 0l-166.45667 -172.97636z"/>
+                    <path fill="#ffffff" d="m727.1699 422.40616l0 -134.96063l-31.307068 0l0 134.96063z"/>
+                    <path fill="#ffffff" d="m497.20206 284.15747l109.60629 0l0 -31.307083l-109.60629 0z"/>
+                    <path fill="#ffffff" d="m606.81757 284.23343l-31.40155 -31.401566l62.677124 0.12597656z"/>
+                    <path fill="#ffffff" d="m830.48645 249.44894l0 109.60629l31.307129 0l0 -109.60629z"/>
+                    <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
+                    <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
+                    <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
+                    <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                </svg>
+            </a>
+            <a href="https://apps.apple.com/app/ryzn" class="cta">Get App</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="pre reveal">// scan receipt #00427</div>
+            <h1 class="reveal">A <span class="accent">receipt</span> for the lift you're about to do.</h1>
+            <p class="lede reveal">When you tapped the puck, your phone read it like a credit card terminal. Here's what came out the other side.</p>
+
+            <div class="receipt-wrap reveal">
+                <div class="receipt">
+                    <div class="stamp" aria-hidden="true">Paid · 0 W</div>
+                    <div class="top">
+                        <div class="logo">
+                            <svg viewBox="100 240 770 190" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#ffffff" d="m230.7223 418.38058l-124.59897 -122.248474l0 -43.200348l168.62993 165.44882z"/>
+                                <path fill="#ffffff" d="m106.123344 252.92651l168.62991 0l0 31.307068l-168.62991 0z"/>
+                                <path fill="#ffffff" d="m274.75235 252.93175l0 96.47243l-31.307068 0l0 -96.47243z"/>
+                                <path fill="#ffffff" d="m344.04776 419.14566l127.81052 -122.993164l0 -43.463516l-172.97638 166.45668z"/>
+                                <path fill="#ffffff" d="m243.4865 349.45587l-31.086609 -31.086609l61.92125 0.25198364z"/>
+                                <path fill="#ffffff" d="m542.53723 418.8832l127.81055 -122.993195l0 -43.4635l-172.97638 166.4567z"/>
+                                <path fill="#ffffff" d="m670.3478 387.57742l-134.96063 0l0 31.307098l134.96063 0z"/>
+                                <path fill="#ffffff" d="m695.8642 294.59564l122.993164 127.81052l43.4635 0l-166.45667 -172.97636z"/>
+                                <path fill="#ffffff" d="m727.1699 422.40616l0 -134.96063l-31.307068 0l0 134.96063z"/>
+                                <path fill="#ffffff" d="m497.20206 284.15747l109.60629 0l0 -31.307083l-109.60629 0z"/>
+                                <path fill="#ffffff" d="m606.81757 284.23343l-31.40155 -31.401566l62.677124 0.12597656z"/>
+                                <path fill="#ffffff" d="m830.48645 249.44894l0 109.60629l31.307129 0l0 -109.60629z"/>
+                                <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
+                                <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
+                                <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
+                                <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                            </svg>
+                        </div>
+                        <div class="ad">RyznTag <strong>// scan receipt</strong></div>
+                        <div class="ts">Order #00427 · just now</div>
+                    </div>
+
+                    <div class="row"><span class="l">Tag ID</span><span class="r">0x4B-AC-09-22</span></div>
+                    <div class="row"><span class="l">Location</span><span class="r">Bench, Rack 3</span></div>
+                    <div class="row"><span class="l">Last lifted</span><span class="r">Mon · 3 days ago</span></div>
+
+                    <div class="lh"><span>Exercise</span><span>Sets × Reps · Wt</span></div>
+                    <div class="ex">
+                        <div class="row"><span class="l">Bench press</span><span class="r">3 × 8 · 185 lb</span></div>
+                        <div class="row"><span class="l">↳ working set</span><span class="r">1 × 6 · 205 lb</span></div>
+                    </div>
+
+                    <div class="total">
+                        <div class="row"><span class="l">Time to scan</span><span class="r">&lt; 1 s</span></div>
+                        <div class="row"><span class="l">Battery used</span><span class="r">0 W · passive</span></div>
+                        <div class="row" style="margin-top: 6px;"><span class="l">TOTAL · types saved</span><span class="r">7</span></div>
+                    </div>
+
+                    <div class="footer">
+                        Open the app to claim → <span class="url">apps.apple.com/app/ryzn</span>
+                    </div>
+
+                    <div class="barcode" aria-hidden="true">
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <a href="https://apps.apple.com/app/ryzn" class="cta-primary">
+                    Claim on App Store
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="reveal"><span class="ln">—</span>Order log<span class="ln">—</span></h2>
+            <div class="steps">
+                <div class="row-step reveal"><div class="sku">01</div><div><h3>Phone met the puck</h3><p>NFC field activated. The passive tag drew zero power, only the iPhone radio.</p></div><div class="dur">0.10 s</div></div>
+                <div class="row-step reveal"><div class="sku">02</div><div><h3>Tag returned its URL</h3><p>The puck broadcast its one line of data — ryznrise.com/scan — back to your phone.</p></div><div class="dur">0.20 s</div></div>
+                <div class="row-step reveal"><div class="sku">03</div><div><h3>iOS surfaced the sheet</h3><p>Standard OS UI for any NFC tag. Tap to open in browser, or in RYZN if installed.</p></div><div class="dur">0.50 s</div></div>
+                <div class="row-step reveal"><div class="sku">04</div><div><h3>RYZN opens to the lift</h3><p>If installed: the right exercise pre-loaded with your last weights. Lift.</p></div><div class="dur">0.80 s</div></div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="reveal"><span class="ln">—</span>Line items<span class="ln">—</span></h2>
+            <div class="why">
+                <div class="why-card reveal"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><h3>Zero typing</h3><p>The gym becomes the interface.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h3>Last weights, ready</h3><p>RYZN pre-fills the bar from your last session.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><h3>Works in any gym</h3><p>Tags pair once for every user.</p></div></div>
+                <div class="why-card reveal"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="14" height="10" rx="2" ry="2"/><line x1="22" y1="11" x2="22" y2="13"/><line x1="2" y1="9" x2="2" y2="15"/></svg></div><div><h3>No batteries</h3><p>Passive NFC. Stick once, last forever.</p></div></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="final-cta reveal">
+                <div class="brand-large">
+                    <svg viewBox="100 240 770 190" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#ffffff" d="m230.7223 418.38058l-124.59897 -122.248474l0 -43.200348l168.62993 165.44882z"/>
+                        <path fill="#ffffff" d="m106.123344 252.92651l168.62991 0l0 31.307068l-168.62991 0z"/>
+                        <path fill="#ffffff" d="m274.75235 252.93175l0 96.47243l-31.307068 0l0 -96.47243z"/>
+                        <path fill="#ffffff" d="m344.04776 419.14566l127.81052 -122.993164l0 -43.463516l-172.97638 166.45668z"/>
+                        <path fill="#ffffff" d="m243.4865 349.45587l-31.086609 -31.086609l61.92125 0.25198364z"/>
+                        <path fill="#ffffff" d="m542.53723 418.8832l127.81055 -122.993195l0 -43.4635l-172.97638 166.4567z"/>
+                        <path fill="#ffffff" d="m670.3478 387.57742l-134.96063 0l0 31.307098l134.96063 0z"/>
+                        <path fill="#ffffff" d="m695.8642 294.59564l122.993164 127.81052l43.4635 0l-166.45667 -172.97636z"/>
+                        <path fill="#ffffff" d="m727.1699 422.40616l0 -134.96063l-31.307068 0l0 134.96063z"/>
+                        <path fill="#ffffff" d="m497.20206 284.15747l109.60629 0l0 -31.307083l-109.60629 0z"/>
+                        <path fill="#ffffff" d="m606.81757 284.23343l-31.40155 -31.401566l62.677124 0.12597656z"/>
+                        <path fill="#ffffff" d="m830.48645 249.44894l0 109.60629l31.307129 0l0 -109.60629z"/>
+                        <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
+                        <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
+                        <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
+                        <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                    </svg>
+                </div>
+                <h2>Claim the <span class="accent">app</span>. Tap again.</h2>
+                <p>Without RYZN installed, this receipt is all you'll see. Once it's on your phone, the next tap takes you straight into the workout.</p>
+                <a href="https://apps.apple.com/app/ryzn" class="cta-primary">
+                    Download · iOS
+                </a>
+                <span class="small">iPhone · iOS 15+ · $10/mo</span>
+            </div>
+        </section>
+
+        <footer>
+            <a href="https://apps.apple.com/app/ryzn">Download on the App Store</a>
+            <span class="dot-sep">·</span>
+            <a href="/">Back to home</a>
+        </footer>
+    </main>
+
+    <script>
+        (function () {
+            if (!('IntersectionObserver' in window)) {
+                document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+                return;
+            }
+            var io = new IntersectionObserver(function(entries){
+                entries.forEach(function(entry){
+                    if (entry.isIntersecting) {
+                        var sibs = Array.from(entry.target.parentElement?.querySelectorAll(':scope > .reveal') || []);
+                        var delay = Math.max(0, sibs.indexOf(entry.target)) * 70;
+                        setTimeout(function(){ entry.target.classList.add('in'); }, delay);
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+            document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+        })();
+    </script>
+</body>
+</html>

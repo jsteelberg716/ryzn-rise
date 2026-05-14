@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>/scan — 8 design variants</title>
+    <meta name="theme-color" content="#0c0d10">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: hsl(225, 8%, 7%);
+            --bg-2: hsl(225, 8%, 10%);
+            --fg: hsl(0, 0%, 100%);
+            --muted: hsl(0, 0%, 64%);
+            --tertiary: hsl(0, 0%, 38%);
+            --primary: hsl(145, 72%, 50%);
+            --primary-deep: hsl(160, 70%, 42%);
+            --card: hsla(0, 0%, 100%, 0.04);
+            --border: hsla(0, 0%, 100%, 0.1);
+            --mono: 'JetBrains Mono', monospace;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg); color: var(--fg);
+            margin: 0; min-height: 100vh;
+            -webkit-font-smoothing: antialiased; line-height: 1.5;
+        }
+        .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .ambient::before {
+            content: ""; position: absolute;
+            top: -20%; left: 50%; transform: translateX(-50%);
+            width: min(800px, 140vw); height: min(800px, 140vw);
+            background: radial-gradient(circle at center, hsla(145, 72%, 50%, 0.18) 0%, transparent 60%);
+        }
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 56px;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: hsla(225, 8%, 5%, 0.82);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+        nav .inner {
+            max-width: 1200px; margin: 0 auto; height: 100%;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 18px; gap: 12px;
+        }
+        nav .brand { display: inline-flex; align-items: center; text-decoration: none; }
+        nav .brand svg { display: block; height: 22px; width: auto; }
+        nav .back {
+            color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 600;
+        }
+        nav .back:hover { color: var(--fg); }
+
+        main {
+            max-width: 1100px; margin: 0 auto;
+            padding: 80px 18px 56px;
+            position: relative; z-index: 1;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .hero .pill {
+            display: inline-block;
+            font-family: var(--mono);
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: hsla(145, 72%, 50%, 0.08);
+            border: 1px solid hsla(145, 72%, 50%, 0.22);
+            padding: 7px 13px;
+            border-radius: 999px;
+            margin-bottom: 18px;
+        }
+        h1 {
+            font-size: clamp(34px, 8vw, 52px);
+            font-weight: 800; line-height: 1.0;
+            letter-spacing: -0.035em;
+            margin: 0 0 12px;
+        }
+        h1 .accent {
+            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .hero p {
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.5;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+        @media (min-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1000px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 22px; } }
+
+        .card {
+            position: relative;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: hsla(145, 72%, 50%, 0.45);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.45), 0 0 24px hsla(145, 72%, 50%, 0.15);
+        }
+        .card .preview {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 11;
+            background: var(--bg);
+            overflow: hidden;
+        }
+        .card .preview iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 1600px;
+            height: calc(1600px * 11 / 16);
+            border: 0;
+            transform: scale(0.25);
+            transform-origin: top left;
+            pointer-events: none;
+            background: var(--bg);
+        }
+        @media (min-width: 700px) {
+            .card .preview iframe {
+                width: 1400px;
+                height: calc(1400px * 11 / 16);
+                transform: scale(0.32);
+            }
+        }
+        .card .preview::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, transparent 60%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+        }
+        .card .preview .num {
+            position: absolute;
+            top: 12px; left: 14px;
+            font-family: var(--mono);
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.14em;
+            background: rgba(0, 0, 0, 0.62);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid hsla(145, 72%, 50%, 0.4);
+            z-index: 2;
+        }
+        .card .meta {
+            padding: 16px 18px 18px;
+            position: relative;
+        }
+        .card .meta h3 {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.015em;
+            margin: 0 0 4px;
+        }
+        .card .meta .tagline {
+            font-size: 13.5px;
+            color: var(--muted);
+            margin: 0 0 12px;
+            line-height: 1.4;
+        }
+        .card .meta .keys {
+            display: flex; gap: 6px; flex-wrap: wrap;
+        }
+        .card .meta .keys span {
+            font-family: var(--mono);
+            font-size: 10px; font-weight: 600;
+            color: var(--muted);
+            background: hsla(0, 0%, 100%, 0.05);
+            border: 1px solid var(--border);
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .card .meta .open {
+            position: absolute;
+            top: 16px; right: 18px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .card .meta .open svg {
+            margin-left: 2px; vertical-align: -2px;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--tertiary);
+            padding: 36px 0 28px;
+            font-size: 12.5px;
+        }
+        footer a { color: var(--muted); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="ambient" aria-hidden="true"></div>
+
+    <nav>
+        <div class="inner">
+            <a href="/" class="brand">
+                <svg viewBox="100 240 770 190" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#ffffff" d="m230.7223 418.38058l-124.59897 -122.248474l0 -43.200348l168.62993 165.44882z"/>
+                    <path fill="#ffffff" d="m106.123344 252.92651l168.62991 0l0 31.307068l-168.62991 0z"/>
+                    <path fill="#ffffff" d="m274.75235 252.93175l0 96.47243l-31.307068 0l0 -96.47243z"/>
+                    <path fill="#ffffff" d="m344.04776 419.14566l127.81052 -122.993164l0 -43.463516l-172.97638 166.45668z"/>
+                    <path fill="#ffffff" d="m243.4865 349.45587l-31.086609 -31.086609l61.92125 0.25198364z"/>
+                    <path fill="#ffffff" d="m542.53723 418.8832l127.81055 -122.993195l0 -43.4635l-172.97638 166.4567z"/>
+                    <path fill="#ffffff" d="m670.3478 387.57742l-134.96063 0l0 31.307098l134.96063 0z"/>
+                    <path fill="#ffffff" d="m695.8642 294.59564l122.993164 127.81052l43.4635 0l-166.45667 -172.97636z"/>
+                    <path fill="#ffffff" d="m727.1699 422.40616l0 -134.96063l-31.307068 0l0 134.96063z"/>
+                    <path fill="#ffffff" d="m497.20206 284.15747l109.60629 0l0 -31.307083l-109.60629 0z"/>
+                    <path fill="#ffffff" d="m606.81757 284.23343l-31.40155 -31.401566l62.677124 0.12597656z"/>
+                    <path fill="#ffffff" d="m830.48645 249.44894l0 109.60629l31.307129 0l0 -109.60629z"/>
+                    <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
+                    <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
+                    <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
+                    <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                </svg>
+            </a>
+            <a href="/scan/" class="back">← Live /scan</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="hero">
+            <span class="pill">/scan · 8 variants</span>
+            <h1>Pick a <span class="accent">design.</span></h1>
+            <p>Eight full redesigns of the post-tap landing page. Each one ships independent of the others. Click any card to open it full-screen on your phone, then come back and pick.</p>
+        </div>
+
+        <div class="grid">
+            <a class="card" href="/scan/v1/" target="_blank">
+                <div class="preview"><span class="num">V1</span><iframe src="/scan/v1/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
+                <div class="meta">
+                    <h3>Drop &amp; Tap</h3>
+                    <span class="open">Open ↗</span>
+                    <p class="tagline">Phone slides in from the right, taps the puck on a surface, scan bursts outward, then the sheet rises halfway with "Exercise detected".</p>
+                    <div class="keys"><span>3D phone tilt</span><span>iOS sheet</span><span>Cinematic</span></div>
+                </div>
+            </a>
+
+            <a class="card" href="/scan/v2/" target="_blank">
+                <div class="preview"><span class="num">V2</span><iframe src="/scan/v2/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
+                <div class="meta">
+                    <h3>Field Lines</h3>
+                    <span class="open">Open ↗</span>
+                    <p class="tagline">No phone — an abstract NFC physics diagram. Concentric rings emanate from the puck while a phone silhouette is drawn in. Spec sheet + chapter handshake.</p>
+                    <div class="keys"><span>Abstract</span><span>Technical</span><span>Cyan</span></div>
+                </div>
+            </a>
+
+            <a class="card" href="/scan/v3/" target="_blank">
+                <div class="preview"><span class="num">V3</span><iframe src="/scan/v3/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
+                <div class="meta">
+                    <h3>Field Guide</h3>
+                    <span class="open">Open ↗</span>
+                    <p class="tagline">Editorial magazine. Big italic serif headlines, pull quotes, numbered chapters. The tag sits on a barbell in an annotated "Fig. 01" illustration.</p>
+                    <div class="keys"><span>Editorial</span><span>Serif</span><span>Long-form</span></div>
+                </div>
+            </a>
+
+            <a class="card" href="/scan/v4/" target="_blank">
+                <div class="preview"><span class="num">V4</span><iframe src="/scan/v4/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
+                <div class="meta">
+                    <h3>Brutalist Board</h3>
+                    <span class="open">Open ↗</span>
+                    <p class="tagline">Black, white, neon green. Huge uppercase. A grid stamp board for the hero. Hard edges, drop-shadow buttons, exposed structure.</p>
+                    <div class="keys"><span>Brutalist</span><span>High contrast</span><span>Bold</span></div>
+                </div>
+            </a>
+
+            <a class="card" href="/scan/v5/" target="_blank">
+                <div class="preview"><span class="num">V5</span><iframe src="/scan/v5/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
+                <div class="meta">
+                    <h3>Apple Keynote</h3>
+                    <span class="open">Open ↗</span>
+                    <p class="tagline">The same 3D-phone-tilt animation as V1, but with massive product-page typography. Big slab sections with the green halo treatment.</p>
+                    <div class="keys"><span>Keynote</span><span>Big type</span><span>Premium</span></div>
+                </div>
+            </a>
+
+            <a class="card" href="/scan/v6/" target="_blank">
+                <div class="preview"><span class="num">V6</span><iframe src="/scan/v6/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
+                <div class="meta">
+                    <h3>Sketchbook</h3>
+                    <span class="open">Open ↗</span>
+                    <p class="tagline">Hand-drawn stroke art of a hand holding a phone over the barbell. Caveat-script annotations, paper-grid backdrop, warm orange accent.</p>
+                    <div class="keys"><span>Illustrated</span><span>Playful</span><span>Hand-drawn</span></div>
+                </div>
+            </a>
+
+            <a class="card" href="/scan/v7/" target="_blank">
+                <div class="preview"><span class="num">V7</span><iframe src="/scan/v7/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
+                <div class="meta">
+                    <h3>Arcade Terminal</h3>
+                    <span class="open">Open ↗</span>
+                    <p class="tagline">80s synthwave. Animated scan-log terminal in the hero, Press Start pixel type, neon green &amp; pink glow, perspective grid floor.</p>
+                    <div class="keys"><span>Retro</span><span>Neon</span><span>Synthwave</span></div>
+                </div>
+            </a>
+
+            <a class="card" href="/scan/v8/" target="_blank">
+                <div class="preview"><span class="num">V8</span><iframe src="/scan/v8/" loading="lazy" sandbox="allow-same-origin"></iframe></div>
+                <div class="meta">
+                    <h3>Receipt</h3>
+                    <span class="open">Open ↗</span>
+                    <p class="tagline">The post-tap page styled as a thermal-printed receipt with tag ID, exercise, total. "PAID · 0 W" stamp, dashed rules, barcode footer.</p>
+                    <div class="keys"><span>Print</span><span>Concept</span><span>Mono</span></div>
+                </div>
+            </a>
+        </div>
+
+        <footer>
+            <a href="/scan/">← Back to live /scan</a>
+        </footer>
+    </main>
+</body>
+</html>
