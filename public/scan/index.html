@@ -16,9 +16,10 @@
     <style>
         /* ───────────────────────────────────────────────────────
            Theme tokens — mirrors src/index.css HSL values so this
-           static page reads as part of the same product, not a
-           separate microsite. Color names stay aligned to the
-           Tailwind theme so any future React migration is mechanical.
+           static page reads as part of the same product. The whole
+           layout is mobile-first because /scan is the URL inside
+           every physical NFC puck — 99% of hits come from someone
+           who just tapped their iPhone to a gym machine.
            ─────────────────────────────────────────────────────── */
         :root {
             --background: hsl(240, 5%, 12%);
@@ -39,7 +40,7 @@
         }
 
         * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
             background: var(--background);
@@ -63,8 +64,8 @@
             content: "";
             position: absolute;
             top: -20%; left: 50%;
-            width: 800px; height: 800px;
-            background: radial-gradient(circle at center, hsla(145, 72%, 50%, 0.18) 0%, transparent 60%);
+            width: min(800px, 140vw); height: min(800px, 140vw);
+            background: radial-gradient(circle at center, hsla(145, 72%, 50%, 0.22) 0%, transparent 60%);
             transform: translateX(-50%);
             animation: pulseGlow 6s ease-in-out infinite;
         }
@@ -73,9 +74,9 @@
             position: absolute;
             inset: 0;
             background-image:
-                linear-gradient(to right, hsla(0, 0%, 100%, 0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, hsla(0, 0%, 100%, 0.02) 1px, transparent 1px);
-            background-size: 64px 64px;
+                linear-gradient(to right, hsla(0, 0%, 100%, 0.025) 1px, transparent 1px),
+                linear-gradient(to bottom, hsla(0, 0%, 100%, 0.025) 1px, transparent 1px);
+            background-size: 56px 56px;
             mask-image: radial-gradient(ellipse at top, black 30%, transparent 70%);
             -webkit-mask-image: radial-gradient(ellipse at top, black 30%, transparent 70%);
         }
@@ -88,7 +89,7 @@
         nav {
             position: fixed;
             top: 0; left: 0; right: 0;
-            height: 64px;
+            height: 56px;
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             background: hsla(240, 5%, 8%, 0.78);
@@ -96,13 +97,13 @@
             z-index: 1000;
         }
         nav .inner {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 18px;
         }
         nav .brand {
             display: flex;
@@ -110,12 +111,12 @@
             color: var(--foreground);
             text-decoration: none;
             font-weight: 900;
-            font-size: 20px;
+            font-size: 18px;
             letter-spacing: 0.8px;
         }
         nav .links {
-            display: flex;
-            gap: 28px;
+            display: none;
+            gap: 26px;
             align-items: center;
         }
         nav .links a {
@@ -124,63 +125,52 @@
             font-weight: 500;
             letter-spacing: 0.02em;
             text-decoration: none;
-            position: relative;
             transition: color 0.2s;
-        }
-        nav .links a::after {
-            content: "";
-            position: absolute;
-            left: 0; bottom: -6px;
-            width: 0; height: 2px;
-            background: var(--primary);
-            transition: width 0.3s ease;
         }
         nav .links a:hover, nav .links a.active {
             color: var(--foreground);
         }
-        nav .links a:hover::after, nav .links a.active::after {
-            width: 100%;
-        }
         nav .cta {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: linear-gradient(90deg, var(--primary), var(--primary-deep));
             color: var(--foreground);
-            padding: 10px 18px;
+            padding: 9px 14px;
             border-radius: 999px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12.5px;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 14px hsla(145, 72%, 50%, 0.32);
         }
-        nav .cta:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px hsla(145, 72%, 50%, 0.48);
-        }
-        nav .cta:active { transform: translateY(0); }
-        @media (max-width: 760px) {
-            nav .links { display: none; }
-            nav .cta { padding: 8px 14px; font-size: 12px; }
+        nav .cta:active { transform: translateY(1px); }
+        @media (min-width: 760px) {
+            nav { height: 64px; }
+            nav .inner { padding: 0 24px; }
+            nav .brand { font-size: 20px; }
+            nav .links { display: flex; }
+            nav .cta { padding: 10px 18px; font-size: 13px; }
         }
 
-        /* ───────────── Layout shell ───────────── */
+        /* ───────────── Layout shell — mobile first ───────────── */
         main {
             max-width: 780px;
             margin: 0 auto;
-            padding: 128px 24px 80px;
+            padding: 88px 18px 56px;
             position: relative;
             z-index: 1;
         }
-        section { margin-bottom: 80px; }
-        @media (max-width: 600px) {
-            main { padding: 104px 20px 64px; }
-            section { margin-bottom: 64px; }
+        section { margin-bottom: 56px; }
+        @media (min-width: 760px) {
+            main { padding: 128px 24px 80px; }
+            section { margin-bottom: 80px; }
         }
 
         /* ───────────── Reveal-on-scroll ───────────── */
         .reveal {
             opacity: 0;
-            transform: translateY(24px);
+            transform: translateY(20px);
             transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
                         transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -203,12 +193,12 @@
             background: hsla(0, 0%, 100%, 0.04);
             border: 1px solid var(--border);
             box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.05);
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 600;
             letter-spacing: 0.15em;
             text-transform: uppercase;
             color: var(--primary);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         .eyebrow .dot {
             position: relative;
@@ -230,46 +220,13 @@
         }
 
         /* ───────────── Hero ───────────── */
-        .hero {
-            text-align: center;
-        }
-        .puck {
-            width: 132px;
-            height: 132px;
-            margin: 0 auto 32px;
-            border-radius: 14px;
-            background: var(--puck);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-card), 0 0 0 1px hsla(0, 0%, 100%, 0.06);
-            position: relative;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .puck:hover {
-            transform: scale(1.04) rotate(-1deg);
-        }
-        .puck::before, .puck::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 14px;
-            border: 2px solid var(--primary);
-            opacity: 0.55;
-            animation: puckPulse 2.2s ease-out infinite;
-        }
-        .puck::after { animation-delay: 1.1s; }
-        @keyframes puckPulse {
-            0%   { transform: scale(1);    opacity: 0.7; }
-            100% { transform: scale(1.55); opacity: 0;   }
-        }
-        .puck svg { display: block; }
+        .hero { text-align: center; }
         h1 {
-            font-size: clamp(36px, 7vw, 56px);
+            font-size: clamp(34px, 9vw, 56px);
             font-weight: 800;
-            line-height: 1.05;
-            letter-spacing: -0.03em;
-            margin: 0 0 18px;
+            line-height: 1.02;
+            letter-spacing: -0.035em;
+            margin: 0 0 14px;
         }
         h1 .accent {
             background: linear-gradient(90deg, var(--primary), var(--primary-deep));
@@ -277,75 +234,435 @@
             background-clip: text;
             color: transparent;
         }
-        .hero p {
+        .hero p.lede {
             color: var(--muted-foreground);
-            font-size: clamp(15px, 1.6vw, 17px);
+            font-size: clamp(14.5px, 4vw, 17px);
             line-height: 1.55;
-            max-width: 560px;
-            margin: 0 auto 32px;
+            max-width: 520px;
+            margin: 0 auto 28px;
         }
+
+        /* ─────────────────────────────────────────────────────
+           NFC scan stage — the centerpiece. Looped 6-second
+           sequence that recreates the iOS NFC tap moment:
+             0.0–1.6s  puck idle, NFC waves rippling out
+             1.6–2.6s  puck drops toward phone (approach)
+             2.6–2.9s  contact pulse
+             2.9–4.4s  iOS banner slides down + sits
+             4.4–5.0s  banner shrinks (tap), app icon zooms in
+             5.0–6.0s  hold, then everything resets
+           Pure CSS — no JS to run, no jank during scroll.
+           ───────────────────────────────────────────────── */
+        .stage {
+            position: relative;
+            width: min(260px, 80vw);
+            margin: 0 auto 28px;
+            padding-top: 110px; /* headroom for the floating puck */
+        }
+
+        /* Phone bezel */
+        .phone {
+            position: relative;
+            width: 100%;
+            max-width: 220px;
+            margin: 0 auto;
+            aspect-ratio: 9 / 19.5;
+            border-radius: 38px;
+            padding: 4px;
+            background:
+                linear-gradient(160deg,
+                    hsla(0, 0%, 100%, 0.18) 0%,
+                    hsla(145, 72%, 50%, 0.10) 35%,
+                    hsla(0, 0%, 100%, 0.05) 100%);
+            box-shadow:
+                0 30px 60px -18px rgba(0,0,0,0.65),
+                0 0 60px rgba(34,197,94,0.18);
+        }
+        .phone-screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 34px;
+            background:
+                radial-gradient(ellipse at top, hsl(240, 6%, 14%) 0%, hsl(240, 6%, 6%) 70%);
+            overflow: hidden;
+            box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.04);
+        }
+        .phone-screen .dyn-island {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 78px;
+            height: 22px;
+            border-radius: 999px;
+            background: #000;
+            z-index: 5;
+        }
+        .phone-screen .clock {
+            position: absolute;
+            top: 12px;
+            left: 18px;
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 0.02em;
+            z-index: 4;
+        }
+        .phone-screen .signal {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 4;
+        }
+        .phone-screen .signal .bars {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 1.5px;
+        }
+        .phone-screen .signal .bars span {
+            width: 3px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 1px;
+        }
+        .phone-screen .signal .bars span:nth-child(1) { height: 4px; }
+        .phone-screen .signal .bars span:nth-child(2) { height: 6px; }
+        .phone-screen .signal .bars span:nth-child(3) { height: 8px; }
+        .phone-screen .signal .bars span:nth-child(4) { height: 10px; }
+        .phone-screen .signal .battery {
+            width: 22px;
+            height: 11px;
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 3px;
+            position: relative;
+        }
+        .phone-screen .signal .battery::after {
+            content: "";
+            position: absolute;
+            inset: 1.5px;
+            right: 4px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 1px;
+        }
+        .phone-screen .signal .battery::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: -3px;
+            transform: translateY(-50%);
+            width: 1.5px;
+            height: 4px;
+            background: rgba(255,255,255,0.55);
+            border-radius: 1px;
+        }
+
+        /* Soft "ready" glow that brightens at contact */
+        .phone-screen::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 40% at 50% 8%, hsla(145, 72%, 50%, 0.35), transparent 60%);
+            opacity: 0;
+            animation: contactGlow 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes contactGlow {
+            0%, 26%, 80%, 100% { opacity: 0; }
+            44%, 60%           { opacity: 1; }
+        }
+
+        /* ── Floating NFC puck (the physical tag).
+              Lives in the 110px padding-top headroom of .stage. Starts
+              at y=12, descends 70px to "tap" the phone top, then rises
+              back. Keyframe timings line up with the iOS banner below. */
+        .puck {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: 78px;
+            height: 78px;
+            border-radius: 12px;
+            background: var(--puck);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 12px 24px rgba(0,0,0,0.4),
+                0 0 0 1px hsla(0, 0%, 100%, 0.08),
+                inset 0 1px 0 rgba(255,255,255,0.85);
+            animation: puckTap 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+            z-index: 6;
+        }
+        .puck svg { display: block; width: 42px; height: 40px; }
+        @keyframes puckTap {
+            0%, 22%   { transform: translateX(-50%) translateY(0) scale(1); }
+            40%       { transform: translateX(-50%) translateY(70px) scale(1); }
+            45%       { transform: translateX(-50%) translateY(70px) scale(1.06); }
+            48%       { transform: translateX(-50%) translateY(70px) scale(0.98); }
+            54%       { transform: translateX(-50%) translateY(70px) scale(1); }
+            74%       { transform: translateX(-50%) translateY(0)  scale(1); }
+            100%      { transform: translateX(-50%) translateY(0)  scale(1); }
+        }
+
+        /* ── Radio-wave rings emanating from the puck ── */
+        .nfc-waves {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 78px; height: 78px;
+            pointer-events: none;
+            z-index: 5;
+            animation: wavesShift 6s ease-in-out infinite;
+        }
+        @keyframes wavesShift {
+            0%, 22%   { transform: translateX(-50%) translateY(0); }
+            40%, 60%  { transform: translateX(-50%) translateY(70px); }
+            74%, 100% { transform: translateX(-50%) translateY(0); }
+        }
+        .nfc-waves::before,
+        .nfc-waves::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            border: 2px solid hsl(145, 72%, 50%);
+            opacity: 0;
+            animation: wavePulse 2.2s ease-out infinite;
+        }
+        .nfc-waves::after { animation-delay: 1.1s; }
+        @keyframes wavePulse {
+            0%   { transform: scale(1);    opacity: 0.75; }
+            100% { transform: scale(1.9);  opacity: 0; }
+        }
+
+        /* ── iOS NFC scan banner — slides down from the top ── */
+        .ios-banner {
+            position: absolute;
+            top: 44px;
+            left: 10px;
+            right: 10px;
+            padding: 11px 12px;
+            border-radius: 16px;
+            background: rgba(40, 40, 45, 0.9);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            box-shadow:
+                0 18px 40px rgba(0,0,0,0.55),
+                inset 0 1px 0 rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-60px) scale(0.92);
+            transform-origin: top center;
+            animation: bannerSlide 6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+            z-index: 7;
+        }
+        @keyframes bannerSlide {
+            0%, 48%   { transform: translateY(-60px) scale(0.92); opacity: 0; }
+            54%       { transform: translateY(0) scale(1); opacity: 1; }
+            68%       { transform: translateY(0) scale(1); opacity: 1; }
+            72%       { transform: translateY(0) scale(0.96); opacity: 1; }
+            74%       { transform: translateY(0) scale(1); opacity: 1; }
+            82%       { transform: translateY(-60px) scale(0.92); opacity: 0; }
+            100%      { transform: translateY(-60px) scale(0.92); opacity: 0; }
+        }
+        .ios-banner .ios-icon {
+            width: 38px; height: 38px;
+            border-radius: 9px;
+            background: linear-gradient(160deg, hsl(40, 18%, 96%), hsl(40, 18%, 88%));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        .ios-banner .ios-icon svg { display: block; width: 26px; height: 26px; }
+        .ios-banner .ios-text {
+            min-width: 0;
+            flex: 1;
+            text-align: left;
+        }
+        .ios-banner .ios-title {
+            color: rgba(255,255,255,0.96);
+            font-size: 12.5px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ios-banner .ios-sub {
+            color: rgba(255,255,255,0.55);
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 1px;
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ios-banner .ios-host {
+            color: rgba(255,255,255,0.4);
+            font-size: 10.5px;
+            font-weight: 500;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        /* ── App-opens splash inside the phone ── */
+        .app-splash {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.7);
+            z-index: 6;
+            animation: appSplash 6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+            background: radial-gradient(ellipse at center, hsla(145, 72%, 50%, 0.18), transparent 70%);
+        }
+        @keyframes appSplash {
+            0%, 82%   { opacity: 0; transform: scale(0.7); }
+            88%       { opacity: 1; transform: scale(1); }
+            93%       { opacity: 1; transform: scale(1); }
+            98%       { opacity: 0; transform: scale(0.95); }
+            100%      { opacity: 0; transform: scale(0.95); }
+        }
+        .app-splash .ai {
+            width: 72px; height: 72px;
+            border-radius: 16px;
+            background: linear-gradient(160deg, hsl(40, 18%, 96%) 0%, hsl(40, 18%, 86%) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 16px 36px rgba(0,0,0,0.55),
+                0 0 24px hsla(145, 72%, 50%, 0.5);
+        }
+        .app-splash .ai svg { display: block; width: 46px; height: 44px; }
+        .app-splash .label {
+            margin-top: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: hsl(145, 72%, 65%);
+            text-transform: uppercase;
+        }
+        .app-splash .label .pulse {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: hsl(145, 72%, 55%);
+            margin-right: 6px;
+            vertical-align: middle;
+            animation: ping 1.4s ease-out infinite;
+        }
+
+        /* ── Stage caption that swaps with the animation phase ── */
+        .stage-caption {
+            position: relative;
+            margin: 0 auto;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted-foreground);
+            text-align: center;
+            min-height: 16px;
+        }
+        .stage-caption span {
+            display: inline-block;
+            position: absolute;
+            left: 0; right: 0;
+            opacity: 0;
+            animation: captionCycle 6s linear infinite;
+        }
+        .stage-caption span:nth-child(1) { animation-delay: 0s; }
+        .stage-caption span:nth-child(2) { animation-delay: 1.6s; }
+        .stage-caption span:nth-child(3) { animation-delay: 3.0s; }
+        .stage-caption span:nth-child(4) { animation-delay: 4.4s; }
+        @keyframes captionCycle {
+            0%, 1%      { opacity: 0; transform: translateY(8px); }
+            5%, 23%     { opacity: 1; transform: translateY(0); }
+            27%, 100%   { opacity: 0; transform: translateY(-6px); }
+        }
+
+        /* ───────────── CTA button ───────────── */
         .cta-primary {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             background: linear-gradient(90deg, var(--primary), var(--primary-deep));
             color: var(--foreground);
-            padding: 16px 32px;
+            padding: 16px 26px;
             border-radius: 14px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15.5px;
             letter-spacing: -0.005em;
-            transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 6px 22px hsla(145, 72%, 50%, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .cta-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px hsla(145, 72%, 50%, 0.55);
+        .cta-primary:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 14px hsla(145, 72%, 50%, 0.5);
         }
-        .cta-primary:active { transform: translateY(0); }
-        .cta-primary svg {
-            transition: transform 0.2s;
-        }
-        .cta-primary:hover svg {
-            transform: translateX(3px);
-        }
+        .cta-primary svg { transition: transform 0.2s; }
 
         /* ───────────── Section headings ───────────── */
         h2 {
-            font-size: clamp(24px, 3vw, 32px);
+            font-size: clamp(22px, 6vw, 30px);
             font-weight: 700;
-            margin: 0 0 28px;
-            letter-spacing: -0.02em;
+            margin: 0 0 22px;
+            letter-spacing: -0.025em;
+            text-align: center;
+        }
+        h2 .accent {
+            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        /* ───────────── Steps ───────────── */
-        .steps {
+        /* ───────────── How-it-works timeline ───────────── */
+        .timeline {
+            position: relative;
             display: grid;
             gap: 14px;
         }
         .step {
-            background: var(--card);
+            position: relative;
+            background:
+                linear-gradient(180deg, hsla(0,0%,100%,0.02), transparent),
+                var(--card);
             border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 22px 24px;
+            border-radius: 20px;
+            padding: 20px 18px 20px 20px;
             display: flex;
-            gap: 18px;
+            gap: 16px;
             align-items: flex-start;
-            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
-            cursor: default;
+            transition: transform 0.25s, border-color 0.25s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .step:hover {
-            transform: translateY(-3px);
+        .step:active {
+            transform: scale(0.985);
             border-color: var(--border-strong);
-            box-shadow: var(--shadow-card);
         }
         .step-num {
             flex-shrink: 0;
-            width: 38px;
-            height: 38px;
+            width: 38px; height: 38px;
             border-radius: 50%;
-            background: linear-gradient(135deg, hsla(145, 72%, 50%, 0.22), hsla(145, 72%, 50%, 0.08));
+            background: linear-gradient(135deg, hsla(145, 72%, 50%, 0.28), hsla(145, 72%, 50%, 0.08));
             color: var(--primary);
             font-weight: 800;
             font-size: 16px;
@@ -353,13 +670,10 @@
             align-items: center;
             justify-content: center;
             border: 1px solid hsla(145, 72%, 50%, 0.35);
-            transition: transform 0.25s;
-        }
-        .step:hover .step-num {
-            transform: scale(1.08);
+            box-shadow: inset 0 1px 0 hsla(0,0%,100%,0.05);
         }
         .step h3 {
-            font-size: 17px;
+            font-size: 16.5px;
             font-weight: 700;
             margin: 0 0 6px;
             letter-spacing: -0.01em;
@@ -367,90 +681,148 @@
         .step p {
             margin: 0;
             color: var(--muted-foreground);
-            font-size: 14.5px;
+            font-size: 14px;
             line-height: 1.55;
         }
+        .step .step-mini {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .step .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: hsla(145, 72%, 50%, 0.10);
+            border: 1px solid hsla(145, 72%, 50%, 0.22);
+            font-size: 11.5px;
+            font-weight: 600;
+            color: hsl(145, 72%, 65%);
+            letter-spacing: 0.01em;
+        }
+        .step .chip svg { width: 12px; height: 12px; }
 
-        /* ───────────── Why grid ───────────── */
+        /* ───────────── Why-cards (single col on mobile) ───────────── */
         .why-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
+            grid-template-columns: 1fr;
+            gap: 12px;
         }
-        @media (max-width: 540px) {
-            .why-grid { grid-template-columns: 1fr; }
+        @media (min-width: 540px) {
+            .why-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
         }
         .why-card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 22px;
+            padding: 18px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
             transition: transform 0.25s, border-color 0.25s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .why-card::before {
-            content: "";
-            position: absolute;
-            inset: -1px;
-            border-radius: 18px;
-            padding: 1px;
-            background: linear-gradient(135deg, transparent, hsla(145, 72%, 50%, 0.35), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-            mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
-            -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
-            mask-composite: exclude;
-            -webkit-mask-composite: xor;
-        }
-        .why-card:hover {
-            transform: translateY(-3px);
-        }
-        .why-card:hover::before {
-            opacity: 1;
+        .why-card:active {
+            transform: scale(0.985);
+            border-color: var(--border-strong);
         }
         .why-card .icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
+            width: 36px; height: 36px;
             border-radius: 10px;
-            background: hsla(145, 72%, 50%, 0.12);
+            background: hsla(145, 72%, 50%, 0.14);
             color: var(--primary);
-            margin-bottom: 14px;
-            transition: transform 0.25s, background 0.25s;
-        }
-        .why-card:hover .icon {
-            transform: scale(1.1);
-            background: hsla(145, 72%, 50%, 0.2);
+            flex-shrink: 0;
         }
         .why-card h3 {
-            margin: 0 0 8px;
-            font-size: 17px;
+            margin: 0 0 6px;
+            font-size: 15.5px;
             font-weight: 700;
             letter-spacing: -0.01em;
         }
         .why-card p {
             margin: 0;
             color: var(--muted-foreground);
-            font-size: 14px;
-            line-height: 1.55;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+
+        /* ───────────── Final CTA card ───────────── */
+        .final-cta {
+            position: relative;
+            text-align: center;
+            background:
+                linear-gradient(135deg, hsla(145, 72%, 50%, 0.10), hsla(160, 70%, 42%, 0.06)),
+                var(--card);
+            border: 1px solid hsla(145, 72%, 50%, 0.18);
+            border-radius: 24px;
+            padding: 28px 22px;
+            overflow: hidden;
+        }
+        .final-cta::before {
+            content: "";
+            position: absolute;
+            top: -40%; left: 50%;
+            width: 120%; height: 180%;
+            background: radial-gradient(ellipse, hsla(145, 72%, 50%, 0.22), transparent 60%);
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .final-cta-icon {
+            position: relative;
+            width: 56px; height: 56px;
+            margin: 0 auto 14px;
+            border-radius: 14px;
+            background: linear-gradient(160deg, hsl(40, 18%, 96%), hsl(40, 18%, 86%));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+        }
+        .final-cta-icon svg { display: block; width: 32px; height: 30px; }
+        .final-cta h2 {
+            position: relative;
+            font-size: clamp(22px, 6.5vw, 28px);
+            margin-bottom: 10px;
+        }
+        .final-cta p {
+            position: relative;
+            color: var(--muted-foreground);
+            font-size: 14.5px;
+            margin: 0 0 22px;
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .final-cta .cta-primary { position: relative; }
+        .final-cta .small {
+            position: relative;
+            display: block;
+            color: var(--tertiary);
+            font-size: 11.5px;
+            margin-top: 14px;
+            letter-spacing: 0.02em;
         }
 
         /* ───────────── Footer ───────────── */
         footer {
             text-align: center;
             color: var(--tertiary);
-            padding-bottom: 40px;
-            font-size: 13px;
+            padding-bottom: 28px;
+            font-size: 12.5px;
         }
         footer a {
             color: var(--muted-foreground);
             text-decoration: none;
-            transition: color 0.2s;
         }
-        footer a:hover { color: var(--primary); }
+        footer a:active { color: var(--primary); }
         footer .dot-sep {
             opacity: 0.4;
             margin: 0 6px;
@@ -470,91 +842,222 @@
                 <a href="/scan" class="active">Scan</a>
                 <a href="/reviews">Reviews</a>
             </div>
-            <a href="/" class="cta">Start Free Trial</a>
+            <a href="https://apps.apple.com/app/ryzn" class="cta">Get App</a>
         </div>
     </nav>
 
     <main>
+        <!-- ─── Hero with the looping NFC scan animation ─── -->
         <section class="hero">
             <span class="eyebrow reveal">
                 <span class="dot"></span>
-                NFC · One-tap workouts
+                You just tapped a RyznTag
             </span>
-            <div class="puck reveal" aria-hidden="true">
-                <svg viewBox="220 110 520 500" width="68" height="66" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#0a0a0a" d="m595.1308 595.992l-356.10382 -349.38617l0 -123.46658l481.94427 472.85272z" />
-                    <path fill="#0a0a0a" d="m239.02696 123.12427l481.94427 0l0 89.47565l-481.94427 0z" />
-                    <path fill="#0a0a0a" d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z" />
-                    <path fill="#0a0a0a" d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z" />
-                    <path fill="hsl(145, 72%, 50%)" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z" />
-                </svg>
+            <h1 class="reveal">
+                One tap.<br>
+                <span class="accent">Workout starts.</span>
+            </h1>
+            <p class="lede reveal">
+                That little banner that just popped up on your phone? That's your gym becoming the interface. Here's what RYZN does the second you tap.
+            </p>
+
+            <!-- The animated stage. Pure CSS, 6-second infinite loop. -->
+            <div class="stage reveal" aria-label="Animation: phone tapping an NFC tag and opening RYZN" role="img">
+                <div class="phone">
+                    <div class="phone-screen">
+                        <!-- iOS status bar -->
+                        <div class="clock">9:41</div>
+                        <div class="dyn-island" aria-hidden="true"></div>
+                        <div class="signal" aria-hidden="true">
+                            <span class="bars"><span></span><span></span><span></span><span></span></span>
+                            <span class="battery"></span>
+                        </div>
+
+                        <!-- The iOS-style NFC scan banner -->
+                        <div class="ios-banner" aria-hidden="true">
+                            <div class="ios-icon">
+                                <!-- Mini RYZN R glyph -->
+                                <svg viewBox="220 110 520 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="#0a0a0a" d="m595.1308 595.992l-356.10382 -349.38617l0 -123.46658l481.94427 472.85272z"/>
+                                    <path fill="#0a0a0a" d="m239.02696 123.12427l481.94427 0l0 89.47565l-481.94427 0z"/>
+                                    <path fill="#0a0a0a" d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z"/>
+                                    <path fill="#0a0a0a" d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z"/>
+                                    <path fill="hsl(145, 72%, 50%)" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z"/>
+                                </svg>
+                            </div>
+                            <div class="ios-text">
+                                <div class="ios-title">RYZN tag</div>
+                                <div class="ios-sub">ryznrise.com/scan</div>
+                            </div>
+                            <span class="ios-host">Safari</span>
+                        </div>
+
+                        <!-- Then the app opens -->
+                        <div class="app-splash" aria-hidden="true">
+                            <div class="ai">
+                                <svg viewBox="220 110 520 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="#0a0a0a" d="m595.1308 595.992l-356.10382 -349.38617l0 -123.46658l481.94427 472.85272z"/>
+                                    <path fill="#0a0a0a" d="m239.02696 123.12427l481.94427 0l0 89.47565l-481.94427 0z"/>
+                                    <path fill="#0a0a0a" d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z"/>
+                                    <path fill="#0a0a0a" d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z"/>
+                                    <path fill="hsl(145, 72%, 50%)" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z"/>
+                                </svg>
+                            </div>
+                            <div class="label"><span class="pulse"></span>RYZN — Bench Press</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NFC waves + the physical puck floating above the phone -->
+                <div class="nfc-waves" aria-hidden="true"></div>
+                <div class="puck" aria-hidden="true">
+                    <svg viewBox="220 110 520 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#0a0a0a" d="m595.1308 595.992l-356.10382 -349.38617l0 -123.46658l481.94427 472.85272z"/>
+                        <path fill="#0a0a0a" d="m239.02696 123.12427l481.94427 0l0 89.47565l-481.94427 0z"/>
+                        <path fill="#0a0a0a" d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z"/>
+                        <path fill="#0a0a0a" d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z"/>
+                        <path fill="hsl(145, 72%, 50%)" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z"/>
+                    </svg>
+                </div>
             </div>
-            <h1 class="reveal">One tap. <span class="accent">Workout starts.</span></h1>
-            <p class="reveal">RyznTags are NFC pucks that pair to gym equipment. Tap your phone, the right exercise loads, your weights from last time pre-fill — you just lift. No typing, no scrolling, no tracking friction.</p>
-            <a href="https://apps.apple.com/app/ryzn" class="cta-primary reveal">
-                Get RYZN on the App Store
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+
+            <div class="stage-caption reveal" aria-hidden="true">
+                <span>Tag is broadcasting</span>
+                <span>Phone enters the field</span>
+                <span>iOS shows the banner</span>
+                <span>RYZN opens, ready to lift</span>
+            </div>
+
+            <div class="reveal" style="margin-top: 32px;">
+                <a href="https://apps.apple.com/app/ryzn" class="cta-primary">
+                    Get RYZN on the App Store
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
         </section>
 
+        <!-- ─── What just happened (explainer) ─── -->
         <section>
-            <h2 class="reveal">How it works</h2>
-            <div class="steps">
+            <h2 class="reveal">What just <span class="accent">happened</span>?</h2>
+            <div class="timeline">
                 <div class="step reveal">
                     <div class="step-num">1</div>
                     <div>
-                        <h3>Tags go on equipment</h3>
-                        <p>Small NFC pucks stick to any gym machine, rack, bench, or wall. Each tag pairs to a piece of equipment once — every user benefits forever.</p>
+                        <h3>You held your phone near a puck</h3>
+                        <p>RyznTags are passive NFC stickers — no batteries, no signal of their own. Your iPhone powers them with a magnetic field the second it gets within an inch.</p>
+                        <div class="step-mini">
+                            <span class="chip">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>
+                                Passive NFC
+                            </span>
+                            <span class="chip">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                                Zero power
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="step reveal">
                     <div class="step-num">2</div>
                     <div>
-                        <h3>Tap your phone</h3>
-                        <p>Hold your iPhone near a puck. iOS shows a banner — tap it. RYZN opens, the right lift is pre-loaded with your last weights, your sets and reps already filled in.</p>
+                        <h3>iOS read the tag and showed a banner</h3>
+                        <p>Built into every iPhone since the iPhone 7 — no app needed for the read. The banner you saw is the same OS-level UI you get from any NFC sticker. The URL on this tag points here.</p>
+                        <div class="step-mini">
+                            <span class="chip">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/></svg>
+                                System banner
+                            </span>
+                            <span class="chip">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9"/><path d="M21 3v6h-6"/><path d="M21 3l-9 9"/></svg>
+                                iPhone 7+
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="step reveal">
                     <div class="step-num">3</div>
                     <div>
-                        <h3>Tap the next one</h3>
-                        <p>Between exercises, tap the next machine. Set, rep, weight — all auto-filled. The whole workout builds itself as you move through the gym.</p>
+                        <h3>If you have RYZN, it opens to the right lift</h3>
+                        <p>The tag carries which machine you tapped. RYZN reads it, pulls your last weights for that exercise, and pre-fills the bar. You just lift — no typing, no scrolling, no app to dig through.</p>
+                        <div class="step-mini">
+                            <span class="chip">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                Pre-filled
+                            </span>
+                            <span class="chip">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                Under 1s
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- ─── Why it matters ─── -->
         <section>
-            <h2 class="reveal">Why it matters</h2>
+            <h2 class="reveal">Why it <span class="accent">matters</span></h2>
             <div class="why-grid">
                 <div class="why-card reveal">
                     <div class="icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                     </div>
-                    <h3>Zero typing</h3>
-                    <p>Stop fumbling between sets. Your gym becomes the interface.</p>
+                    <div>
+                        <h3>Zero typing</h3>
+                        <p>Stop fumbling between sets. The gym becomes the interface.</p>
+                    </div>
                 </div>
                 <div class="why-card reveal">
                     <div class="icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
-                    <h3>Last weights, ready</h3>
-                    <p>RYZN pre-fills the bar from your last session — no guessing.</p>
+                    <div>
+                        <h3>Last weights, ready</h3>
+                        <p>RYZN pre-fills the bar from your last session — no guessing.</p>
+                    </div>
                 </div>
                 <div class="why-card reveal">
                     <div class="icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     </div>
-                    <h3>Works in any gym</h3>
-                    <p>Tags pair once, work for every RYZN user who scans them.</p>
+                    <div>
+                        <h3>Works in any gym</h3>
+                        <p>Tags pair once, work for every RYZN user who taps them.</p>
+                    </div>
                 </div>
                 <div class="why-card reveal">
                     <div class="icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="14" height="10" rx="2" ry="2"/><line x1="22" y1="11" x2="22" y2="13"/><line x1="2" y1="9" x2="2" y2="15"/></svg>
                     </div>
-                    <h3>No batteries</h3>
-                    <p>Passive NFC. No charging, no replacing — stick once, last forever.</p>
+                    <div>
+                        <h3>No batteries</h3>
+                        <p>Passive NFC. Stick once, last forever.</p>
+                    </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- ─── Final CTA ─── -->
+        <section>
+            <div class="final-cta reveal">
+                <div class="final-cta-icon" aria-hidden="true">
+                    <svg viewBox="220 110 520 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#0a0a0a" d="m595.1308 595.992l-356.10382 -349.38617l0 -123.46658l481.94427 472.85272z"/>
+                        <path fill="#0a0a0a" d="m239.02696 123.12427l481.94427 0l0 89.47565l-481.94427 0z"/>
+                        <path fill="#0a0a0a" d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z"/>
+                        <path fill="#0a0a0a" d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z"/>
+                        <path fill="hsl(145, 72%, 50%)" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z"/>
+                    </svg>
+                </div>
+                <h2>Get the <span class="accent">app</span>. Tap the tag again.</h2>
+                <p>Without RYZN installed, this page is all you'll see. Once it's on your phone, the next tap takes you straight into the workout.</p>
+                <a href="https://apps.apple.com/app/ryzn" class="cta-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/>
+                    </svg>
+                    Get RYZN on the App Store
+                </a>
+                <span class="small">iPhone · iOS 15.0+ · $10/month</span>
             </div>
         </section>
 
