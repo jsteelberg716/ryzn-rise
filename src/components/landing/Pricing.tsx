@@ -121,7 +121,7 @@ const Pricing = () => {
                 </span>
                 <span className="text-muted-foreground text-base">{proPeriod}</span>
               </div>
-              <p className="text-muted-foreground/60 text-xs mt-1">{proSubtext} · 3-day free trial</p>
+              <p className="text-muted-foreground/60 text-xs mt-1">{proSubtext} · Cancel anytime</p>
 
               <div className="mt-6 space-y-3 flex-1">
                 {proFeatures.map((f) => (
@@ -133,7 +133,7 @@ const Pricing = () => {
               </div>
 
               <button className="w-full mt-8 py-3.5 rounded-[14px] font-bold text-sm bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300">
-                Start Free Trial
+                Get RYZN
               </button>
             </div>
           </motion.div>

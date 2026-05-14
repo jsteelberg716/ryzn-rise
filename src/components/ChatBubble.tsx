@@ -151,9 +151,14 @@ const ChatBubble = () => {
             aria-label="Open chat"
           >
             <MessageCircle size={22} className="text-foreground" />
-            {/* Pulsing accent ring — subtle attention pull */}
+            {/* Pulsing accent ring — slow + soft per Jack 2026-05-13.
+                animate-ping is 1 s and reads as too urgent; 3 s feels
+                like a heartbeat, not an alarm. */}
             <span
-              className="absolute inset-0 rounded-full border-2 border-accent-green/50 animate-ping pointer-events-none"
+              className="absolute inset-0 rounded-full border-2 border-accent-green/50 pointer-events-none"
+              style={{
+                animation: 'chatBubblePulse 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+              }}
               aria-hidden="true"
             />
           </motion.button>
@@ -193,10 +198,14 @@ const ChatBubble = () => {
               </button>
             </div>
 
-            {/* Conversation */}
+            {/* Conversation. `overscroll-contain` + the onWheel guard
+                stop wheel/trackpad scrolling from leaking out to the
+                page when the user is reading the transcript — per Jack
+                2026-05-13. Inside the chat scrolls; outside doesn't. */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-y-auto px-4 py-4 space-y-3 scroll-smooth"
+              onWheel={(e) => e.stopPropagation()}
+              className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-3 scroll-smooth"
             >
               {messages.length === 0 && <Welcome onPick={send} />}
 
@@ -210,6 +219,34 @@ const ChatBubble = () => {
 
               {loading && <TypingIndicator />}
             </div>
+
+            {/* Persistent preset-question strip — visible above the
+                input AFTER the first message has been sent. The Welcome
+                block at the top handles the pre-chat state; this strip
+                keeps the preset prompts reachable through the whole
+                conversation per Jack 2026-05-13 ("those initial
+                questions that appear should continue to appear after
+                each chat"). Hidden during loading so it doesn't
+                clutter the typing indicator. */}
+            {messages.length > 0 && !loading && (
+              <div className="px-3 pt-2 pb-1 border-t border-primary/[0.05]">
+                <p className="text-[0.625rem] uppercase tracking-[0.15em] text-muted-foreground/60 px-1 mb-1.5">
+                  Or try
+                </p>
+                <div className="flex gap-1.5 overflow-x-auto hide-scrollbar pb-1">
+                  {PRESET_QUESTIONS.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      onClick={() => send(q)}
+                      className="flex-shrink-0 px-3 py-1.5 rounded-full bg-primary/[0.06] border border-primary/10 text-[0.7rem] text-muted-foreground hover:text-foreground hover:bg-primary/[0.1] transition-colors"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Input */}
             <form

@@ -59,7 +59,7 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-3">
           <button className="cta-primary px-5 py-2.5 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground text-sm font-semibold">
-            {isWildcats ? 'Claim Free Account' : 'Start Free Trial'}
+            {isWildcats ? 'Claim Free Account' : 'Get RYZN'}
           </button>
         </div>
 
@@ -121,7 +121,7 @@ const Navbar = () => {
               transition={{ delay: 0.4 }}
               className="mt-4 px-8 py-3 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-semibold"
             >
-              {isWildcats ? 'Claim Free Account' : 'Start Free Trial'}
+              {isWildcats ? 'Claim Free Account' : 'Get RYZN'}
             </motion.button>
           </motion.div>
         )}

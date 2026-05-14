@@ -231,6 +231,13 @@
 }
 
 
+/* ChatBubble slow pulse — 3 s, softer than animate-ping per Jack 2026-05-13 */
+@keyframes chatBubblePulse {
+  0%   { transform: scale(1);    opacity: 0.55; }
+  75%  { transform: scale(1.45); opacity: 0;    }
+  100% { transform: scale(1.45); opacity: 0;    }
+}
+
 /* Bounce chevron */
 @keyframes bounceChevron {
   0%, 100% { transform: translateY(0); opacity: 0.5; }

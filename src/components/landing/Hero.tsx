@@ -55,7 +55,7 @@ const Hero = () => {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
                 <span className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
-                  iOS App — 3 Days Free
+                  iOS App — Available Now
                 </span>
               </>
             )}
@@ -102,10 +102,10 @@ const Hero = () => {
                 href="#pricing"
                 className="cta-primary cta-pulse inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]"
               >
-                {isWildcats ? 'Claim Your Free Account' : 'Start 3-Day Free Trial'}
+                {isWildcats ? 'Claim Your Free Account' : 'Get RYZN'}
               </a>
               <p className="text-muted-foreground/60 text-xs mt-2 ml-1">
-                {isWildcats ? 'Verify with your .edu email. Free forever.' : 'No credit card. Cancel anytime.'}
+                {isWildcats ? 'Verify with your .edu email. Free forever.' : '$10/month · Cancel anytime'}
               </p>
             </div>
             <a

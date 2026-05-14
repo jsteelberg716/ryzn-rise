@@ -39,8 +39,8 @@ const FinalCTA = () => {
         </motion.h2>
 
         <motion.p variants={fadeUpVariant} className="mt-6 text-muted-foreground text-lg leading-relaxed">
-          3 days. Full access. No credit card.<br />
-          Try RYZN and see what training with intelligence feels like.
+          The fitness app built for iPhone, not ported to it.<br />
+          Train with intelligence — starting today.
         </motion.p>
 
         <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap justify-center gap-4">
@@ -62,7 +62,7 @@ const FinalCTA = () => {
         </motion.div>
 
         <motion.p variants={fadeUpVariant} className="mt-8 text-muted-foreground/50 text-xs">
-          Available for iPhone · iOS 15.0+ · Free to download · $6.99/month after trial
+          Available for iPhone · iOS 15.0+ · $10/month · Cancel anytime
         </motion.p>
       </motion.div>
     </section>

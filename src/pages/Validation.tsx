@@ -605,7 +605,7 @@ const Validation = () => {
               to="/"
               className="cta-primary cta-pulse inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]"
             >
-              Start 3-Day Free Trial
+              Get RYZN
             </Link>
             <Link
               to="/"
