@@ -212,13 +212,14 @@
             transform-origin: 50% 50%;
         }
         @keyframes puckScan {
-            /* Hold full size all the way through the phone's slide-in,
-               then snap shrunk between 26 % (ripple appears) and 30 %
-               (peak tap). No upward pulse — clean shrink only. Re-
-               grows when the phone exits between 92 % and 100 %. */
+            /* Hold full size through the slide-in, then ease shrunk
+               across 26 → 38 % (~0.84s) so the tag visibly "pulls
+               into" the phone rather than snapping out. No upward
+               pulse — clean shrink only. Re-grows on exit. */
             0%      { transform: translateX(-50%) scale(1); }
-            26%     { transform: translateX(-50%) scale(1); }
-            30%     { transform: translateX(-50%) scale(0.15); }
+            26%     { transform: translateX(-50%) scale(1);
+                      animation-timing-function: cubic-bezier(0.55, 0, 0.4, 1); }
+            38%     { transform: translateX(-50%) scale(0.15); }
             80%     { transform: translateX(-50%) scale(0.15); }
             92%     { transform: translateX(-50%) scale(1); }
             100%    { transform: translateX(-50%) scale(1); }
