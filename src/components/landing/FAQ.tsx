@@ -10,6 +10,7 @@ const faqs = [
   { q: "Is this available on Android?", a: "RYZN is a native iOS app built in SwiftUI and uses Apple-only integrations (HealthKit, iCloud, StoreKit). An Android version is not planned at this time." },
   { q: "What workout splits are included?", a: "Push/Pull/Legs (PPL), Upper/Lower, Arnold Split, Bro Split, and Full Body. Each has a full exercise list, day structure, and animated preview. You can also build completely custom splits from scratch." },
   { q: "How do the shareable workout cards work?", a: "After you finish any workout, RYZN automatically generates a branded summary card with your stats, PRs, and a muscle heatmap. You get multiple style options and can share directly to Instagram Stories, TikTok, iMessage, or anywhere via the iOS Share Sheet." },
+  { q: "Is there a free trial?", a: "Yes. Every new subscription starts with a 3-day free trial. You're not charged until day 4 — if you cancel any time during the trial through your iPhone Settings → Apple ID → Subscriptions, you won't be billed at all." },
   { q: "Can I cancel my subscription?", a: "Yes. Cancel anytime through your iPhone's App Store subscriptions page. You keep access until the end of your current billing period." },
 ];
 

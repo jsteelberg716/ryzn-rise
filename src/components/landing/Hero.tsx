@@ -105,7 +105,7 @@ const Hero = () => {
                 {isWildcats ? 'Claim Your Free Account' : 'Get RYZN'}
               </a>
               <p className="text-muted-foreground/60 text-xs mt-2 ml-1">
-                {isWildcats ? 'Verify with your .edu email. Free forever.' : '$10/month · Cancel anytime'}
+                {isWildcats ? 'Verify with your .edu email. Free forever.' : '3-day free trial · $10/month · Cancel anytime'}
               </p>
             </div>
             <a

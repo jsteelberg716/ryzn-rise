@@ -240,7 +240,7 @@ const Mobile = () => {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="mt-4 text-xs text-muted-foreground/50"
           >
-            iPhone · iOS 15.0+ · $10/month
+            iPhone · iOS 15.0+ · 3-day free trial · $10/month
           </motion.p>
         </div>
       </motion.section>
@@ -610,7 +610,7 @@ const Mobile = () => {
             </div>
           </a>
           <p className="mt-5 text-xs text-muted-foreground/50">
-            iPhone · iOS 15.0+ · $10/month
+            iPhone · iOS 15.0+ · 3-day free trial · $10/month
           </p>
         </motion.div>
       </section>

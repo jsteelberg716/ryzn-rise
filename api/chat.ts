@@ -62,8 +62,10 @@ About RYZN:
 - Splits included: Push/Pull/Legs, Upper/Lower, Arnold, Bro, Full
   Body. Custom splits supported.
 - Pricing: Pro is $10/month or $80/year (effective $6.67/mo on
-  annual — saves 33%). 3-day free trial, no credit card required.
-  Cancel anytime via the App Store.
+  annual — saves 33%). Every new subscription starts with a 3-day
+  free trial — no charge until day 4, cancel any time during the
+  trial in iPhone Settings → Apple ID → Subscriptions to avoid
+  being billed. Cancel anytime after that via the App Store.
 - Privacy: HealthKit data never leaves the device. Other data lives
   in Supabase with row-level security per account. Never sold or
   shared with advertisers.

@@ -62,7 +62,7 @@ const FinalCTA = () => {
         </motion.div>
 
         <motion.p variants={fadeUpVariant} className="mt-8 text-muted-foreground/50 text-xs">
-          Available for iPhone · iOS 15.0+ · $10/month · Cancel anytime
+          Available for iPhone · iOS 15.0+ · 3-day free trial · $10/month · Cancel anytime
         </motion.p>
       </motion.div>
     </section>

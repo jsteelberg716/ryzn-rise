@@ -122,6 +122,9 @@ const Pricing = () => {
                 <span className="text-muted-foreground text-base">{proPeriod}</span>
               </div>
               <p className="text-muted-foreground/60 text-xs mt-1">{proSubtext} · Cancel anytime</p>
+              <p className="text-primary text-xs font-semibold mt-2">
+                Start with a 3-day free trial — no charge until day 4.
+              </p>
 
               <div className="mt-6 space-y-3 flex-1">
                 {proFeatures.map((f) => (
