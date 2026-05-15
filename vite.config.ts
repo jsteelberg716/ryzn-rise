@@ -16,6 +16,16 @@ import { componentTagger } from "lovable-tagger";
 // `Response` back to Node. Single source of truth — no duplicated
 // OpenAI call, no drift between dev + prod.
 // ─────────────────────────────────────────────────────────────────────
+// Edge-runtime API routes that the dev shim should adapt. Each entry
+// maps a public path to the file under api/. Node-runtime routes
+// (/api/stats, /api/track — Vercel Node + Upstash Redis types) aren't
+// listed here; they need the real Vercel runtime in dev too.
+const EDGE_ROUTES: Record<string, string> = {
+  "/api/chat":     "api/chat.ts",
+  "/api/feedback": "api/feedback.ts",
+  "/api/grammar":  "api/grammar.ts",
+};
+
 const edgeFunctionsDevPlugin = () => ({
   name: "ryzn-edge-functions-dev",
   apply: "serve" as const,
@@ -23,14 +33,12 @@ const edgeFunctionsDevPlugin = () => ({
     server.middlewares.use(async (req: any, res: any, next: any) => {
       const url: string = req.url ?? "";
       const pathname = url.split("?")[0];
-      // Only /api/chat is dev-shimmed. /api/stats and /api/track use
-      // Upstash Redis + Vercel Node types and need the real Vercel
-      // runtime — they're not blockers for chat work.
-      if (pathname !== "/api/chat") return next();
+      const filePath = EDGE_ROUTES[pathname];
+      if (!filePath) return next();
 
       try {
         const mod = await server.ssrLoadModule(
-          path.resolve(__dirname, "api/chat.ts"),
+          path.resolve(__dirname, filePath),
         );
         const handler = mod.default;
         if (typeof handler !== "function") return next();
@@ -78,6 +86,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   if (env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY) {
     process.env.OPENAI_API_KEY = env.OPENAI_API_KEY;
+  }
+  if (env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY) {
+    process.env.ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY;
   }
 
   return {

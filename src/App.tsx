@@ -12,6 +12,7 @@ import Validation from "./pages/Validation.tsx";
 import Analytics from "./pages/Analytics.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Reviews from "./pages/Reviews.tsx";
+import Feedback from "./pages/Feedback.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ChatBubble from "./components/ChatBubble.tsx";
 
@@ -55,6 +56,7 @@ const App = () => {
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/reviews" element={<Reviews />} />
+            <Route path="/feedback" element={<Feedback />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

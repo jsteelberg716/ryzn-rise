@@ -640,6 +640,9 @@ const Mobile = () => {
             <Link to="/reviews" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
               Reviews
             </Link>
+            <Link to="/feedback" className="text-primary hover:opacity-80 transition-opacity font-semibold">
+              Leave Feedback →
+            </Link>
             <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
               Desktop site
             </Link>
