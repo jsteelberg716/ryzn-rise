@@ -25,7 +25,18 @@ const Hero = () => {
   const phoneOpacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 1, 0]);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen pt-[120px] pb-20 overflow-x-clip bg-background scanlines">
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen pt-[120px] pb-20 bg-background scanlines"
+      style={{
+        // overflow: clip + a wide clip-margin so the cta-pulse rings,
+        // box-shadow glow, and other off-bounds visuals aren't sliced
+        // by the section's clipping rect. Plain overflow-hidden /
+        // -x-clip without a margin chops them at the exact edge.
+        overflow: 'clip',
+        overflowClipMargin: '120px',
+      }}
+    >
       <div className="hero-background" />
       <div className="hero-grid" />
 
@@ -96,36 +107,43 @@ const Hero = () => {
             )}
           </motion.p>
 
-          {/* CTA Group */}
+          {/* CTA Group — Get RYZN on the left, See How It Works on
+              the right. The "Get RYZN" pill carries a 24 px box-shadow
+              halo + 4 px cta-pulse rings; the section uses
+              overflow:clip with a 120 px clip-margin so neither gets
+              sliced at the column edge. */}
           <motion.div variants={wordReveal} className="mt-8 flex flex-wrap gap-4 items-start">
-            <div>
+            <div className="flex flex-col gap-3">
               <a
                 href="#pricing"
                 className="cta-primary cta-pulse inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]"
               >
                 {isWildcats ? 'Claim Your Free Account' : 'Get RYZN'}
               </a>
-              <p className="text-muted-foreground/60 text-xs mt-2 ml-1">
+              <p className="text-muted-foreground/60 text-xs ml-1">
                 {isWildcats ? 'Verify with your .edu email. Free forever.' : '3-day free trial · $10/month · Cancel anytime'}
               </p>
             </div>
-            <a
-              href="#how-it-works"
-              className="dmd-convex px-8 py-4 rounded-pill text-muted-foreground font-semibold text-[1.0625rem] hover:text-foreground transition-all duration-200"
-            >
-              See How It Works
-            </a>
+            <div className="flex flex-col gap-4 items-start">
+              <a
+                href="#how-it-works"
+                className="dmd-convex px-8 py-4 rounded-pill text-muted-foreground font-semibold text-[1.0625rem] hover:text-foreground transition-all duration-200"
+              >
+                See How It Works
+              </a>
+              {/* Theme picker — sits directly under "See How It Works"
+                  so it visually anchors the right side of the CTA
+                  stack and doesn't get cut off by row wrapping. */}
+              <ChooseYourTheme />
+            </div>
           </motion.div>
 
-          {/* App Store row — "Coming soon" on the left, theme picker
-              on the right so the picker visually anchors the right
-              side of the CTA stack without crowding the headline. */}
+          {/* App Store row */}
           <motion.div
             variants={wordReveal}
-            className="mt-8 flex flex-wrap items-center justify-between gap-6 text-sm text-muted-foreground"
+            className="mt-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
           >
             <span>Coming soon to the <strong className="text-foreground">App Store</strong></span>
-            <ChooseYourTheme />
           </motion.div>
         </motion.div>
 
