@@ -282,24 +282,29 @@
         }
         @keyframes phoneSeq {
             /* Off-screen LEFT, tilted toward direction of travel.
-               Single ease-out curve into rest = one continuous slide. */
-            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg);
+               Single ease-out curve into rest = one continuous slide.
+               Opacity fades in over the first ~6 % so the phone doesn't
+               pop against any iframe clip line on the left side either. */
+            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg); opacity: 0;
                    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+            6%   { opacity: 1; }
             /* Rest position — top aligned with puck, mid-tilt */
-            22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(18deg);
+            22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(18deg); opacity: 1;
                    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
             /* Tap — phone tips forward HARD as it makes contact */
-            30%  { transform: translate(-50%, -10px) rotateZ(0deg)   rotateX(34deg) scale(1.015); }
+            30%  { transform: translate(-50%, -10px) rotateZ(0deg)   rotateX(34deg) scale(1.015); opacity: 1; }
             /* Hold contact, easing tilt back */
-            36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(26deg); }
+            36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(26deg); opacity: 1; }
             /* Level out for the sheet rise */
-            48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); }
+            48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); opacity: 1; }
             /* Hold while the sheet is up — give it a real beat */
-            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg);
+            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg); opacity: 1;
                    animation-timing-function: cubic-bezier(0.5, 0, 1, 1); }
-            /* Exit OFF to the right (fully clear of the viewport) */
-            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
-            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
+            /* Exit OFF to the right — fade opacity to 0 along with the
+               translate so the phone dissolves out instead of getting
+               sliced by the iframe's right-edge clip line. */
+            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); opacity: 0; }
+            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); opacity: 0; }
         }
 
         .phone-rig .bezel {
@@ -658,7 +663,7 @@
         body.embed main > section:not(.hero) { display: none !important; }
         body.embed main { padding: 0; }
         body.embed .hero { padding: 0; min-height: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        body.embed .hero .stage { max-width: min(540px, 90vw); margin: 0 auto; }
+        body.embed .hero .stage { max-width: min(720px, 95vw); margin: 0 auto; }
     </style>
 </head>
 <body>
