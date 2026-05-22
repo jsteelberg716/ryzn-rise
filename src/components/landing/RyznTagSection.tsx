@@ -5,14 +5,19 @@ import { Nfc, Dumbbell, Repeat } from 'lucide-react';
 /// Desktop landing section that mirrors the mobile /scan experience.
 /// Replaces the "Your program. Your schedule. Your rules." (WorkoutPrograms)
 /// section in the main scroll — surfaces the NFC tap-to-lift flow to
-/// desktop visitors who'd otherwise never see it (mobile users hit the
-/// dedicated /scan landing via Instagram links or direct tag taps).
+/// desktop visitors who'd otherwise never see it.
 ///
-/// Layout: animation on the LEFT, explanation on the RIGHT. The
-/// animation iframes /scan/v1/?embed=1 — that flag activates the page's
-/// embed mode (hides nav, eyebrow, headline, footer, CTA, and all
-/// non-hero sections; enlarges the .stage to desktop scale) so only the
-/// phone-taps-puck-sheet-rise animation shows.
+/// Layout: the iframe spans the FULL container width on desktop,
+/// and the explanation column is absolutely positioned on top of
+/// its right ~42 % with `backdrop-filter: blur` — so the exiting
+/// phone visually slides UNDER the text column (and the liquid-glass
+/// blur only reads when there's something behind it). A subtle 1 px
+/// left border on the text column gives the "harsh line" Jack asked
+/// to keep.
+///
+/// On mobile, the layout collapses to a vertical stack — the iframe
+/// stays full-width and the text column drops below it. The
+/// backdrop-filter overlay only fires at lg+ breakpoints.
 const RyznTagSection = () => {
   const beats = [
     {
@@ -64,13 +69,16 @@ const RyznTagSection = () => {
       </motion.div>
 
       <motion.div
-        className="max-w-[1200px] mx-auto mt-12 lg:mt-16 px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+        className="relative max-w-[1200px] mx-auto mt-12 lg:mt-16 px-6"
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-80px' }}
       >
-        {/* LEFT — animation, full column width */}
+        {/* Animation iframe — spans the full container width. The
+            phone's exit translate(150%) carries it under the absolute
+            text column overlay on the right ~42% of this area before
+            it disappears past the iframe's right edge. */}
         <motion.div variants={fadeUpVariant} className="w-full">
           <iframe
             src="/scan/v1/?embed=1"
@@ -82,10 +90,28 @@ const RyznTagSection = () => {
           />
         </motion.div>
 
-        {/* RIGHT — explanation + CTA */}
+        {/* Text column — overlays the right portion of the iframe at
+            lg+. backdrop-filter blurs whatever sits behind it; nothing
+            sits behind it most of the time (just the section bg-card),
+            so the "liquid glass" effect is invisible — until the phone
+            slides under during its exit animation, at which point the
+            phone reads as a soft blurred shape behind the text. The
+            1 px left border + faint left-side gradient creates the
+            "harsh line" Jack asked to preserve.
+            On mobile (< lg) this falls back to a normal stacked
+            section below the iframe — no overlay, no backdrop blur. */}
         <motion.div
           variants={fadeUpVariant}
-          className="space-y-6 lg:space-y-7 max-w-[480px] mx-auto lg:mx-0"
+          className="
+            mt-8 lg:mt-0 lg:absolute lg:top-0 lg:right-6 lg:bottom-0
+            lg:w-[42%] lg:max-w-[480px]
+            lg:flex lg:flex-col lg:justify-center
+            lg:px-10 lg:py-10
+            lg:border-l lg:border-primary/15
+            lg:backdrop-blur-lg lg:[backdrop-filter:blur(18px)_saturate(140%)]
+            lg:bg-[hsl(225_8%_7%_/_0.15)]
+            space-y-6 lg:space-y-7
+          "
         >
           {beats.map(({ icon: Icon, title, copy }) => (
             <div key={title} className="flex gap-4">
@@ -101,7 +127,7 @@ const RyznTagSection = () => {
             </div>
           ))}
 
-          <div className="pt-4">
+          <div className="pt-2">
             <a
               href="/scan"
               className="dmd-convex inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-foreground hover:text-primary transition-colors"

@@ -671,36 +671,12 @@
         body.embed .hero h1,
         body.embed main > section:not(.hero) { display: none !important; }
         body.embed main { padding: 0; }
-        body.embed .hero { padding: 0; min-height: 0; display: flex; align-items: center; justify-content: center; height: 100%; position: relative; }
+        body.embed .hero { padding: 0; min-height: 0; display: flex; align-items: center; justify-content: center; height: 100%; }
         body.embed .hero .stage { max-width: min(640px, 92vw); margin: 0 auto; padding-bottom: 0; }
         body.embed html, body.embed body { height: 100%; }
-
-        /* Frosted-glass edge overlay — sits on the right side of the
-           iframe in embed mode. The exiting phone slides UNDER this
-           overlay rather than fading opacity, so it looks like the
-           phone dissolves behind a piece of frosted glass / the text
-           column. z-index 7 puts it above the phone-rig (4) + screen
-           base (5) but below the scan-ripple (6) so the ripple still
-           reads clean during the tap. Mask gradient fades the blur in
-           from the left so there's no hard boundary line. */
-        body.embed .hero::after {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; bottom: 0;
-            width: 32%;
-            pointer-events: none;
-            z-index: 7;
-            backdrop-filter: blur(10px) saturate(140%);
-            -webkit-backdrop-filter: blur(10px) saturate(140%);
-            background: linear-gradient(
-                to right,
-                transparent 0%,
-                hsla(225, 8%, 7%, 0.35) 50%,
-                hsla(225, 8%, 7%, 0.85) 100%
-            );
-            mask-image: linear-gradient(to right, transparent 0%, black 30%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
-        }
+        /* No inside-iframe glass overlay — the parent's text column
+           in RyznTagSection.tsx carries the backdrop-filter, and the
+           phone visually fades under it only when crossing behind. */
     </style>
 </head>
 <body>
