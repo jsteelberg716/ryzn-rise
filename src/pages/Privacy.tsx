@@ -24,6 +24,7 @@ import {
   RefreshCw,
   Mail,
   MapPin,
+  Nfc,
 } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 import RyznWordLogo from '@/components/RyznWordLogo';
@@ -80,6 +81,7 @@ const sections = [
       <>
         <p>We store food photos, voice descriptions, typed meals, estimated macros, water and alcohol counts, weight logs, and "food memories" (AI-inferred preferences such as "prefers oat milk").</p>
         <p className="mt-2">Voice input is <strong className="text-foreground">transcribed on-device using Apple Speech</strong> before being sent anywhere.</p>
+        <p className="mt-2"><strong className="text-foreground">Voice and text refinements.</strong> When you correct a meal during logging (e.g. "actually I only ate half"), the text of each refinement is saved alongside the meal so it reappears when you re-open the meal to modify it. Only the corrected text is stored — never the raw audio.</p>
       </>
     ),
   },
@@ -105,22 +107,34 @@ const sections = [
     title: '7. Location',
     body: (
       <>
-        <p>When you start an <strong className="text-foreground">outdoor cardio session</strong> (run, walk, hike, bike, or any cardio activity logged with the "Outdoor" mode), RYZN reads your device's GPS location to compute distance, pace, and route. This data is used to:</p>
+        <p>RYZN uses your device's location for two related purposes:</p>
         <ul className="mt-3 space-y-1.5 list-disc list-inside text-muted-foreground">
-          <li>Display the live route on your in-session map</li>
-          <li>Calculate distance, average pace, and split times</li>
-          <li>Save the completed route to your cardio history so you can review past sessions</li>
+          <li><strong className="text-foreground">Outdoor cardio tracking.</strong> When you start an outdoor cardio session (run, walk, hike, bike, or any cardio activity logged with "Outdoor" mode), RYZN reads continuous GPS samples to compute distance, pace, and the route shown on your in-session map. Sampling stops the moment you tap End.</li>
+          <li><strong className="text-foreground">Workout auto-finish.</strong> When you start a strength workout, RYZN captures a single location fix and creates a 250 m geofence around it. If you leave that area without tapping Finish, the workout is auto-finished and you receive a "Workout finished" notification — so you never lose progress because you forgot to wrap up. The geofence is dropped as soon as the workout is finished or cancelled.</li>
         </ul>
-        <p className="mt-3"><strong className="text-foreground">Permissions.</strong> "While Using the App" is required for any outdoor cardio. "Always" is optional — when granted, RYZN continues recording if your screen locks or you switch apps mid-session so the route doesn't drop out partway through a long run. You can downgrade to "While Using" anytime in <strong className="text-foreground">Settings → Privacy &amp; Security → Location Services → RYZN</strong>.</p>
-        <p className="mt-2"><strong className="text-foreground">Only while active.</strong> Location samples are recorded <strong className="text-foreground">only while a cardio session is active</strong>. The moment you tap End on a session, location capture stops. RYZN never reads your location outside of an active outdoor cardio session — no background scraping, no idle location pings.</p>
-        <p className="mt-2"><strong className="text-foreground">Storage and sharing.</strong> Routes are stored encrypted in transit (TLS) and at rest in our Supabase Postgres database, scoped to your account by row-level security policies. Other users cannot read your routes. We <strong className="text-foreground">never</strong> sell, share, or transmit your location data to advertisers, data brokers, or any third party. Your routes are <strong className="text-foreground">not</strong> sent to OpenAI, Anthropic, or any AI service — cardio summaries that the AI assistant references contain only aggregate metrics (distance, duration, kcal), not coordinates. We don't fingerprint, track, or correlate your location across apps, sessions, or devices.</p>
-        <p className="mt-2">You can delete any cardio session from your history (with its associated route) at any time by swiping left on the session card and tapping Delete.</p>
+        <p className="mt-3"><strong className="text-foreground">Permissions.</strong> "While Using the App" is sufficient for both features. "Always" is optional — when granted, RYZN continues recording cardio routes if your screen locks mid-session and reliably detects gym departure even after the app is fully backgrounded. You can downgrade to "While Using" anytime in <strong className="text-foreground">Settings → Privacy &amp; Security → Location Services → RYZN</strong>.</p>
+        <p className="mt-2"><strong className="text-foreground">Only when relevant.</strong> Continuous GPS is read <strong className="text-foreground">only while a cardio session is active</strong>. The workout geofence reads a single fix at session start and then only fires when you cross the radius — no continuous tracking, no idle location pings.</p>
+        <p className="mt-2"><strong className="text-foreground">Storage and sharing.</strong> Cardio routes and the single fix captured for the workout geofence are stored encrypted in transit (TLS) and at rest in our Supabase Postgres database, scoped to your account by row-level security policies. Other users cannot read your location data. We <strong className="text-foreground">never</strong> sell, share, or transmit your location data to advertisers, data brokers, or any third party. Locations are <strong className="text-foreground">not</strong> sent to OpenAI, Anthropic, or any AI service — cardio summaries that the AI assistant references contain only aggregate metrics (distance, duration, kcal), not coordinates. We don't fingerprint, track, or correlate your location across apps, sessions, or devices.</p>
+        <p className="mt-2">You can delete any cardio session from your history (with its associated route) at any time by swiping left on the session card and tapping Delete. The single workout-start fix is deleted with the workout itself.</p>
+      </>
+    ),
+  },
+  {
+    icon: Nfc,
+    title: '8. NFC Tags',
+    body: (
+      <>
+        <p>RYZN supports optional NFC stickers ("Ryzn Tags") you can place on gym equipment. Tapping a tag with your phone launches the workout for that machine, skipping the exercise picker.</p>
+        <p className="mt-2"><strong className="text-foreground">What we read.</strong> When you tap a tag, iOS hands the app the tag's UID (a short identifier) and a Universal Link that we encoded onto the tag. No other data is read from the tag, and RYZN never writes anything to tags it didn't program itself.</p>
+        <p className="mt-2"><strong className="text-foreground">What we store.</strong> Tag UIDs and the exercise you paired each tag with are stored locally on your device and (for syncing across devices) in your private Supabase account. UIDs are <strong className="text-foreground">never</strong> sold, shared with advertisers or data brokers, or sent to any AI service.</p>
+        <p className="mt-2"><strong className="text-foreground">Permissions.</strong> The first time you tap a tag, iOS may show a system prompt asking permission to read NFC. You can revoke at any time in <strong className="text-foreground">Settings → Privacy &amp; Security</strong>.</p>
+        <p className="mt-2">Without granting NFC, every other feature of RYZN continues to work — tags are purely a convenience.</p>
       </>
     ),
   },
   {
     icon: ImageIcon,
-    title: '8. Photos & Media',
+    title: '9. Photos & Media',
     body: (
       <p>
         Food photos are uploaded to a private Supabase storage bucket. Progress photos and avatars live in private buckets readable <strong className="text-foreground">only by your account</strong>. RYZN does not access your full photo library and does not perform facial recognition.
@@ -129,7 +143,7 @@ const sections = [
   },
   {
     icon: CreditCard,
-    title: '9. Subscription & Billing',
+    title: '10. Subscription & Billing',
     body: (
       <p>
         Apple handles all payments via StoreKit. We never see your credit card number. We store your subscription status, transaction ID, and an anonymous account token in a <code className="text-xs bg-primary/10 px-1.5 py-0.5 rounded">subscriptions</code> table.
@@ -138,7 +152,7 @@ const sections = [
   },
   {
     icon: MessageSquare,
-    title: '10. Feedback & Bug Reports',
+    title: '11. Feedback & Bug Reports',
     body: (
       <p>
         When you submit feedback or a bug report, we receive the text you wrote plus auto-attached app version, iOS version, and device model. No account data is attached unless you include it yourself.
@@ -147,7 +161,7 @@ const sections = [
   },
   {
     icon: Globe,
-    title: '11. Third-Party Services',
+    title: '12. Third-Party Services',
     body: (
       <ul className="space-y-1.5 list-disc list-inside text-muted-foreground">
         <li><strong className="text-foreground">Open Food Facts</strong> — barcode lookups (no personal info sent)</li>
@@ -159,7 +173,7 @@ const sections = [
   },
   {
     icon: Smartphone,
-    title: '12. Local Device Storage',
+    title: '13. Local Device Storage',
     body: (
       <>
         <p>The following lives on your device:</p>
@@ -176,7 +190,7 @@ const sections = [
   },
   {
     icon: Database,
-    title: '13. Data Storage',
+    title: '14. Data Storage',
     body: (
       <p>
         All cloud data lives in <strong className="text-foreground">Supabase</strong> (US data centers) protected by row-level security — your data is only accessible by your authenticated account. See Supabase's privacy policy for details on their infrastructure.
@@ -185,7 +199,7 @@ const sections = [
   },
   {
     icon: Ban,
-    title: '14. Sharing & Selling',
+    title: '15. Sharing & Selling',
     body: (
       <p>
         We do not sell your data. <strong className="text-foreground">Ever.</strong> No advertisers, no data brokers, no marketing networks. No ad SDKs. No cross-app tracking.
@@ -194,7 +208,7 @@ const sections = [
   },
   {
     icon: UserCheck,
-    title: '15. Your Rights',
+    title: '16. Your Rights',
     body: (
       <ul className="space-y-1.5 list-disc list-inside text-muted-foreground">
         <li>Edit your profile at any time</li>
@@ -208,7 +222,7 @@ const sections = [
   },
   {
     icon: Clock,
-    title: '16. Data Retention',
+    title: '17. Data Retention',
     body: (
       <ul className="space-y-1.5 list-disc list-inside text-muted-foreground">
         <li><strong className="text-foreground">Active accounts:</strong> retained while the account exists</li>
@@ -219,7 +233,7 @@ const sections = [
   },
   {
     icon: Baby,
-    title: "17. Children's Privacy",
+    title: "18. Children's Privacy",
     body: (
       <p>
         RYZN is rated <strong className="text-foreground">12+</strong>. We do not knowingly collect data from anyone under the age of 13.
@@ -228,7 +242,7 @@ const sections = [
   },
   {
     icon: Lock,
-    title: '18. Security',
+    title: '19. Security',
     body: (
       <p>
         All traffic is encrypted with HTTPS / TLS. Supabase storage is encrypted at rest. The iOS Keychain uses hardware-backed encryption. Defense-in-depth: row-level security plus signed JWTs.
@@ -237,7 +251,7 @@ const sections = [
   },
   {
     icon: RefreshCw,
-    title: '19. Changes',
+    title: '20. Changes',
     body: (
       <p>
         Material changes to this policy trigger an in-app notification and an updated effective date. Minor fixes do not.
@@ -246,7 +260,7 @@ const sections = [
   },
   {
     icon: Mail,
-    title: '20. Contact',
+    title: '21. Contact',
     body: (
       <p>
         Questions? Email <a href="mailto:jackwork716@gmail.com" className="text-accent-green hover:underline">jackwork716@gmail.com</a>. RYZN is operated by <strong className="text-foreground">Jack Steelberg</strong> as a sole proprietor — there is no parent company.
@@ -290,7 +304,7 @@ const Privacy = () => {
           </motion.h1>
 
           <motion.p variants={fadeUpVariant} className="mt-4 text-muted-foreground" style={{ fontSize: '1.0625rem' }}>
-            Effective May 6, 2026
+            Effective May 20, 2026
           </motion.p>
 
           <motion.div variants={fadeUpVariant} className="mt-6 glass-card rounded-[20px] p-6 border-l-2" style={{ borderLeftColor: 'hsl(var(--accent-green))' }}>
