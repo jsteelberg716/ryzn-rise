@@ -276,7 +276,7 @@ const Privacy = () => {
     <div className="min-h-screen bg-bg-primary text-foreground relative overflow-hidden">
       {/* Aurora */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34, 197, 94,0.14) 0%, transparent 70%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% -10%, hsl(var(--primary) / 0.14) 0%, transparent 70%)' }} />
       </div>
 
       {/* Nav */}

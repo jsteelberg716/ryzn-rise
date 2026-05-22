@@ -29,7 +29,7 @@ const RyznIconLogo = ({
       <path fill={mainFill} d="m720.9687 123.13923l0 275.71823l-89.47565 0l0 -275.71823z" />
       <path fill={mainFill} d="m631.6109 399.00522l-88.84558 -88.84555l176.97101 0.7201233z" />
       {/* Green accent triangle — always brand green */}
-      <path fill="#22c55e" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z" />
+      <path fill="hsl(var(--primary))" d="m351.50107 596.87714l-112.474045 -110.86301l0 -112.38107l226.48817 223.24408z" />
     </svg>
   );
 };

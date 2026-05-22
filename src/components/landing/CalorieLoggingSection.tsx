@@ -61,7 +61,7 @@ type Scene = {
 };
 
 const MACRO_COLORS = {
-  protein: '#22c55e',
+  protein: 'hsl(var(--primary))',
   carbs: '#F59E0B',
   fat: '#60A5FA',
   water: '#60A5FA',
@@ -173,7 +173,7 @@ const VideoPhoneMock = () => {
         className="absolute -inset-10 -z-10 blur-3xl pointer-events-none transition-opacity duration-500"
         style={{
           background:
-            'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34, 197, 94,0.22) 0%, rgba(69,183,209,0.08) 45%, transparent 70%)',
+            'radial-gradient(ellipse 60% 70% at 50% 60%, hsl(var(--primary) / 0.22) 0%, rgba(69,183,209,0.08) 45%, transparent 70%)',
           opacity: hovered ? 1.15 : 1,
         }}
       />
@@ -184,12 +184,12 @@ const VideoPhoneMock = () => {
         style={{
           width: 320,
           background:
-            'linear-gradient(145deg, rgba(255,255,255,0.15), rgba(34, 197, 94,0.12) 40%, rgba(255,255,255,0.05))',
+            'linear-gradient(145deg, rgba(255,255,255,0.15), hsl(var(--primary) / 0.12) 40%, rgba(255,255,255,0.05))',
           transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
           transformStyle: 'preserve-3d',
           transition: hovered ? 'transform 0.08s ease-out' : 'transform 0.5s ease-out',
           boxShadow: hovered
-            ? `${-tilt.rotateY * 1.8}px ${tilt.rotateX * 1.8 + 36}px 70px rgba(0,0,0,0.55), 0 0 70px rgba(34,197,94,0.22)`
+            ? `${-tilt.rotateY * 1.8}px ${tilt.rotateX * 1.8 + 36}px 70px rgba(0,0,0,0.55), 0 0 70px hsl(var(--primary) / 0.22)`
             : '0 40px 80px -20px rgba(0,0,0,0.6)',
         }}
       >
@@ -220,7 +220,7 @@ const VideoPhoneMock = () => {
             <div
               className="absolute inset-0 pointer-events-none rounded-[41px] transition-opacity duration-300"
               style={{
-                background: `linear-gradient(${135 + tilt.rotateY * 4}deg, rgba(255,255,255,0.16) 0%, transparent 35%, transparent 65%, rgba(34,197,94,0.10) 100%)`,
+                background: `linear-gradient(${135 + tilt.rotateY * 4}deg, rgba(255,255,255,0.16) 0%, transparent 35%, transparent 65%, hsl(var(--primary) / 0.10) 100%)`,
                 opacity: hovered ? 0.9 : 0.4,
                 mixBlendMode: 'overlay',
               }}
@@ -272,7 +272,7 @@ const CalorieLoggingSection = () => {
         className="absolute inset-0 pointer-events-none opacity-50"
         style={{
           background:
-            'radial-gradient(ellipse 50% 40% at 70% 30%, rgba(34, 197, 94,0.1), transparent 70%), radial-gradient(ellipse 40% 30% at 20% 80%, rgba(69,183,209,0.06), transparent 60%)',
+            'radial-gradient(ellipse 50% 40% at 70% 30%, hsl(var(--primary) / 0.1), transparent 70%), radial-gradient(ellipse 40% 30% at 20% 80%, rgba(69,183,209,0.06), transparent 60%)',
         }}
       />
 
@@ -331,7 +331,7 @@ const CalorieLoggingSection = () => {
                 {f.highlight && (
                   <div
                     className="absolute -top-6 -right-6 w-20 h-20 rounded-full blur-2xl pointer-events-none"
-                    style={{ background: 'radial-gradient(circle, rgba(34, 197, 94,0.3), transparent 70%)' }}
+                    style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.3), transparent 70%)' }}
                   />
                 )}
                 <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 relative">
@@ -360,7 +360,7 @@ const CalorieLoggingSection = () => {
           >
             <div
               className="absolute -top-12 -right-12 w-40 h-40 rounded-full blur-3xl pointer-events-none"
-              style={{ background: 'radial-gradient(circle, rgba(34, 197, 94,0.2), transparent 70%)' }}
+              style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.2), transparent 70%)' }}
             />
             <div className="relative flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center flex-shrink-0">
@@ -428,7 +428,7 @@ const PhoneDemo = ({
         className="absolute -inset-10 -z-10 blur-3xl pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34, 197, 94,0.22) 0%, rgba(69,183,209,0.08) 45%, transparent 70%)',
+            'radial-gradient(ellipse 60% 70% at 50% 60%, hsl(var(--primary) / 0.22) 0%, rgba(69,183,209,0.08) 45%, transparent 70%)',
         }}
       />
 
@@ -438,7 +438,7 @@ const PhoneDemo = ({
         style={{
           width: 320,
           background:
-            'linear-gradient(145deg, rgba(255,255,255,0.15), rgba(34, 197, 94,0.12) 40%, rgba(255,255,255,0.05))',
+            'linear-gradient(145deg, rgba(255,255,255,0.15), hsl(var(--primary) / 0.12) 40%, rgba(255,255,255,0.05))',
         }}
       >
         <div
@@ -572,7 +572,7 @@ const PhoneDemo = ({
                   <div
                     className="w-14 h-14 rounded-full flex items-center justify-center"
                     style={{
-                      background: 'hsl(145 72% 50%)',
+                      background: 'hsl(var(--primary))',
                       boxShadow: '0 10px 30px -6px hsl(145 72% 50% / 0.7), inset 0 1px 0 rgba(255,255,255,0.25)',
                     }}
                   >
@@ -608,7 +608,7 @@ const PhoneDemo = ({
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{
-                    background: micActive ? 'hsl(145 72% 50%)' : 'rgba(255,255,255,0.08)',
+                    background: micActive ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.08)',
                     transition: 'background 250ms',
                     boxShadow: micActive ? '0 0 16px hsl(145 72% 50% / 0.6)' : 'none',
                   }}
@@ -911,7 +911,7 @@ const ToggleButton = ({
     <div
       className="dmd-concave w-9 h-9 rounded-full flex items-center justify-center"
       style={{
-        background: active ? 'rgba(34, 197, 94, 0.25)' : 'rgba(18, 20, 26, 0.82)',
+        background: active ? 'hsl(var(--primary) / 0.25)' : 'rgba(18, 20, 26, 0.82)',
         backdropFilter: 'blur(14px)',
         border: active ? '1px solid hsl(145 72% 50% / 0.6)' : undefined,
       }}

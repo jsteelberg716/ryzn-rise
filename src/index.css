@@ -16,7 +16,7 @@
     --popover: 240 5% 12%;
     --popover-foreground: 0 0% 100%;
 
-    /* RYZN red — canonical accent #22c55e */
+    /* RYZN red — canonical accent hsl(var(--primary)) */
     --primary: 145 72% 50%;
     --primary-foreground: 0 0% 100%;
 
@@ -91,8 +91,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(34, 197, 94,0.22) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(34, 197, 94,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% -10%, hsl(var(--primary) / 0.22) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, hsl(var(--primary) / 0.06) 0%, transparent 60%),
     radial-gradient(ellipse 40% 30% at 10% 60%, rgba(69,183,209,0.06) 0%, transparent 50%);
   background-size: 200% 200%;
   animation: auroraShift 12s ease-in-out infinite alternate;
@@ -109,8 +109,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(34, 197, 94,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 197, 94,0.05) 1px, transparent 1px);
+    linear-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.05) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 0%, transparent 70%);
@@ -122,13 +122,13 @@
   background: rgba(255,255,255,0.03);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(34, 197, 94,0.12);
+  border: 1px solid hsl(var(--primary) / 0.12);
 }
 
 .glass-card:hover {
   background: rgba(255,255,255,0.06);
-  border-color: rgba(34, 197, 94,0.25);
-  box-shadow: 0 8px 32px rgba(34, 197, 94,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+  border-color: hsl(var(--primary) / 0.25);
+  box-shadow: 0 8px 32px hsl(var(--primary) / 0.1), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 /* Scanline overlay */
@@ -140,8 +140,8 @@
     0deg,
     transparent,
     transparent 2px,
-    rgba(34, 197, 94,0.015) 2px,
-    rgba(34, 197, 94,0.015) 4px
+    hsl(var(--primary) / 0.015) 2px,
+    hsl(var(--primary) / 0.015) 4px
   );
   pointer-events: none;
   z-index: 1;
@@ -150,13 +150,13 @@
 /* CTA button */
 .cta-primary {
   position: relative;
-  box-shadow: 0 4px 24px rgba(34, 197, 94,0.3);
+  box-shadow: 0 4px 24px hsl(var(--primary) / 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cta-primary:hover {
   transform: scale(1.03);
-  box-shadow: 0 8px 32px rgba(34, 197, 94,0.5);
+  box-shadow: 0 8px 32px hsl(var(--primary) / 0.5);
 }
 
 .cta-primary:active {
@@ -166,7 +166,7 @@
 /* Validation CTA — all-green variant */
 .cta-validation {
   position: relative;
-  box-shadow: 0 4px 24px rgba(34, 197, 94,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
+  box-shadow: 0 4px 24px hsl(var(--primary) / 0.35), inset 0 1px 0 rgba(255,255,255,0.12);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .cta-validation::before {
@@ -174,7 +174,7 @@
   position: absolute;
   inset: -2px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(34, 197, 94,0.6), rgba(77,213,198,0.4));
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.6), rgba(77,213,198,0.4));
   filter: blur(14px);
   z-index: -1;
   opacity: 0.55;
@@ -182,7 +182,7 @@
 }
 .cta-validation:hover {
   transform: scale(1.03);
-  box-shadow: 0 10px 36px rgba(34, 197, 94,0.55), inset 0 1px 0 rgba(255,255,255,0.18);
+  box-shadow: 0 10px 36px hsl(var(--primary) / 0.55), inset 0 1px 0 rgba(255,255,255,0.18);
 }
 .cta-validation:active {
   transform: scale(0.97);
@@ -203,10 +203,10 @@
 }
 .wildcats-banner-bg {
   background-color: #003366;
-  background-image: linear-gradient(90deg, #003366 0%, hsl(145 72% 50%) 30%, hsl(145 72% 50%) 50%, hsl(145 72% 50%) 70%, #003366 100%);
+  background-image: linear-gradient(90deg, #003366 0%, hsl(var(--primary)) 30%, hsl(var(--primary)) 50%, hsl(var(--primary)) 70%, #003366 100%);
   background-size: 200% 100%;
   animation: wildcatsShimmer 6s ease-in-out infinite;
-  box-shadow: 0 4px 20px rgba(34, 197, 94,0.35), inset 0 -1px 0 rgba(0,0,0,0.25);
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.35), inset 0 -1px 0 rgba(0,0,0,0.25);
 }
 .wildcats-banner-sheen {
   background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
@@ -253,7 +253,7 @@
 
 /* Gradient text utility */
 .gradient-text {
-  background: linear-gradient(135deg, hsl(145 72% 50%) 0%, hsl(145 72% 50%) 100%);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -268,7 +268,7 @@
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(34, 197, 94,0.3), transparent 40%, transparent 60%, rgba(69,183,209,0.2));
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.3), transparent 40%, transparent 60%, rgba(69,183,209,0.2));
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -289,7 +289,7 @@
   transform: translateX(-50%);
   width: 60%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(34, 197, 94,0.3), transparent);
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent);
 }
 
 /* ── DMD Depth System (from iOS spec §2) ──────────────────────── */
@@ -380,7 +380,7 @@ html, body {
   position: absolute;
   inset: -4px;
   border-radius: inherit;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  border: 1px solid hsl(var(--primary) / 0.3);
   opacity: 0;
   animation: ctaPulseRing 3s ease-in-out infinite;
 }
@@ -404,8 +404,8 @@ html, body {
   opacity: 0;
   transition: opacity 0.3s;
   background-image:
-    linear-gradient(rgba(34, 197, 94,0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 197, 94,0.12) 1px, transparent 1px);
+    linear-gradient(hsl(var(--primary) / 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.12) 1px, transparent 1px);
   background-size: 40px 40px;
   z-index: 0;
 }
@@ -447,7 +447,7 @@ html, body {
 }
 .card-lift:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(34, 197, 94,0.12), 0 8px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 50px hsl(var(--primary) / 0.12), 0 8px 20px rgba(0,0,0,0.3);
 }
 
 /* Glow text on hover */
@@ -455,5 +455,5 @@ html, body {
   transition: text-shadow 0.3s ease;
 }
 .text-glow-hover:hover {
-  text-shadow: 0 0 20px rgba(34, 197, 94,0.5);
+  text-shadow: 0 0 20px hsl(var(--primary) / 0.5);
 }

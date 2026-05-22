@@ -7,11 +7,11 @@ const FinalCTA = () => {
     <section className="relative py-32 lg:py-40 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, hsl(240 33% 4%) 0%, hsl(145 30% 6%) 50%, hsl(240 33% 4%) 100%)' }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(34, 197, 94,0.15) 0%, transparent 70%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 50%, hsl(var(--primary) / 0.15) 0%, transparent 70%)' }} />
       
       {/* Grid pattern */}
       <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: 'linear-gradient(rgba(34, 197, 94,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(34, 197, 94,0.03) 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(hsl(var(--primary) / 0.03) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.03) 1px, transparent 1px)',
         backgroundSize: '60px 60px',
         maskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, black 0%, transparent 70%)',
         WebkitMaskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, black 0%, transparent 70%)',

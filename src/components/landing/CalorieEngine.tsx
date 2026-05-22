@@ -107,7 +107,7 @@ const CalorieEngine = () => {
           className="w-full h-full"
           style={{
             background:
-              'radial-gradient(ellipse 60% 50% at 50% 25%, rgba(34, 197, 94,0.10), transparent 70%)',
+              'radial-gradient(ellipse 60% 50% at 50% 25%, hsl(var(--primary) / 0.10), transparent 70%)',
           }}
         />
       </motion.div>
@@ -171,7 +171,7 @@ const CalorieEngine = () => {
         >
           <div
             className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(34, 197, 94,0.18), transparent 70%)' }}
+            style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.18), transparent 70%)' }}
           />
 
           {/* Workout selector */}
@@ -185,7 +185,7 @@ const CalorieEngine = () => {
                   onClick={() => setActiveId(w.id)}
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-pill text-sm font-medium transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-primary to-accent-green text-foreground shadow-[0_4px_20px_rgba(34, 197, 94,0.3)]'
+                      ? 'bg-gradient-to-r from-primary to-accent-green text-foreground shadow-[0_4px_20px_hsl(var(--primary) / 0.3)]'
                       : 'glass-card text-muted-foreground hover:text-foreground hover:border-primary/25'
                   }`}
                   aria-pressed={isActive}
@@ -218,7 +218,7 @@ const CalorieEngine = () => {
               <div
                 className="absolute -top-12 -right-12 w-40 h-40 rounded-full blur-3xl pointer-events-none"
                 style={{
-                  background: 'radial-gradient(circle, rgba(34, 197, 94,0.35), transparent 70%)',
+                  background: 'radial-gradient(circle, hsl(var(--primary) / 0.35), transparent 70%)',
                 }}
               />
               <div className="relative flex items-center justify-between mb-2">
@@ -370,7 +370,7 @@ const CalorieEngine = () => {
             to="/validation"
             className="cta-validation inline-flex items-center gap-2 px-8 py-4 rounded-pill text-foreground font-bold text-[1.0625rem]"
             style={{
-              background: 'linear-gradient(135deg, hsl(145 72% 50%) 0%, hsl(172 63% 55%) 100%)',
+              background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(172 63% 55%) 100%)',
             }}
           >
             <FlaskConical size={18} />

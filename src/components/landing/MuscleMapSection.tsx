@@ -31,7 +31,7 @@ export const MUSCLE_PATHS = [
 
 const COLOR_GRAY = "rgba(50,50,58,0.35)";
 const COLOR_BLUE = "rgba(69,183,209,0.75)";
-const COLOR_GREEN = "rgba(34, 197, 94,0.85)";
+const COLOR_GREEN = "hsl(var(--primary) / 0.85)";
 const COLOR_RED = "rgba(255,107,107,0.9)";
 
 const legend = [
@@ -161,8 +161,8 @@ const MuscleMapSection = () => {
                 key={i}
                 className="w-2 h-2 rounded-full transition-all duration-300"
                 style={{
-                  backgroundColor: i === stateIdx ? '#22c55e' : 'rgba(255,255,255,0.15)',
-                  boxShadow: i === stateIdx ? '0 0 8px rgba(34, 197, 94,0.5)' : 'none',
+                  backgroundColor: i === stateIdx ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.15)',
+                  boxShadow: i === stateIdx ? '0 0 8px hsl(var(--primary) / 0.5)' : 'none',
                 }}
               />
             ))}

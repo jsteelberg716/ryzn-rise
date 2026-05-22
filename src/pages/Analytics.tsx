@@ -98,7 +98,7 @@ const StatCard = ({
 const BarCard = ({
   title,
   data,
-  color = 'hsl(145 72% 50%)',
+  color = 'hsl(var(--primary))',
 }: {
   title: string;
   data: NameValue[];
@@ -210,14 +210,14 @@ const Analytics = () => {
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34, 197, 94,0.18) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 30%, rgba(69,183,209,0.06) 0%, transparent 60%)',
+              'radial-gradient(ellipse 80% 50% at 50% -10%, hsl(var(--primary) / 0.18) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 30%, rgba(69,183,209,0.06) 0%, transparent 60%)',
           }}
         />
         <div
           className="absolute inset-0 opacity-[0.4]"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(34, 197, 94,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(34, 197, 94,0.04) 1px, transparent 1px)',
+              'linear-gradient(hsl(var(--primary) / 0.04) 1px, transparent 1px),linear-gradient(90deg, hsl(var(--primary) / 0.04) 1px, transparent 1px)',
             backgroundSize: '44px 44px',
             maskImage: 'radial-gradient(ellipse 70% 50% at 50% 20%, black 0%, transparent 75%)',
           }}
@@ -382,8 +382,8 @@ ANALYTICS_PASSWORD=pick-a-password`}
                     <AreaChart data={stats.daily} margin={{ top: 10, right: 20, bottom: 0, left: 0 }}>
                       <defs>
                         <linearGradient id="pvGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="hsl(145 72% 50%)" stopOpacity={0.5} />
-                          <stop offset="100%" stopColor="hsl(145 72% 50%)" stopOpacity={0} />
+                          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.5} />
+                          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                         </linearGradient>
                         <linearGradient id="visGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="hsl(172 63% 55%)" stopOpacity={0.4} />
@@ -398,7 +398,7 @@ ANALYTICS_PASSWORD=pick-a-password`}
                         type="monotone"
                         dataKey="pv"
                         name="Pageviews"
-                        stroke="hsl(145 72% 50%)"
+                        stroke="hsl(var(--primary))"
                         strokeWidth={2}
                         fill="url(#pvGradient)"
                       />
@@ -423,11 +423,11 @@ ANALYTICS_PASSWORD=pick-a-password`}
               initial="hidden"
               animate="visible"
             >
-              <BarCard title="Traffic sources (QR / ?ref)" data={stats.sources} color="hsl(145 72% 50%)" />
-              <BarCard title="Top pages" data={stats.paths} color="hsl(145 72% 50%)" />
+              <BarCard title="Traffic sources (QR / ?ref)" data={stats.sources} color="hsl(var(--primary))" />
+              <BarCard title="Top pages" data={stats.paths} color="hsl(var(--primary))" />
               <BarCard title="Top referrers" data={stats.refs} color="hsl(172 63% 55%)" />
               <BarCard title="Countries" data={stats.countries} color="hsl(195 60% 55%)" />
-              <BarCard title="Devices" data={stats.devices} color="hsl(145 72% 50%)" />
+              <BarCard title="Devices" data={stats.devices} color="hsl(var(--primary))" />
             </motion.section>
 
             {/* Recent events */}

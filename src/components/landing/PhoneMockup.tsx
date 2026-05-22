@@ -30,8 +30,8 @@ const MUSCLE_PATHS = [
 
 const GROUPS = [...new Set(MUSCLE_PATHS.map(m => m.group))];
 const COLOR_IDLE = "rgba(50,50,58,0.3)";
-const COLOR_GLOW = "rgba(34, 197, 94,0.9)";
-const COLOR_HOVER = "rgba(34, 197, 94,1)";
+const COLOR_GLOW = "hsl(var(--primary) / 0.9)";
+const COLOR_HOVER = "hsl(var(--primary) / 1)";
 
 const PhoneMockup = () => {
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
@@ -60,8 +60,8 @@ const PhoneMockup = () => {
   };
 
   const getFilter = (group: string) => {
-    if (hoveredGroup === group) return `drop-shadow(0 0 12px rgba(34, 197, 94,0.8))`;
-    if (!hoveredGroup && activeGroup === group) return `drop-shadow(0 0 8px rgba(34, 197, 94,0.5))`;
+    if (hoveredGroup === group) return `drop-shadow(0 0 12px hsl(var(--primary) / 0.8))`;
+    if (!hoveredGroup && activeGroup === group) return `drop-shadow(0 0 8px hsl(var(--primary) / 0.5))`;
     return 'none';
   };
 
@@ -97,7 +97,7 @@ const PhoneMockup = () => {
         style={{
           border: '2px solid rgb(40, 40, 40)',
           boxShadow: isPhoneHovered
-            ? `${-tilt.rotateY}px ${tilt.rotateX}px 30px rgba(0,0,0,0.5), 0 0 40px rgba(34, 197, 94,0.15)`
+            ? `${-tilt.rotateY}px ${tilt.rotateX}px 30px rgba(0,0,0,0.5), 0 0 40px hsl(var(--primary) / 0.15)`
             : '2px 5px 15px rgba(0, 0, 0, 0.486)',
           transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
           transformStyle: 'preserve-3d',
@@ -121,10 +121,10 @@ const PhoneMockup = () => {
           {/* RYZN Logo */}
           <div className="w-full flex flex-col items-center pt-10 pb-2 px-6">
             <div className="relative w-[75%]">
-              <img src={ryznLogoWhite} alt="RYZN" className="w-full h-auto" style={{ filter: 'drop-shadow(0 0 8px rgba(34, 197, 94,0.3))' }} />
+              <img src={ryznLogoWhite} alt="RYZN" className="w-full h-auto" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.3))' }} />
               <img src={ryznLogoAccent} alt="" aria-hidden className="absolute inset-0 w-full h-auto" />
             </div>
-            <div className="w-[60%] h-[2px] bg-[#22c55e] mt-3 rounded-full" />
+            <div className="w-[60%] h-[2px] bg-[hsl(var(--primary))] mt-3 rounded-full" />
           </div>
 
           {/* Muscle map — centered, slightly smaller */}
@@ -150,7 +150,7 @@ const PhoneMockup = () => {
 
             {/* Hover label */}
             {hoveredLabel && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#22c55e] text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[hsl(var(--primary))] text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
                 {hoveredLabel}
               </div>
             )}
@@ -158,7 +158,7 @@ const PhoneMockup = () => {
 
           {/* Bottom bar */}
           <div className="w-full px-6 pb-4">
-            <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ background: 'linear-gradient(90deg, rgba(50,50,58,0.5), rgba(69,183,209,0.6), rgba(34, 197, 94,0.8), rgba(255,107,107,0.8))' }} />
+            <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ background: 'linear-gradient(90deg, rgba(50,50,58,0.5), rgba(69,183,209,0.6), hsl(var(--primary) / 0.8), rgba(255,107,107,0.8))' }} />
             <div className="flex justify-between mt-1">
               <span className="text-white/20 text-[6px]">Resting</span>
               <span className="text-white/20 text-[6px]">Warming Up</span>

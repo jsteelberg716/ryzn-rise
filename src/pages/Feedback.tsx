@@ -488,7 +488,7 @@ const QuestionCard = ({ num, kicker, text, field, value, onChange }: QuestionCar
 );
 
 // All styles are local to this page — keeps the prototype's visual
-// fidelity (dark glassmorphic, #22C55E green, Space Grotesk / Inter)
+// fidelity (dark glassmorphic, hsl(var(--primary)) green, Space Grotesk / Inter)
 // without polluting site-wide CSS.
 const FeedbackStyles = () => (
   <style>{`
@@ -505,8 +505,8 @@ const FeedbackStyles = () => (
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(circle at 20% 10%, rgba(34,197,94,0.08), transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(34,197,94,0.05), transparent 40%);
+        radial-gradient(circle at 20% 10%, hsl(var(--primary) / 0.08), transparent 40%),
+        radial-gradient(circle at 80% 80%, hsl(var(--primary) / 0.05), transparent 40%);
       pointer-events: none;
       z-index: 0;
     }
@@ -531,7 +531,7 @@ const FeedbackStyles = () => (
       text-decoration: none;
       display: inline-block;
     }
-    .feedback-logo span { color: #22C55E; }
+    .feedback-logo span { color: hsl(var(--primary)); }
     .feedback-tag {
       font-size: 12px;
       text-transform: uppercase;
@@ -560,7 +560,7 @@ const FeedbackStyles = () => (
       background: rgba(255,255,255,0.03);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(34,197,94,0.12);
+      border: 1px solid hsl(var(--primary) / 0.12);
       border-radius: 16px;
       padding: 28px;
       margin-bottom: 20px;
@@ -583,7 +583,7 @@ const FeedbackStyles = () => (
       font-family: 'Space Grotesk', sans-serif;
       font-size: 11px;
       font-weight: 600;
-      color: #22C55E;
+      color: hsl(var(--primary));
       letter-spacing: 0.12em;
       text-transform: uppercase;
       margin-bottom: 8px;
@@ -634,15 +634,15 @@ const FeedbackStyles = () => (
     }
     .feedback-opt:hover .feedback-opt-label {
       background: rgba(255,255,255,0.06);
-      border-color: rgba(34,197,94,0.12);
+      border-color: hsl(var(--primary) / 0.12);
     }
     .feedback-opt input:checked ~ .feedback-opt-label {
-      background: rgba(34,197,94,0.08);
-      border-color: rgba(34,197,94,0.25);
+      background: hsl(var(--primary) / 0.08);
+      border-color: hsl(var(--primary) / 0.25);
     }
     .feedback-opt input:checked ~ .feedback-opt-label::before {
-      border-color: #22C55E;
-      background: #22C55E;
+      border-color: hsl(var(--primary));
+      background: hsl(var(--primary));
       box-shadow: inset 0 0 0 3px #0a0a0a;
     }
     .feedback-card textarea {
@@ -660,8 +660,8 @@ const FeedbackStyles = () => (
     }
     .feedback-card textarea:focus {
       outline: none;
-      border-color: rgba(34,197,94,0.25);
-      background: rgba(34,197,94,0.04);
+      border-color: hsl(var(--primary) / 0.25);
+      background: hsl(var(--primary) / 0.04);
     }
     .feedback-card textarea::placeholder { color: #666; }
 
@@ -676,9 +676,9 @@ const FeedbackStyles = () => (
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: rgba(34,197,94,0.08);
-      border: 1px solid rgba(34,197,94,0.25);
-      color: #22C55E;
+      background: hsl(var(--primary) / 0.08);
+      border: 1px solid hsl(var(--primary) / 0.25);
+      color: hsl(var(--primary));
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -688,22 +688,22 @@ const FeedbackStyles = () => (
       position: relative;
     }
     .feedback-mic-btn:hover {
-      background: rgba(34,197,94,0.15);
+      background: hsl(var(--primary) / 0.15);
       transform: scale(1.05);
     }
     .feedback-mic-btn:active { transform: scale(0.95); }
     .feedback-mic-btn svg { width: 18px; height: 18px; }
     .feedback-mic-btn.recording {
-      background: #22C55E;
+      background: hsl(var(--primary));
       color: #000;
-      border-color: #22C55E;
+      border-color: hsl(var(--primary));
     }
     .feedback-mic-btn.recording::before {
       content: '';
       position: absolute;
       inset: -6px;
       border-radius: 50%;
-      border: 2px solid #22C55E;
+      border: 2px solid hsl(var(--primary));
       opacity: 0.5;
       animation: feedbackPulseRing 1.4s ease-out infinite;
     }
@@ -722,7 +722,7 @@ const FeedbackStyles = () => (
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #22C55E;
+      background: hsl(var(--primary));
       margin-right: 6px;
       vertical-align: middle;
       animation: feedbackDotBlink 1s ease-in-out infinite;
@@ -752,7 +752,7 @@ const FeedbackStyles = () => (
       justify-content: center;
     }
     .feedback-submit {
-      background: #22C55E;
+      background: hsl(var(--primary));
       color: #000;
       border: none;
       padding: 16px 40px;
@@ -763,11 +763,11 @@ const FeedbackStyles = () => (
       letter-spacing: 0.02em;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
-      box-shadow: 0 4px 20px rgba(34,197,94,0.12);
+      box-shadow: 0 4px 20px hsl(var(--primary) / 0.12);
     }
     .feedback-submit:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(34,197,94,0.4);
+      box-shadow: 0 8px 32px hsl(var(--primary) / 0.4);
     }
     .feedback-submit:active:not(:disabled) { transform: scale(0.97); }
     .feedback-submit:disabled {
@@ -790,13 +790,13 @@ const FeedbackStyles = () => (
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: rgba(34,197,94,0.12);
-      border: 1.5px solid #22C55E;
+      background: hsl(var(--primary) / 0.12);
+      border: 1.5px solid hsl(var(--primary));
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 24px;
-      color: #22C55E;
+      color: hsl(var(--primary));
       font-size: 28px;
     }
     .feedback-thanks h2 {
@@ -810,7 +810,7 @@ const FeedbackStyles = () => (
     .feedback-thanks-back {
       display: inline-block;
       margin-top: 24px;
-      color: #22C55E;
+      color: hsl(var(--primary));
       text-decoration: none;
       font-size: 13px;
       letter-spacing: 0.04em;

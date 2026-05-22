@@ -380,7 +380,7 @@ const Mobile = () => {
           <div
             className="absolute -top-20 -right-20 w-48 h-48 rounded-full pointer-events-none"
             style={{
-              background: 'radial-gradient(circle, rgba(34, 197, 94, 0.18) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, hsl(var(--primary) / 0.18) 0%, transparent 70%)',
             }}
           />
           <div className="relative">
@@ -443,11 +443,11 @@ const Mobile = () => {
           <motion.div
             aria-hidden
             className="absolute inset-0 rounded-3xl"
-            style={{ boxShadow: '0 0 0 0 rgba(34,197,94,0.55)' }}
+            style={{ boxShadow: '0 0 0 0 hsl(var(--primary) / 0.55)' }}
             animate={{
               boxShadow: [
-                '0 0 0 0 rgba(34,197,94,0.55)',
-                '0 0 0 36px rgba(34,197,94,0)',
+                '0 0 0 0 hsl(var(--primary) / 0.55)',
+                '0 0 0 36px hsl(var(--primary) / 0)',
               ],
             }}
             transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut' }}
@@ -455,11 +455,11 @@ const Mobile = () => {
           <motion.div
             aria-hidden
             className="absolute inset-0 rounded-3xl"
-            style={{ boxShadow: '0 0 0 0 rgba(34,197,94,0.35)' }}
+            style={{ boxShadow: '0 0 0 0 hsl(var(--primary) / 0.35)' }}
             animate={{
               boxShadow: [
-                '0 0 0 0 rgba(34,197,94,0.35)',
-                '0 0 0 24px rgba(34,197,94,0)',
+                '0 0 0 0 hsl(var(--primary) / 0.35)',
+                '0 0 0 24px hsl(var(--primary) / 0)',
               ],
             }}
             transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay: 0.8 }}
@@ -578,7 +578,7 @@ const Mobile = () => {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(34, 197, 94, 0.18) 0%, transparent 70%)',
+              'radial-gradient(ellipse 80% 60% at 50% 50%, hsl(var(--primary) / 0.18) 0%, transparent 70%)',
           }}
         />
         <motion.div
@@ -664,7 +664,7 @@ const Mobile = () => {
             exit={{ opacity: 0, y: 24, scale: 0.9 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             whileTap={{ scale: 0.95 }}
-            className="fixed bottom-6 left-5 z-30 flex items-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-sm shadow-[0_8px_24px_rgba(34,197,94,0.4)] active:shadow-[0_4px_12px_rgba(34,197,94,0.5)]"
+            className="fixed bottom-6 left-5 z-30 flex items-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-sm shadow-[0_8px_24px_hsl(var(--primary) / 0.4)] active:shadow-[0_4px_12px_hsl(var(--primary) / 0.5)]"
             aria-label="Download RYZN"
           >
             <AppleIcon className="w-4 h-4" />
@@ -767,8 +767,8 @@ function MuscleMapMobile() {
                 style={{
                   width: i === stateIdx ? 16 : 6,
                   height: 6,
-                  backgroundColor: i === stateIdx ? '#22c55e' : 'rgba(255,255,255,0.18)',
-                  boxShadow: i === stateIdx ? '0 0 8px rgba(34,197,94,0.55)' : 'none',
+                  backgroundColor: i === stateIdx ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.18)',
+                  boxShadow: i === stateIdx ? '0 0 8px hsl(var(--primary) / 0.55)' : 'none',
                 }}
               />
             ))}
@@ -862,7 +862,7 @@ function FuelDemoMobile() {
             className="absolute -inset-8 -z-10 blur-3xl pointer-events-none"
             style={{
               background:
-                'radial-gradient(ellipse 60% 70% at 50% 60%, rgba(34,197,94,0.28) 0%, rgba(69,183,209,0.10) 45%, transparent 70%)',
+                'radial-gradient(ellipse 60% 70% at 50% 60%, hsl(var(--primary) / 0.28) 0%, rgba(69,183,209,0.10) 45%, transparent 70%)',
             }}
           />
 
@@ -871,7 +871,7 @@ function FuelDemoMobile() {
             className="relative rounded-[36px] p-[3px] phone-float-slow"
             style={{
               background:
-                'linear-gradient(145deg, rgba(255,255,255,0.16), rgba(34,197,94,0.14) 40%, rgba(255,255,255,0.05))',
+                'linear-gradient(145deg, rgba(255,255,255,0.16), hsl(var(--primary) / 0.14) 40%, rgba(255,255,255,0.05))',
               boxShadow: '0 30px 60px -16px rgba(0,0,0,0.6)',
             }}
           >
@@ -904,7 +904,7 @@ function FuelDemoMobile() {
                   className="absolute inset-0 pointer-events-none rounded-[33px]"
                   style={{
                     background:
-                      'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 35%, transparent 65%, rgba(34,197,94,0.08) 100%)',
+                      'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 35%, transparent 65%, hsl(var(--primary) / 0.08) 100%)',
                     mixBlendMode: 'overlay',
                   }}
                 />
@@ -941,7 +941,7 @@ function FuelDemoMobile() {
               {c.highlight && (
                 <div
                   className="absolute -top-6 -right-6 w-16 h-16 rounded-full blur-2xl pointer-events-none"
-                  style={{ background: 'radial-gradient(circle, rgba(34,197,94,0.35), transparent 70%)' }}
+                  style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.35), transparent 70%)' }}
                 />
               )}
               <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
@@ -1022,7 +1022,7 @@ function ShareCardsMobile() {
           className="absolute inset-0 -z-10 rounded-[40px] blur-3xl pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse at center, rgba(34,197,94,0.32) 0%, rgba(34,197,94,0.08) 50%, transparent 75%)',
+              'radial-gradient(ellipse at center, hsl(var(--primary) / 0.32) 0%, hsl(var(--primary) / 0.08) 50%, transparent 75%)',
             transform: 'scale(1.15)',
           }}
         />
@@ -1096,7 +1096,7 @@ function ShareCardsMobile() {
             className="rounded-2xl overflow-hidden"
             style={{
               boxShadow:
-                '0 24px 50px rgba(0,0,0,0.55), 0 0 56px rgba(34,197,94,0.28), 0 0 0 1px rgba(255,255,255,0.06)',
+                '0 24px 50px rgba(0,0,0,0.55), 0 0 56px hsl(var(--primary) / 0.28), 0 0 0 1px rgba(255,255,255,0.06)',
             }}
             animate={{ y: [0, -5, 0] }}
             transition={{ y: { duration: 4, repeat: Infinity, ease: 'easeInOut' } }}
@@ -1107,7 +1107,7 @@ function ShareCardsMobile() {
               className="absolute inset-0 pointer-events-none rounded-2xl"
               style={{
                 background:
-                  'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 35%, transparent 65%, rgba(34,197,94,0.12) 100%)',
+                  'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 35%, transparent 65%, hsl(var(--primary) / 0.12) 100%)',
                 mixBlendMode: 'overlay',
               }}
             />
@@ -1125,8 +1125,8 @@ function ShareCardsMobile() {
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full backdrop-blur-md select-none"
               style={{
                 background: 'rgba(20,20,28,0.78)',
-                border: '1px solid rgba(34,197,94,0.3)',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.4), 0 0 16px rgba(34,197,94,0.18)',
+                border: '1px solid hsl(var(--primary) / 0.3)',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.4), 0 0 16px hsl(var(--primary) / 0.18)',
               }}
               animate={{
                 x: stackInView ? p.x : 0,

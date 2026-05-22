@@ -172,10 +172,10 @@ const Validation = () => {
     <div className="min-h-screen bg-bg-primary text-foreground relative overflow-hidden">
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34, 197, 94,0.18) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 30%, rgba(69,183,209,0.06) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse 80% 50% at 50% -10%, hsl(var(--primary) / 0.18) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 30%, rgba(69,183,209,0.06) 0%, transparent 60%)',
         }} />
         <div className="absolute inset-0 opacity-[0.4]" style={{
-          backgroundImage: 'linear-gradient(rgba(34, 197, 94,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(34, 197, 94,0.04) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(hsl(var(--primary) / 0.04) 1px, transparent 1px),linear-gradient(90deg, hsl(var(--primary) / 0.04) 1px, transparent 1px)',
           backgroundSize: '44px 44px',
           maskImage: 'radial-gradient(ellipse 70% 50% at 50% 20%, black 0%, transparent 75%)',
         }} />
@@ -346,7 +346,7 @@ const Validation = () => {
               >
                 <div
                   className="absolute -top-16 -right-16 w-48 h-48 rounded-full blur-3xl pointer-events-none"
-                  style={{ background: 'radial-gradient(circle, rgba(34, 197, 94,0.10), transparent 70%)' }}
+                  style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.10), transparent 70%)' }}
                 />
                 <div className="text-xs font-medium tracking-widest uppercase text-accent-green mb-2">
                   Lifter {i + 1}
@@ -432,7 +432,7 @@ const Validation = () => {
                   <Bar dataKey="Whoop"  fill="hsl(0 0% 75%)"    radius={[8, 8, 0, 0]}>
                     <LabelList dataKey="Whoop" position="top" fill="rgba(255,255,255,0.5)" fontSize={11} />
                   </Bar>
-                  <Bar dataKey="RYZN"   fill="hsl(145 72% 50%)" radius={[8, 8, 0, 0]}>
+                  <Bar dataKey="RYZN"   fill="hsl(var(--primary))" radius={[8, 8, 0, 0]}>
                     <LabelList dataKey="RYZN" position="top" fill="hsl(145 72% 65%)" fontSize={11} fontWeight={700} />
                   </Bar>
                 </BarChart>
@@ -484,7 +484,7 @@ const Validation = () => {
             >
               <div
                 className="absolute -top-16 -right-16 w-48 h-48 rounded-full blur-3xl pointer-events-none"
-                style={{ background: 'radial-gradient(circle, rgba(34, 197, 94,0.18), transparent 70%)' }}
+                style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.18), transparent 70%)' }}
               />
               <div className="flex items-center gap-2 mb-3">
                 <Beaker size={16} className="text-accent-green" />

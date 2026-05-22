@@ -37,7 +37,7 @@ function ProgressionChart() {
     <div ref={ref} className="dmd-convex rounded-[24px] p-6">
       <svg viewBox="0 0 400 200" className="w-full">
         {[0, 1, 2, 3, 4].map(i => (
-          <line key={i} x1="20" y1={10 + i * 45} x2="380" y2={10 + i * 45} stroke="rgba(34, 197, 94,0.06)" strokeWidth="1" />
+          <line key={i} x1="20" y1={10 + i * 45} x2="380" y2={10 + i * 45} stroke="hsl(var(--primary) / 0.06)" strokeWidth="1" />
         ))}
         <motion.path
           d={areaD}
@@ -49,7 +49,7 @@ function ProgressionChart() {
         <motion.path
           d={pathD}
           fill="none"
-          stroke="#22c55e"
+          stroke="hsl(var(--primary))"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -66,7 +66,7 @@ function ProgressionChart() {
               cx={x}
               cy={y}
               r="4"
-              fill="#22c55e"
+              fill="hsl(var(--primary))"
               initial={{ scale: 0, opacity: 0 }}
               animate={inView ? { scale: 1, opacity: 1 } : {}}
               transition={{ delay: 0.3 + i * 0.25, duration: 0.3, ease: EASING.overshoot }}
@@ -75,8 +75,8 @@ function ProgressionChart() {
         })}
         <defs>
           <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>

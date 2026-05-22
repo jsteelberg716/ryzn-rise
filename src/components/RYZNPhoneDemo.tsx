@@ -33,7 +33,7 @@ const EXERCISES = [
 
 const COLOR_GRAY = "rgba(50,50,58,0.35)";
 const COLOR_BLUE = "rgba(59,130,246,0.75)";
-const COLOR_GREEN = "rgba(34, 197, 94,0.85)";
+const COLOR_GREEN = "hsl(var(--primary) / 0.85)";
 
 const MUSCLE_STATES = [
   { arms: 2, forearms: 1, chest: 0, shoulders: 0, core: 0, upper_back: 0, quads: 0 },
@@ -90,7 +90,7 @@ export default function RYZNPhoneDemo() {
   const nextExercise = () => { setExIdx(i => i + 1); setResting(false); setRestTime(0); };
   const skipRest = () => { setResting(false); setRestTime(0); };
   const finish = () => {
-    setConfetti(Array.from({ length: 40 }, (_, i) => ({ id: i, x: Math.random() * 100, color: ["#22c55e", "#3b82f6", "#eab308", "#ef4444", "#a855f7"][Math.floor(Math.random() * 5)], delay: Math.random() * 0.6 })));
+    setConfetti(Array.from({ length: 40 }, (_, i) => ({ id: i, x: Math.random() * 100, color: ["hsl(var(--primary))", "#3b82f6", "#eab308", "#ef4444", "#a855f7"][Math.floor(Math.random() * 5)], delay: Math.random() * 0.6 })));
     setDone(true);
   };
   const reset = () => { setStep(0); setExIdx(0); setResting(false); setRestTime(0); setDone(false); setConfetti([]); setComp(EXERCISES.map(e => e.sets.map(() => false))); };
@@ -122,7 +122,7 @@ export default function RYZNPhoneDemo() {
             <svg viewBox="330 80 300 440" width={130} height={190}>
               {MUSCLE_PATHS.map(m => <path key={m.id} d={m.d} fill={getMuscleColor(gi(m.group))} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" style={{ transition: "fill 0.6s" }} />)}
             </svg>
-            <button onClick={reset} style={{ marginTop: 20, padding: "10px 24px", borderRadius: 12, background: "#22c55e", color: "black", fontWeight: 600, fontSize: 14, border: "none", cursor: "pointer" }}>Try Again</button>
+            <button onClick={reset} style={{ marginTop: 20, padding: "10px 24px", borderRadius: 12, background: "hsl(var(--primary))", color: "black", fontWeight: 600, fontSize: 14, border: "none", cursor: "pointer" }}>Try Again</button>
           </div>
         ) : (
           <>
@@ -156,7 +156,7 @@ export default function RYZNPhoneDemo() {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {ex.sets.map((s, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: 12, border: `1px solid ${sets[i] ? "rgba(34, 197, 94,0.2)" : "rgba(255,255,255,0.06)"}`, background: sets[i] ? "rgba(34, 197, 94,0.1)" : "rgba(255,255,255,0.02)", transition: "all 0.3s" }}>
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: 12, border: `1px solid ${sets[i] ? "hsl(var(--primary) / 0.2)" : "rgba(255,255,255,0.06)"}`, background: sets[i] ? "hsl(var(--primary) / 0.1)" : "rgba(255,255,255,0.02)", transition: "all 0.3s" }}>
                       <span style={{ fontSize: 12, fontFamily: "monospace", width: 20, color: sets[i] ? "#4ade80" : "rgba(255,255,255,0.3)" }}>{i + 1}</span>
                       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
                         {s.w > 0 && <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 14, fontWeight: 500 }}>{s.w} lbs</span>}
@@ -164,12 +164,12 @@ export default function RYZNPhoneDemo() {
                         <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 14, fontWeight: 500 }}>{s.r} reps</span>
                       </div>
                       {sets[i] ? (
-                        <div style={{ width: 32, height: 32, borderRadius: 16, background: "#22c55e", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <div style={{ width: 32, height: 32, borderRadius: 16, background: "hsl(var(--primary))", display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
                         </div>
                       ) : i === nextSet ? (
-                        <button onClick={completeSet} style={{ width: 32, height: 32, borderRadius: 16, border: "2px solid rgba(34, 197, 94,0.4)", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(34, 197, 94,0.5)" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+                        <button onClick={completeSet} style={{ width: 32, height: 32, borderRadius: 16, border: "2px solid hsl(var(--primary) / 0.4)", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--primary) / 0.5)" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
                         </button>
                       ) : (
                         <div style={{ width: 32, height: 32, borderRadius: 16, border: "1px solid rgba(255,255,255,0.1)" }} />
@@ -180,12 +180,12 @@ export default function RYZNPhoneDemo() {
               </div>
 
               {allDone && !isLast && (
-                <button onClick={nextExercise} style={{ width: "100%", padding: 12, borderRadius: 12, background: "#22c55e", color: "black", fontWeight: 600, fontSize: 14, border: "none", cursor: "pointer", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <button onClick={nextExercise} style={{ width: "100%", padding: 12, borderRadius: 12, background: "hsl(var(--primary))", color: "black", fontWeight: 600, fontSize: 14, border: "none", cursor: "pointer", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                   Next Exercise <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6" /></svg>
                 </button>
               )}
               {allDone && isLast && (
-                <button onClick={finish} style={{ width: "100%", padding: 12, borderRadius: 12, background: "#22c55e", color: "black", fontWeight: 600, fontSize: 14, border: "none", cursor: "pointer", marginBottom: 8 }}>
+                <button onClick={finish} style={{ width: "100%", padding: 12, borderRadius: 12, background: "hsl(var(--primary))", color: "black", fontWeight: 600, fontSize: 14, border: "none", cursor: "pointer", marginBottom: 8 }}>
                   🎉 Finish Workout
                 </button>
               )}

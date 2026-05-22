@@ -13,7 +13,7 @@ const splits = [
     name: 'Push/Pull/Legs',
     subtitle: 'The classic 6-day split',
     lottie: benchPress,
-    gradient: 'linear-gradient(135deg, #22c55e, #15803D)',
+    gradient: 'linear-gradient(135deg, hsl(var(--primary)), #15803D)',
     tags: ['6 days/week', 'Intermediate', 'Strength + Size'],
     days: [
       { day: 'Push', exercises: ['Bench Press', 'Overhead Press', 'Incline DB Press', 'Lateral Raises', 'Tricep Pushdowns', 'Cable Flyes'] },

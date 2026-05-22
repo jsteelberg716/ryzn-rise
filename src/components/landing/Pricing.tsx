@@ -42,7 +42,7 @@ const Pricing = () => {
 
   return (
     <section id="pricing" className="relative bg-background py-20 lg:py-32">
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(34, 197, 94,0.08) 0%, transparent 70%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, hsl(var(--primary) / 0.08) 0%, transparent 70%)' }} />
 
       <motion.div
         className="relative z-10 max-w-[1200px] mx-auto px-6 text-center"
@@ -96,13 +96,13 @@ const Pricing = () => {
           <motion.div
             variants={fadeUpVariant}
             className="relative dmd-convex rounded-2xl p-8 flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1"
-            style={{ boxShadow: '0 0 60px rgba(34, 197, 94,0.12), inset 0 1px 0 rgba(255,255,255,0.05)' }}
+            style={{ boxShadow: '0 0 60px hsl(var(--primary) / 0.12), inset 0 1px 0 rgba(255,255,255,0.05)' }}
           >
             <div
               className="pointer-events-none absolute -inset-px rounded-2xl z-0"
               style={{
                 background:
-                  'conic-gradient(from var(--pro-angle, 0deg), rgba(34,197,94,0) 0deg, #22c55e 40deg, rgba(34,197,94,0) 80deg, rgba(34,197,94,0) 180deg, #22c55e 220deg, rgba(34,197,94,0) 260deg, rgba(34,197,94,0) 360deg)',
+                  'conic-gradient(from var(--pro-angle, 0deg), hsl(var(--primary) / 0) 0deg, hsl(var(--primary)) 40deg, hsl(var(--primary) / 0) 80deg, hsl(var(--primary) / 0) 180deg, hsl(var(--primary)) 220deg, hsl(var(--primary) / 0) 260deg, hsl(var(--primary) / 0) 360deg)',
                 animation: 'pro-border-spin 4s linear infinite',
               }}
             />
@@ -214,7 +214,7 @@ const Pricing = () => {
               {/* Aurora */}
               <div
                 className="absolute inset-0 -z-10 pointer-events-none opacity-60"
-                style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(34,197,94,0.18), transparent 70%)' }}
+                style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, hsl(var(--primary) / 0.18), transparent 70%)' }}
               />
 
               <button

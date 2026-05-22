@@ -148,7 +148,7 @@ const Reviews = () => {
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34, 197, 94,0.14) 0%, transparent 70%)',
+              'radial-gradient(ellipse 80% 50% at 50% -10%, hsl(var(--primary) / 0.14) 0%, transparent 70%)',
           }}
         />
       </div>
@@ -493,7 +493,7 @@ function EmptyState() {
           className="absolute inset-0 -z-10 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse 70% 60% at 50% 0%, rgba(34, 197, 94, 0.18) 0%, transparent 70%)',
+              'radial-gradient(ellipse 70% 60% at 50% 0%, hsl(var(--primary) / 0.18) 0%, transparent 70%)',
           }}
         />
 
