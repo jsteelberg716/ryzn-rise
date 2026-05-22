@@ -296,7 +296,7 @@
                the frosted .glass-edge overlay on the right makes the
                exit look like the phone sliding under glass instead
                of a fade. */
-            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg);
+            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg) scale(1); opacity: 1;
                    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
             /* Rest position — top aligned with puck, mid-tilt */
             22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(18deg);
@@ -308,12 +308,16 @@
             /* Level out for the sheet rise */
             48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); }
             /* Hold while the sheet is up — give it a real beat */
-            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg);
+            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg) scale(1); opacity: 1;
                    animation-timing-function: cubic-bezier(0.5, 0, 1, 1); }
-            /* Exit OFF to the right — phone stays fully opaque; the
-               .glass-edge overlay frosts it as it crosses. */
-            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
-            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
+            /* Exit RIGHT into the glass overlay — translate just far
+               enough to enter the text-column area (~100 % of stage
+               width clears the visible left region), and simultaneously
+               shrink to ~0.5 + fade to 0. Reads as the phone receding
+               into the distance behind the glass rather than freezing
+               at the iframe boundary and disappearing in one frame. */
+            96%  { transform: translate(110%, 8px)   rotateZ(10deg)  rotateX(20deg) scale(0.5); opacity: 0; }
+            100% { transform: translate(110%, 8px)   rotateZ(10deg)  rotateX(20deg) scale(0.5); opacity: 0; }
         }
 
         .phone-rig .bezel {
@@ -671,17 +675,23 @@
         body.embed .hero h1,
         body.embed main > section:not(.hero) { display: none !important; }
         body.embed main { padding: 0; }
-        body.embed .hero { padding: 0 0 0 4vw; min-height: 0; display: flex; align-items: center; justify-content: flex-start; height: 100%; }
-        body.embed .hero .stage { max-width: min(560px, 50vw); margin: 0; padding-bottom: 0; }
+        body.embed .hero { padding: 0; min-height: 0; height: 100%; position: relative; }
         body.embed html, body.embed body { height: 100%; }
-        /* Stage is anchored to the LEFT side of the iframe so the
-           text column overlay (positioned over the right ~42 % by
-           RyznTagSection.tsx) sits in clear space rather than over
-           the phone. justify-content: flex-start + a small left
-           pad gives the animation breathing room without recentring.
-           No inside-iframe glass overlay — the parent's text column
-           carries the backdrop-filter, and the phone visually fades
-           under it only when crossing behind. */
+        /* Stage is absolutely anchored to 29 % of the iframe width
+           (= the center of the LEFT 58 % region — the area the
+           parent's text-column overlay doesn't cover). Deterministic
+           regardless of flex / margin math. Vertical center via the
+           top:50% + translateY combo. */
+        body.embed .hero .stage {
+            position: absolute;
+            left: 29%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: min(520px, 48vw);
+            max-width: 520px;
+            margin: 0;
+            padding-bottom: 0;
+        }
     </style>
 </head>
 <body>

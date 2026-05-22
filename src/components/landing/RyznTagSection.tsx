@@ -107,9 +107,7 @@ const RyznTagSection = () => {
             lg:w-[42%] lg:max-w-[480px]
             lg:flex lg:flex-col lg:justify-center
             lg:px-10 lg:py-10
-            lg:border-l lg:border-primary/15
             lg:backdrop-blur-lg lg:[backdrop-filter:blur(18px)_saturate(140%)]
-            lg:bg-[hsl(225_8%_7%_/_0.15)]
             space-y-6 lg:space-y-7
           "
         >
