@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
-import { Nfc, ArrowDown, Repeat } from 'lucide-react';
 
 /// Desktop landing section that mirrors the mobile /scan experience.
 /// Replaces the "Your program. Your schedule. Your rules." (WorkoutPrograms)
@@ -8,17 +7,11 @@ import { Nfc, ArrowDown, Repeat } from 'lucide-react';
 /// desktop visitors who'd otherwise never see it (mobile users hit the
 /// dedicated /scan landing via Instagram links or direct tag taps).
 ///
-/// Right column iframes /scan/v1/ so the polished phone-tap-tag-sheet-rise
-/// animation is reused without duplication. The iframe is sized + clipped
-/// to look like a phone-on-desk preview (~370×720) rather than a page
-/// embed.
+/// The animation iframes /scan/v1/?embed=1 — that query flag activates
+/// the page's embed mode (hides nav, footer, the post-hero CTA, and all
+/// non-hero sections) so only the phone-taps-puck-sheet-rise animation
+/// shows. Single source of truth for the animation itself.
 const RyznTagSection = () => {
-  const beats = [
-    { icon: Nfc, title: 'Tap', copy: 'Touch your phone to any RYZN tag on a machine, rack, or bench.' },
-    { icon: ArrowDown, title: 'Lift', copy: 'The exercise opens instantly. Log sets, hit your weight, send it.' },
-    { icon: Repeat, title: 'Repeat', copy: 'Tap the next tag for the next lift. No menus. No typing.' },
-  ];
-
   return (
     <section className="relative bg-card pt-16 lg:pt-20 pb-20 lg:pb-28 section-glow section-inset">
       <motion.div
@@ -50,64 +43,39 @@ const RyznTagSection = () => {
         </motion.p>
       </motion.div>
 
+      {/* Full-width animation panel. iframe is sized to the natural
+          height the embed needs (eyebrow + heading + stage) so the
+          phone animation reads at desktop scale. */}
       <motion.div
-        className="max-w-[1200px] mx-auto mt-12 lg:mt-16 px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center"
-        variants={staggerContainer}
+        className="max-w-[1200px] mx-auto mt-10 lg:mt-14 px-6"
+        variants={fadeUpVariant}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-80px' }}
       >
-        {/* LEFT — explanation beats */}
-        <motion.div variants={fadeUpVariant} className="space-y-6 lg:space-y-8 max-w-[480px] mx-auto lg:mx-0">
-          {beats.map(({ icon: Icon, title, copy }) => (
-            <div key={title} className="flex gap-4">
-              <div className="dmd-concave shrink-0 size-12 rounded-full flex items-center justify-center text-primary">
-                <Icon className="size-5" strokeWidth={2.25} />
-              </div>
-              <div>
-                <h3 className="text-foreground font-semibold text-lg">{title}.</h3>
-                <p className="text-muted-foreground text-[0.9375rem] mt-1 leading-relaxed">
-                  {copy}
-                </p>
-              </div>
-            </div>
-          ))}
+        <iframe
+          src="/scan/v1/?embed=1"
+          title="RYZN tag scan animation"
+          scrolling="no"
+          loading="lazy"
+          className="block w-full border-0"
+          style={{ height: 'clamp(560px, 70vh, 800px)' }}
+        />
+      </motion.div>
 
-          <div className="pt-4">
-            <a
-              href="/scan"
-              className="dmd-convex inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-foreground hover:text-primary transition-colors"
-            >
-              See the full demo
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </motion.div>
-
-        {/* RIGHT — embedded animation framed as a phone preview */}
-        <motion.div
-          variants={fadeUpVariant}
-          className="flex justify-center lg:justify-end"
+      <motion.div
+        className="max-w-[1200px] mx-auto mt-10 px-6 text-center"
+        variants={fadeUpVariant}
+        initial="hidden"
+        whileInView="visible"
+      >
+        <a
+          href="/scan"
+          className="dmd-convex inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-foreground hover:text-primary transition-colors"
         >
-          <div
-            className="relative rounded-[40px] overflow-hidden shadow-2xl"
-            style={{
-              width: 'min(370px, 100%)',
-              aspectRatio: '370 / 760',
-              background: '#000',
-              boxShadow: '0 30px 80px -20px rgba(0,0,0,0.5), 0 0 0 8px #111, 0 0 0 9px rgba(255,255,255,0.06)',
-            }}
-          >
-            <iframe
-              src="/scan/v1/"
-              title="RYZN tag scan animation"
-              scrolling="no"
-              loading="lazy"
-              className="block w-full h-full border-0"
-              style={{ borderRadius: 'inherit' }}
-            />
-          </div>
-        </motion.div>
+          See the full demo
+          <span aria-hidden="true">→</span>
+        </a>
       </motion.div>
     </section>
   );
