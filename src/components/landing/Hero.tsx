@@ -108,12 +108,14 @@ const Hero = () => {
           </motion.p>
 
           {/* CTA Group — Get RYZN on the left, See How It Works on
-              the right. The "Get RYZN" pill carries a 24 px box-shadow
-              halo + 4 px cta-pulse rings; the section uses
-              overflow:clip with a 120 px clip-margin so neither gets
-              sliced at the column edge. */}
+              the right. `items-start` on the outer row + `items-start`
+              on each inner flex-col so the inline-block buttons keep
+              their natural width (otherwise flex's default
+              `align-items: stretch` makes them span the column,
+              pushing text off-center and pinching the rounded-pill
+              ends against the column edges). */}
           <motion.div variants={wordReveal} className="mt-8 flex flex-wrap gap-4 items-start">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col items-start gap-3">
               <a
                 href="#pricing"
                 className="cta-primary cta-pulse inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]"
@@ -124,26 +126,24 @@ const Hero = () => {
                 {isWildcats ? 'Verify with your .edu email. Free forever.' : '3-day free trial · $10/month · Cancel anytime'}
               </p>
             </div>
-            <div className="flex flex-col gap-4 items-start">
-              <a
-                href="#how-it-works"
-                className="dmd-convex px-8 py-4 rounded-pill text-muted-foreground font-semibold text-[1.0625rem] hover:text-foreground transition-all duration-200"
-              >
-                See How It Works
-              </a>
-              {/* Theme picker — sits directly under "See How It Works"
-                  so it visually anchors the right side of the CTA
-                  stack and doesn't get cut off by row wrapping. */}
-              <ChooseYourTheme />
-            </div>
+            <a
+              href="#how-it-works"
+              className="dmd-convex px-8 py-4 rounded-pill text-muted-foreground font-semibold text-[1.0625rem] hover:text-foreground transition-all duration-200"
+            >
+              See How It Works
+            </a>
           </motion.div>
 
-          {/* App Store row */}
+          {/* App Store + Theme picker row — share a single horizontal
+              line so they're visually aligned. justify-between
+              anchors "Coming soon..." to the left edge and the
+              picker to the right edge of the column. */}
           <motion.div
             variants={wordReveal}
-            className="mt-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
+            className="mt-8 flex flex-wrap items-center justify-between gap-6 text-sm text-muted-foreground"
           >
             <span>Coming soon to the <strong className="text-foreground">App Store</strong></span>
+            <ChooseYourTheme />
           </motion.div>
         </motion.div>
 
