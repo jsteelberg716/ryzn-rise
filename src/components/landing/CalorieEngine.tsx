@@ -370,7 +370,7 @@ const CalorieEngine = () => {
             to="/validation"
             className="cta-validation inline-flex items-center gap-2 px-8 py-4 rounded-pill text-foreground font-bold text-[1.0625rem]"
             style={{
-              background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(172 63% 55%) 100%)',
+              background: 'hsl(var(--primary))',
             }}
           >
             <FlaskConical size={18} />

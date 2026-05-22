@@ -25,7 +25,7 @@ const Hero = () => {
   const phoneOpacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 1, 0]);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen pt-[120px] pb-20 overflow-hidden bg-background scanlines">
+    <section ref={sectionRef} className="relative min-h-screen pt-[120px] pb-20 overflow-x-clip bg-background scanlines">
       <div className="hero-background" />
       <div className="hero-grid" />
 
@@ -96,13 +96,6 @@ const Hero = () => {
             )}
           </motion.p>
 
-          {/* Theme picker — sits in the open space directly under
-              "Log smarter. / Lift heavier." Centered within the
-              left column so it visually anchors the empty area. */}
-          <motion.div variants={wordReveal} className="mt-6">
-            <ChooseYourTheme />
-          </motion.div>
-
           {/* CTA Group */}
           <motion.div variants={wordReveal} className="mt-8 flex flex-wrap gap-4 items-start">
             <div>
@@ -124,9 +117,15 @@ const Hero = () => {
             </a>
           </motion.div>
 
-          {/* App Store */}
-          <motion.div variants={wordReveal} className="mt-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          {/* App Store row — "Coming soon" on the left, theme picker
+              on the right so the picker visually anchors the right
+              side of the CTA stack without crowding the headline. */}
+          <motion.div
+            variants={wordReveal}
+            className="mt-8 flex flex-wrap items-center justify-between gap-6 text-sm text-muted-foreground"
+          >
             <span>Coming soon to the <strong className="text-foreground">App Store</strong></span>
+            <ChooseYourTheme />
           </motion.div>
         </motion.div>
 

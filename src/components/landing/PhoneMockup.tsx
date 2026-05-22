@@ -122,7 +122,22 @@ const PhoneMockup = () => {
           <div className="w-full flex flex-col items-center pt-10 pb-2 px-6">
             <div className="relative w-[75%]">
               <img src={ryznLogoWhite} alt="RYZN" className="w-full h-auto" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.3))' }} />
-              <img src={ryznLogoAccent} alt="" aria-hidden className="absolute inset-0 w-full h-auto" />
+              {/* Accent stripe — inlined as JSX (not <img src=…/>) so
+                  the fill picks up the active theme via CSS variable.
+                  External SVG loaded via <img> renders in an isolated
+                  context that doesn't inherit document-level CSS vars. */}
+              <svg
+                aria-hidden
+                viewBox="0 0 960 720"
+                preserveAspectRatio="xMidYMid meet"
+                className="absolute inset-0 w-full h-auto"
+                style={{ overflow: 'visible' }}
+              >
+                <path
+                  fill="hsl(var(--primary))"
+                  d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"
+                />
+              </svg>
             </div>
             <div className="w-[60%] h-[2px] bg-[hsl(var(--primary))] mt-3 rounded-full" />
           </div>
