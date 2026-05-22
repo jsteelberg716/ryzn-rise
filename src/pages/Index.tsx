@@ -4,7 +4,7 @@ import StatsBar from '@/components/landing/StatsBar';
 import CalorieEngine from '@/components/landing/CalorieEngine';
 import MuscleMapSection from '@/components/landing/MuscleMapSection';
 import CalorieLoggingSection from '@/components/landing/CalorieLoggingSection';
-import WorkoutPrograms from '@/components/landing/WorkoutPrograms';
+import RyznTagSection from '@/components/landing/RyznTagSection';
 import ShareCards from '@/components/landing/ShareCards';
 import Gamification from '@/components/landing/Gamification';
 import WildcatsBanner from '@/components/landing/WildcatsBanner';
@@ -26,7 +26,7 @@ const Index = () => {
       <CalorieEngine />
       <MuscleMapSection />
       <CalorieLoggingSection />
-      <WorkoutPrograms />
+      <RyznTagSection />
       <ShareCards />
       <Gamification />
 
