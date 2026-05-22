@@ -29,9 +29,13 @@ export const MUSCLE_PATHS = [
   { id: "m_quad_left", group: "quads", d: "m525.7482 349.29968c6.6636353 3.4685059 12.723999 25.146545 15.010498 40.580048c2.28656 15.433502 2.3674927 34.853455 -1.2913208 52.020996c-3.6588135 17.167542 -16.356934 38.845154 -20.661438 50.984253c-4.3044434 12.139099 -2.5826416 26.879242 -5.165344 21.850372c-2.582672 -5.028839 -7.3180237 -36.243195 -10.330688 -52.02359c-3.0126953 -15.780426 -7.3232727 -27.051636 -7.7454224 -42.658813c-0.42211914 -15.607147 0.18197632 -39.192017 5.212616 -50.984253c5.030609 -11.792206 18.307526 -23.237518 24.9711 -19.769012z" },
 ];
 
+// Heatmap colors are SEMANTIC, not brand — green = "optimal volume",
+// red = "overworked", etc. They stay literal regardless of the active
+// accent theme so the legend reads consistently no matter what color
+// the visitor picks (orange-theme visitors still see green = good).
 const COLOR_GRAY = "rgba(50,50,58,0.35)";
 const COLOR_BLUE = "rgba(69,183,209,0.75)";
-const COLOR_GREEN = "hsl(var(--primary) / 0.85)";
+const COLOR_GREEN = "rgba(34,197,94,0.85)";
 const COLOR_RED = "rgba(255,107,107,0.9)";
 
 const legend = [

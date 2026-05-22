@@ -17,8 +17,13 @@
             --fg: hsl(0, 0%, 100%);
             --muted: hsl(0, 0%, 64%);
             --tertiary: hsl(0, 0%, 38%);
-            --primary: hsl(145, 72%, 50%);
-            --primary-deep: hsl(160, 70%, 42%);
+            /* Space-separated HSL so slash-notation alpha (e.g.
+               `hsl(var(--primary) / 0.5)`) works AND a theme picker
+               in the parent window can rewrite just the H/S/L values
+               via localStorage. See the inline script just below the
+               <body> tag for theme hydration. */
+            --primary: 145 72% 50%;
+            --primary-deep: 160 70% 42%;
             --card: hsla(0, 0%, 100%, 0.04);
             --border: hsla(0, 0%, 100%, 0.08);
             --border-strong: hsla(0, 0%, 100%, 0.18);
@@ -45,7 +50,7 @@
         .ambient::before {
             content: ""; position: absolute; top: -25%; left: 50%;
             width: min(800px, 150vw); height: min(800px, 150vw);
-            background: radial-gradient(circle at center, hsla(145, 72%, 50%, 0.25) 0%, transparent 60%);
+            background: radial-gradient(circle at center, hsl(var(--primary) / 0.25) 0%, transparent 60%);
             transform: translateX(-50%);
             animation: heroPulse 6s ease-in-out infinite;
         }
@@ -76,7 +81,7 @@
         nav .brand svg { display: block; height: 22px; width: auto; }
         nav .cta {
             display: inline-flex; align-items: center; gap: 6px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-deep)));
             color: var(--fg);
             padding: 9px 16px;
             border-radius: 999px;
@@ -84,7 +89,7 @@
             font-weight: 700;
             font-size: 12.5px;
             white-space: nowrap;
-            box-shadow: 0 6px 18px hsla(145, 72%, 50%, 0.32);
+            box-shadow: 0 6px 18px hsl(var(--primary) / 0.32);
             flex-shrink: 0;
         }
         nav .cta:active { transform: translateY(1px); }
@@ -111,14 +116,14 @@
             background: hsla(0, 0%, 100%, 0.05);
             border: 1px solid var(--border);
             font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
-            color: var(--primary); margin-bottom: 18px;
+            color: hsl(var(--primary)); margin-bottom: 18px;
         }
         .eyebrow .dot {
-            position: relative; width: 6px; height: 6px; border-radius: 50%; background: var(--primary);
+            position: relative; width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--primary));
         }
         .eyebrow .dot::after {
             content: ""; position: absolute; inset: -3px; border-radius: 50%;
-            background: var(--primary); opacity: 0.4;
+            background: hsl(var(--primary)); opacity: 0.4;
             animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
         @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
@@ -130,7 +135,7 @@
             margin: 0 0 14px;
         }
         h1 .accent {
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-deep)));
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
         .hero .lede {
@@ -172,7 +177,7 @@
             width: 75%; height: 240px;
             background:
                 radial-gradient(ellipse 60% 50% at 50% 50%,
-                    hsla(145, 72%, 50%, 0.18) 0%, transparent 70%);
+                    hsl(var(--primary) / 0.18) 0%, transparent 70%);
             pointer-events: none;
             filter: blur(2px);
         }
@@ -228,7 +233,7 @@
         .puck-on-surface::after {
             content: ""; position: absolute; inset: 0;
             border-radius: 12px;
-            background: radial-gradient(ellipse at top, hsla(145, 72%, 60%, 0.65), transparent 65%);
+            background: radial-gradient(ellipse at top, hsl(var(--primary) / 0.65), transparent 65%);
             opacity: 0;
             animation: puckGlow 7s ease-in-out infinite;
             pointer-events: none;
@@ -253,7 +258,7 @@
         .scan-ripple::before, .scan-ripple::after {
             content: ""; position: absolute; inset: 0;
             border-radius: 50%;
-            border: 2px solid hsla(145, 72%, 55%, 0.9);
+            border: 2px solid hsl(var(--primary) / 0.9);
             opacity: 0;
             animation: rippleBurst 7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
         }
@@ -315,7 +320,7 @@
             background:
                 linear-gradient(160deg,
                     hsla(0, 0%, 100%, 0.22) 0%,
-                    hsla(145, 72%, 50%, 0.12) 35%,
+                    hsl(var(--primary) / 0.12) 35%,
                     hsla(0, 0%, 100%, 0.06) 100%);
             box-shadow:
                 0 32px 50px -10px rgba(0,0,0,0.7),
@@ -376,7 +381,7 @@
             width: 58%;
             max-width: 96px;
             opacity: 0.85;
-            filter: drop-shadow(0 0 24px hsla(145, 72%, 50%, 0.35));
+            filter: drop-shadow(0 0 24px hsl(var(--primary) / 0.35));
         }
         .phone-rig .wallpaper .mark svg { display: block; width: 100%; height: auto; }
         .phone-rig .wallpaper .label {
@@ -429,7 +434,7 @@
         .sheet .kicker {
             text-align: center;
             font-size: 8px; font-weight: 800; letter-spacing: 0.2em;
-            color: hsl(145, 72%, 65%);
+            color: hsl(var(--primary));
             text-transform: uppercase;
             margin-bottom: 6px;
         }
@@ -477,14 +482,14 @@
         }
         .sheet .start-btn {
             margin-top: auto;
-            background: hsl(145, 72%, 50%);
+            background: hsl(var(--primary));
             color: #052414;
             border-radius: 10px;
             padding: 8px 10px;
             text-align: center;
             font-size: 11px; font-weight: 800;
             letter-spacing: 0.02em;
-            box-shadow: 0 4px 12px hsla(145, 72%, 50%, 0.35);
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.35);
         }
 
         /* Scroll-down hint that lives under the stage. Disappears the
@@ -523,7 +528,7 @@
 
         .cta-primary {
             display: inline-flex; align-items: center; gap: 10px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-deep)));
             color: var(--fg);
             padding: 16px 26px;
             border-radius: 14px;
@@ -531,7 +536,7 @@
             font-weight: 700;
             font-size: 15px;
             letter-spacing: -0.005em;
-            box-shadow: 0 8px 24px hsla(145, 72%, 50%, 0.45);
+            box-shadow: 0 8px 24px hsl(var(--primary) / 0.45);
             transition: transform 0.18s, box-shadow 0.18s;
         }
         .cta-primary:active { transform: translateY(1px); }
@@ -552,7 +557,7 @@
             letter-spacing: -0.005em;
             transition: border-color 0.18s, color 0.18s, transform 0.18s;
         }
-        .cta-secondary:hover { border-color: var(--primary); color: var(--primary); }
+        .cta-secondary:hover { border-color: hsl(var(--primary)); color: hsl(var(--primary)); }
         .cta-secondary:active { transform: translateY(1px); }
 
         /* Stacks the two CTAs vertically on phones, side-by-side once
@@ -580,7 +585,7 @@
             text-align: center;
         }
         h2 .accent {
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-deep)));
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
 
@@ -594,11 +599,11 @@
         .step:active { transform: scale(0.985); border-color: var(--border-strong); }
         .step-num {
             flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
-            background: linear-gradient(135deg, hsla(145, 72%, 50%, 0.3), hsla(145, 72%, 50%, 0.08));
-            color: var(--primary);
+            background: linear-gradient(135deg, hsl(var(--primary) / 0.3), hsl(var(--primary) / 0.08));
+            color: hsl(var(--primary));
             font-weight: 800; font-size: 16px;
             display: flex; align-items: center; justify-content: center;
-            border: 1px solid hsla(145, 72%, 50%, 0.4);
+            border: 1px solid hsl(var(--primary) / 0.4);
         }
         .step h3 { font-size: 16.5px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
         .step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
@@ -612,8 +617,8 @@
         }
         .why-card .icon {
             width: 36px; height: 36px; border-radius: 10px;
-            background: hsla(145, 72%, 50%, 0.14);
-            color: var(--primary);
+            background: hsl(var(--primary) / 0.14);
+            color: hsl(var(--primary));
             display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
         .why-card h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
@@ -622,9 +627,9 @@
         .final-cta {
             position: relative; text-align: center;
             background:
-                linear-gradient(135deg, hsla(145, 72%, 50%, 0.10), hsla(160, 70%, 42%, 0.06)),
+                linear-gradient(135deg, hsl(var(--primary) / 0.10), hsl(var(--primary-deep) / 0.06)),
                 var(--card);
-            border: 1px solid hsla(145, 72%, 50%, 0.2);
+            border: 1px solid hsl(var(--primary) / 0.2);
             border-radius: 24px;
             padding: 28px 22px;
             overflow: hidden;
@@ -633,7 +638,7 @@
             content: ""; position: absolute;
             top: -40%; left: 50%; transform: translateX(-50%);
             width: 120%; height: 180%;
-            background: radial-gradient(ellipse, hsla(145, 72%, 50%, 0.22), transparent 60%);
+            background: radial-gradient(ellipse, hsl(var(--primary) / 0.22), transparent 60%);
             pointer-events: none;
         }
         .final-cta .brand-large svg { display: inline-block; height: 26px; width: auto; position: relative; }
@@ -674,6 +679,37 @@
         if (new URLSearchParams(location.search).get('embed') === '1') {
             document.body.classList.add('embed');
         }
+
+        // Theme hydration — read the accent the visitor picked in the
+        // parent window (same origin, so localStorage is shared) and
+        // apply the same H S% L% triplet this page's --primary expects.
+        // Without this, the iframe's animation (puck, sheet, logo,
+        // eyebrow dot, button gradients) would stay green even when
+        // the rest of the site re-tinted. Listen for `storage` events
+        // too so picking a new theme in the parent updates the iframe
+        // immediately without a reload.
+        (function () {
+            var THEMES = {
+                emerald: '145 72% 50%',
+                coral:   '10 78% 55%',
+                ocean:   '210 64% 46%',
+                blush:   '340 65% 57%',
+                gold:    '45 75% 53%',
+                violet:  '270 47% 52%'
+            };
+            function apply(key) {
+                var v = THEMES[key];
+                if (!v) return;
+                document.documentElement.style.setProperty('--primary', v);
+                document.documentElement.style.setProperty('--primary-deep', v);
+            }
+            try {
+                apply(localStorage.getItem('ryzn-theme'));
+            } catch (_) { /* private mode — fall back to default */ }
+            window.addEventListener('storage', function (e) {
+                if (e.key === 'ryzn-theme') apply(e.newValue);
+            });
+        })();
     </script>
     <div class="ambient" aria-hidden="true"></div>
 
@@ -697,7 +733,7 @@
                     <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
                     <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
                     <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
-                    <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                    <path fill="hsl(var(--primary))" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
                 </svg>
             </a>
             <a href="https://apps.apple.com/app/ryzn" class="cta">Get App</a>
@@ -719,7 +755,7 @@
                         <path fill="#0a0a0a" d="m239.02 123.12l481.94 0l0 89.47l-481.94 0z"/>
                         <path fill="#0a0a0a" d="m720.96 123.13l0 275.71l-89.47 0l0 -275.71z"/>
                         <path fill="#0a0a0a" d="m631.61 399.00l-88.84 -88.84l176.97 0.72z"/>
-                        <path fill="hsl(145, 72%, 50%)" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
+                        <path fill="hsl(var(--primary))" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
                     </svg>
                 </div>
 
@@ -741,7 +777,7 @@
                                         <path fill="#ffffff" d="m239.02 123.12l481.94 0l0 89.47l-481.94 0z"/>
                                         <path fill="#ffffff" d="m720.96 123.13l0 275.71l-89.47 0l0 -275.71z"/>
                                         <path fill="#ffffff" d="m631.61 399.00l-88.84 -88.84l176.97 0.72z"/>
-                                        <path fill="hsl(145, 72%, 50%)" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
+                                        <path fill="hsl(var(--primary))" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
                                     </svg>
                                 </div>
                                 <div class="label">RYZN</div>
@@ -817,7 +853,7 @@
                         <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
                         <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
                         <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
-                        <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                        <path fill="hsl(var(--primary))" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
                     </svg>
                 </div>
                 <h2>The next tap opens <span class="accent">your workout</span>.</h2>

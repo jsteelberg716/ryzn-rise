@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { ChevronDown, PawPrint } from 'lucide-react';
 import { staggerContainer, wordReveal, EASING, DURATION } from '@/lib/animations';
+import ChooseYourTheme from '@/components/landing/ChooseYourTheme';
 import PhoneMockup from './PhoneMockup';
 import { useIsWildcats } from '@/hooks/useIsWildcats';
 
@@ -94,6 +95,13 @@ const Hero = () => {
               </>
             )}
           </motion.p>
+
+          {/* Theme picker — sits in the open space directly under
+              "Log smarter. / Lift heavier." Centered within the
+              left column so it visually anchors the empty area. */}
+          <motion.div variants={wordReveal} className="mt-6">
+            <ChooseYourTheme />
+          </motion.div>
 
           {/* CTA Group */}
           <motion.div variants={wordReveal} className="mt-8 flex flex-wrap gap-4 items-start">
