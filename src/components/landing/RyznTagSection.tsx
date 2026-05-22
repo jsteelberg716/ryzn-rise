@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
+import { Nfc, Dumbbell, Repeat } from 'lucide-react';
 
 /// Desktop landing section that mirrors the mobile /scan experience.
 /// Replaces the "Your program. Your schedule. Your rules." (WorkoutPrograms)
@@ -7,11 +8,30 @@ import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 /// desktop visitors who'd otherwise never see it (mobile users hit the
 /// dedicated /scan landing via Instagram links or direct tag taps).
 ///
-/// The animation iframes /scan/v1/?embed=1 — that query flag activates
-/// the page's embed mode (hides nav, footer, the post-hero CTA, and all
-/// non-hero sections) so only the phone-taps-puck-sheet-rise animation
-/// shows. Single source of truth for the animation itself.
+/// Layout: animation on the LEFT, explanation on the RIGHT. The
+/// animation iframes /scan/v1/?embed=1 — that flag activates the page's
+/// embed mode (hides nav, eyebrow, headline, footer, CTA, and all
+/// non-hero sections; enlarges the .stage to desktop scale) so only the
+/// phone-taps-puck-sheet-rise animation shows.
 const RyznTagSection = () => {
+  const beats = [
+    {
+      icon: Nfc,
+      title: 'Tap',
+      copy: 'Touch your phone to any RYZN tag on a machine, rack, or bench.',
+    },
+    {
+      icon: Dumbbell,
+      title: 'Lift',
+      copy: 'The exercise opens instantly. Log sets, hit your weight, send it.',
+    },
+    {
+      icon: Repeat,
+      title: 'Repeat',
+      copy: 'Tap the next tag for the next lift. No menus. No typing.',
+    },
+  ];
+
   return (
     <section className="relative bg-card pt-16 lg:pt-20 pb-20 lg:pb-28 section-glow section-inset">
       <motion.div
@@ -43,39 +63,54 @@ const RyznTagSection = () => {
         </motion.p>
       </motion.div>
 
-      {/* Full-width animation panel. iframe is sized to the natural
-          height the embed needs (eyebrow + heading + stage) so the
-          phone animation reads at desktop scale. */}
       <motion.div
-        className="max-w-[1200px] mx-auto mt-10 lg:mt-14 px-6"
-        variants={fadeUpVariant}
+        className="max-w-[1200px] mx-auto mt-12 lg:mt-16 px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+        variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-80px' }}
       >
-        <iframe
-          src="/scan/v1/?embed=1"
-          title="RYZN tag scan animation"
-          scrolling="no"
-          loading="lazy"
-          className="block w-full border-0"
-          style={{ height: 'clamp(560px, 70vh, 800px)' }}
-        />
-      </motion.div>
+        {/* LEFT — animation, full column width */}
+        <motion.div variants={fadeUpVariant} className="w-full">
+          <iframe
+            src="/scan/v1/?embed=1"
+            title="RYZN tag scan animation"
+            scrolling="no"
+            loading="lazy"
+            className="block w-full border-0"
+            style={{ height: 'clamp(560px, 70vh, 760px)' }}
+          />
+        </motion.div>
 
-      <motion.div
-        className="max-w-[1200px] mx-auto mt-10 px-6 text-center"
-        variants={fadeUpVariant}
-        initial="hidden"
-        whileInView="visible"
-      >
-        <a
-          href="/scan"
-          className="dmd-convex inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-foreground hover:text-primary transition-colors"
+        {/* RIGHT — explanation + CTA */}
+        <motion.div
+          variants={fadeUpVariant}
+          className="space-y-6 lg:space-y-7 max-w-[480px] mx-auto lg:mx-0"
         >
-          See the full demo
-          <span aria-hidden="true">→</span>
-        </a>
+          {beats.map(({ icon: Icon, title, copy }) => (
+            <div key={title} className="flex gap-4">
+              <div className="dmd-concave shrink-0 size-12 rounded-full flex items-center justify-center text-primary">
+                <Icon className="size-5" strokeWidth={2.25} />
+              </div>
+              <div>
+                <h3 className="text-foreground font-semibold text-lg">{title}.</h3>
+                <p className="text-muted-foreground text-[0.9375rem] mt-1 leading-relaxed">
+                  {copy}
+                </p>
+              </div>
+            </div>
+          ))}
+
+          <div className="pt-4">
+            <a
+              href="/scan"
+              className="dmd-convex inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-foreground hover:text-primary transition-colors"
+            >
+              See the full demo
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </motion.div>
       </motion.div>
     </section>
   );

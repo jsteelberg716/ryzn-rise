@@ -641,21 +641,24 @@
         footer .dot-sep { opacity: 0.4; margin: 0 6px; }
 
         /* ── Embed mode (?embed=1) ─────────────────────────────────
-           Hides nav, the post-hero CTA, the scroll hint, and every
-           non-hero section so this page can be iframe'd into the
-           desktop landing as a clean animation panel. Activated by
-           the inline script just below the body open tag. */
+           Hides nav, eyebrow, headline, the post-hero CTA, the scroll
+           hint, and every non-hero section so this page can be iframe'd
+           into the desktop landing as a clean animation-only panel.
+           The .stage itself is enlarged so the phone reads at desktop
+           scale rather than the mobile-default 380px max-width.
+           Activated by the inline script just below the body open tag. */
         body.embed { background: transparent; min-height: 0; overflow: hidden; }
         body.embed .ambient { display: none; }
         body.embed nav,
         body.embed footer,
         body.embed .hero-hint,
         body.embed .hero > div:last-child,
+        body.embed .hero .eyebrow,
+        body.embed .hero h1,
         body.embed main > section:not(.hero) { display: none !important; }
-        body.embed main { padding-top: 24px; padding-bottom: 0; }
-        body.embed .hero { padding: 0 16px; }
-        body.embed .hero h1 { font-size: clamp(1.5rem, 4vw, 2.25rem); margin-top: 8px; }
-        body.embed .hero .stage { margin-top: 24px; }
+        body.embed main { padding: 0; }
+        body.embed .hero { padding: 0; min-height: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        body.embed .hero .stage { max-width: min(540px, 90vw); margin: 0 auto; }
     </style>
 </head>
 <body>
