@@ -12,6 +12,7 @@ import { useIsWildcats } from '@/hooks/useIsWildcats';
 
 import Pricing from '@/components/landing/Pricing';
 import FAQ from '@/components/landing/FAQ';
+import ChooseYourTheme from '@/components/landing/ChooseYourTheme';
 import FinalCTA from '@/components/landing/FinalCTA';
 import Footer from '@/components/landing/Footer';
 
@@ -32,6 +33,7 @@ const Index = () => {
 
       <Pricing />
       <FAQ />
+      <ChooseYourTheme />
       <FinalCTA />
       <Footer />
     </div>

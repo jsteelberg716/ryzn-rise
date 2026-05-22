@@ -15,6 +15,35 @@
 
   <body style="background-color: #08091a; color: #ffffff; min-height: 100vh;">
     <div id="root" style="min-height: 100vh;"></div>
+    <script>
+      // No-flash theme application — runs before the React bundle
+      // loads so first paint already has the user's persisted accent
+      // applied to --primary / --accent / --accent-green / --ring.
+      // Matches the values in src/lib/themes.ts THEMES table.
+      (function () {
+        try {
+          var THEMES = {
+            emerald: '145 72% 50%',
+            coral:   '10 78% 55%',
+            ocean:   '210 64% 46%',
+            blush:   '340 65% 57%',
+            gold:    '45 75% 53%',
+            violet:  '270 47% 52%'
+          };
+          var key = localStorage.getItem('ryzn-theme');
+          if (key && THEMES[key]) {
+            var v = THEMES[key];
+            var s = document.documentElement.style;
+            s.setProperty('--primary', v);
+            s.setProperty('--accent', v);
+            s.setProperty('--accent-green', v);
+            s.setProperty('--ring', v);
+          }
+        } catch (_) {
+          /* localStorage blocked / private mode — fall through to defaults */
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
