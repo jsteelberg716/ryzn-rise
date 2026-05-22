@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, ArrowRight, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, ArrowRight, Sparkles, RotateCcw } from 'lucide-react';
+import { respondLocally } from '@/lib/localAgent';
 
 // ─────────────────────────────────────────────────────────────────────
 // ChatBubble
 //
 // Floating chat widget mounted globally. Bottom-right corner on every
 // page (homepage hash anchors + /reviews / /privacy / /validation /
-// /analytics). Backed by /api/chat (Edge runtime → OpenAI gpt-4o-mini)
-// with a system prompt that knows everything about RYZN and can
-// navigate the visitor to the right section via a `navigate` token
-// returned alongside each message.
+// /analytics). Backed by `respondLocally` — a rules-based knowledge
+// base that ships in the bundle and answers visitor questions
+// without an OpenAI API call. Lives at src/lib/localAgent.ts; extend
+// by adding entries there.
 //
 // Persistence: the entire conversation is held in component state and
 // resets when the bubble is closed + reopened. Keeps things simple —
@@ -80,39 +81,39 @@ const ChatBubble = () => {
     setInput('');
     setLoading(true);
 
-    try {
-      const r = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          messages: next.map(({ role, content }) => ({ role, content })),
-        }),
-      });
-      const data = await r.json();
-      const assistantMsg: ChatMessage = {
+    // Resolve the reply locally via the rules-based agent in
+    // src/lib/localAgent.ts. A small async delay imitates the
+    // network round-trip so the typing indicator gets to show
+    // (without it the response pops in instantly, which reads as
+    // canned). 350-650 ms feels natural.
+    const startedAt = Date.now();
+    const reply = respondLocally(trimmed);
+    const minDelayMs = 350 + Math.random() * 300;
+    const elapsed = Date.now() - startedAt;
+    if (elapsed < minDelayMs) {
+      await new Promise((resolve) => setTimeout(resolve, minDelayMs - elapsed));
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      {
         id: crypto.randomUUID(),
         role: 'assistant',
-        content:
-          typeof data.text === 'string' && data.text.length > 0
-            ? data.text
-            : "Sorry, didn't catch that. Try again?",
-        navigate: data.navigate ?? null,
-      };
-      setMessages((prev) => [...prev, assistantMsg]);
-    } catch (err) {
-      console.warn('[chat] request failed:', err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          role: 'assistant',
-          content:
-            'Network hiccup. Try again in a sec, or shoot Jack an email at jackwork716@gmail.com.',
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
+        content: reply.text,
+        navigate: reply.navigate,
+      },
+    ]);
+    setLoading(false);
+  };
+
+  /// Wipe the conversation and return to the welcome screen.
+  /// Bound to the reset button to the left of the X.
+  const reset = () => {
+    setMessages([]);
+    setInput('');
+    // Refocus the input so the visitor can immediately type a new
+    // question without an extra tap.
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   // Resolve a `navigate` token returned by the model into the right
@@ -189,13 +190,28 @@ const ChatBubble = () => {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Close chat"
-              >
-                <X size={16} />
-              </button>
+              <div className="flex items-center gap-1">
+                {/* Reset — clears the transcript and returns to the
+                    welcome screen. Disabled while there's nothing to
+                    reset so the icon doesn't look interactive on a
+                    fresh open. */}
+                <button
+                  onClick={reset}
+                  disabled={messages.length === 0 && !loading}
+                  className="w-8 h-8 rounded-full hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground disabled:cursor-not-allowed"
+                  aria-label="Reset conversation"
+                  title="Reset conversation"
+                >
+                  <RotateCcw size={15} />
+                </button>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="w-8 h-8 rounded-full hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Close chat"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
 
             {/* Conversation. `overscroll-contain` + the onWheel guard
