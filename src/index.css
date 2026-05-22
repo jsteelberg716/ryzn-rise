@@ -147,16 +147,26 @@
   z-index: 1;
 }
 
-/* CTA button */
+/* CTA button — symmetric halo + small drop-shadow for depth.
+   Two stacked shadows: the first is offset-less (0 0) so the glow
+   wraps the button on ALL sides, including the top and left
+   (previously a single 0 4px 24px shadow looked like the top was
+   "cut off" because the glow only extended down + sideways). The
+   second is a subtle drop shadow for depth without breaking
+   symmetry. */
 .cta-primary {
   position: relative;
-  box-shadow: 0 4px 24px hsl(var(--primary) / 0.3);
+  box-shadow:
+    0 0 28px hsl(var(--primary) / 0.4),
+    0 6px 20px hsl(var(--primary) / 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cta-primary:hover {
   transform: scale(1.03);
-  box-shadow: 0 8px 32px hsl(var(--primary) / 0.5);
+  box-shadow:
+    0 0 38px hsl(var(--primary) / 0.55),
+    0 10px 26px hsl(var(--primary) / 0.28);
 }
 
 .cta-primary:active {
