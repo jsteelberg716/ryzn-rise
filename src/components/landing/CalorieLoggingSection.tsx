@@ -356,7 +356,7 @@ const CalorieLoggingSection = () => {
           <motion.div
             variants={fadeUpVariant}
             className="mt-6 dmd-convex rounded-[24px] p-6 relative overflow-hidden"
-            style={{ borderColor: 'hsl(145 72% 50% / 0.35)' }}
+            style={{ borderColor: 'hsl(var(--primary) / 0.35)' }}
           >
             <div
               className="absolute -top-12 -right-12 w-40 h-40 rounded-full blur-3xl pointer-events-none"

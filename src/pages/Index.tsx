@@ -6,7 +6,6 @@ import MuscleMapSection from '@/components/landing/MuscleMapSection';
 import CalorieLoggingSection from '@/components/landing/CalorieLoggingSection';
 import RyznTagSection from '@/components/landing/RyznTagSection';
 import ShareCards from '@/components/landing/ShareCards';
-import Gamification from '@/components/landing/Gamification';
 import WildcatsBanner from '@/components/landing/WildcatsBanner';
 import { useIsWildcats } from '@/hooks/useIsWildcats';
 
@@ -28,7 +27,6 @@ const Index = () => {
       <CalorieLoggingSection />
       <RyznTagSection />
       <ShareCards />
-      <Gamification />
 
       <Pricing />
       <FAQ />
