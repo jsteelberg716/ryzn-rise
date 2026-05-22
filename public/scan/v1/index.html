@@ -253,7 +253,10 @@
             transform: translate(-50%, -50%);
             width: 220px; height: 220px;
             pointer-events: none;
-            z-index: 2;
+            /* z-index 6 sits above the phone-rig (4) and the phone
+               screen base (5) so the ripple's top arc isn't masked
+               by the phone's body when the tap fires. */
+            z-index: 6;
         }
         .scan-ripple::before, .scan-ripple::after {
             content: ""; position: absolute; inset: 0;
@@ -288,28 +291,29 @@
         @keyframes phoneSeq {
             /* Off-screen LEFT, tilted toward direction of travel.
                Single ease-out curve into rest = one continuous slide.
-               Opacity fades in over the first ~6 % so the phone doesn't
-               pop against any iframe clip line on the left side either. */
-            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg); opacity: 0;
+               Opacity stays at 1 throughout — the off-stage positions
+               (±150 %) are hidden by body.embed's overflow:hidden +
+               the frosted .glass-edge overlay on the right makes the
+               exit look like the phone sliding under glass instead
+               of a fade. */
+            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg);
                    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
-            6%   { opacity: 1; }
             /* Rest position — top aligned with puck, mid-tilt */
-            22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(18deg); opacity: 1;
+            22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(18deg);
                    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
             /* Tap — phone tips forward HARD as it makes contact */
-            30%  { transform: translate(-50%, -10px) rotateZ(0deg)   rotateX(34deg) scale(1.015); opacity: 1; }
+            30%  { transform: translate(-50%, -10px) rotateZ(0deg)   rotateX(34deg) scale(1.015); }
             /* Hold contact, easing tilt back */
-            36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(26deg); opacity: 1; }
+            36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(26deg); }
             /* Level out for the sheet rise */
-            48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); opacity: 1; }
+            48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); }
             /* Hold while the sheet is up — give it a real beat */
-            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg); opacity: 1;
+            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg);
                    animation-timing-function: cubic-bezier(0.5, 0, 1, 1); }
-            /* Exit OFF to the right — fade opacity to 0 along with the
-               translate so the phone dissolves out instead of getting
-               sliced by the iframe's right-edge clip line. */
-            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); opacity: 0; }
-            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); opacity: 0; }
+            /* Exit OFF to the right — phone stays fully opaque; the
+               .glass-edge overlay frosts it as it crosses. */
+            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
+            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
         }
 
         .phone-rig .bezel {
@@ -667,9 +671,36 @@
         body.embed .hero h1,
         body.embed main > section:not(.hero) { display: none !important; }
         body.embed main { padding: 0; }
-        body.embed .hero { padding: 0; min-height: 0; display: flex; align-items: center; justify-content: center; height: 100%; }
+        body.embed .hero { padding: 0; min-height: 0; display: flex; align-items: center; justify-content: center; height: 100%; position: relative; }
         body.embed .hero .stage { max-width: min(640px, 92vw); margin: 0 auto; padding-bottom: 0; }
         body.embed html, body.embed body { height: 100%; }
+
+        /* Frosted-glass edge overlay — sits on the right side of the
+           iframe in embed mode. The exiting phone slides UNDER this
+           overlay rather than fading opacity, so it looks like the
+           phone dissolves behind a piece of frosted glass / the text
+           column. z-index 7 puts it above the phone-rig (4) + screen
+           base (5) but below the scan-ripple (6) so the ripple still
+           reads clean during the tap. Mask gradient fades the blur in
+           from the left so there's no hard boundary line. */
+        body.embed .hero::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 32%;
+            pointer-events: none;
+            z-index: 7;
+            backdrop-filter: blur(10px) saturate(140%);
+            -webkit-backdrop-filter: blur(10px) saturate(140%);
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                hsla(225, 8%, 7%, 0.35) 50%,
+                hsla(225, 8%, 7%, 0.85) 100%
+            );
+            mask-image: linear-gradient(to right, transparent 0%, black 30%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
+        }
     </style>
 </head>
 <body>
