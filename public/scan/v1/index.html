@@ -307,29 +307,22 @@
             36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(26deg); }
             /* Level out for the sheet rise */
             48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); }
-            /* Hold while the sheet is up — give it a real beat */
+            /* Hold while the sheet is up — give it a real beat. The
+               same ease-in curve carries through every exit keyframe
+               below so there are no abrupt timing changes between
+               them (the previous mix of curves caused a visible
+               "flicker" at 80→86 where the easing shifted). */
             80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg) scale(1); opacity: 1;
-                   animation-timing-function: cubic-bezier(0.5, 0, 1, 1); }
-            /* Exit RIGHT into the glass overlay. The text column on
-               the parent (RyznTagSection) covers iframe-internal
-               x = 648 → 1128. Phone-rig anchor is at iframe x = 333
-               (rest center). For the phone to clearly enter the
-               overlay zone (where the parent's backdrop-filter
-               can blur it), the translate needs to push the phone
-               center well past x = 648. Phone width is 206 px, so:
-                 - translate(180 %) → center at 333 + 371 = 704
-                   (just inside overlay edge)
-                 - translate(280 %) → center at 333 + 577 = 910
-                   (mid-overlay)
-                 - translate(380 %) → center at 333 + 783 = 1116
-                   (near iframe right edge — about to clip)
-               Opacity stays above 0 while the phone is INSIDE the
-               overlay zone so the backdrop-filter has visible
-               pixels to blur. Scale + opacity ease out together
-               for the receding-behind-glass illusion. */
-            86%  { transform: translate(30%, 4px)    rotateZ(4deg)   rotateX(14deg) scale(0.95); opacity: 1; }
-            92%  { transform: translate(180%, 0)     rotateZ(10deg)  rotateX(20deg) scale(0.75); opacity: 0.85; }
-            96%  { transform: translate(280%, -2px)  rotateZ(14deg)  rotateX(22deg) scale(0.5); opacity: 0.5; }
+                   animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.55); }
+            /* Exit RIGHT into the glass overlay. Three keyframes
+               (instead of four) over a wider exit window (75→100 %
+               instead of 80→96) so the slide is smooth and gives
+               more visible time in the overlay zone. Same ease-in
+               curve on each transition. */
+            88%  { transform: translate(70%, 4px)    rotateZ(6deg)   rotateX(18deg) scale(0.9); opacity: 1;
+                   animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.55); }
+            94%  { transform: translate(220%, 0)     rotateZ(12deg)  rotateX(22deg) scale(0.65); opacity: 0.7;
+                   animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.55); }
             100% { transform: translate(380%, -4px)  rotateZ(16deg)  rotateX(20deg) scale(0.3); opacity: 0; }
         }
 
@@ -702,7 +695,7 @@
               space we don't render in embed. */
         body.embed main { padding: 0; max-width: none; margin: 0; }
         body.embed .hero {
-            padding: 0 0 0 11vw;
+            padding: 0 0 0 8vw;
             min-height: 0;
             display: flex;
             align-items: center;
@@ -710,10 +703,17 @@
             height: 100vh;
         }
         body.embed .hero .stage {
-            max-width: min(480px, 36vw);
+            max-width: min(560px, 42vw);
             margin: 0;
             padding-bottom: 0;
         }
+        /* Embed mode also lifts the size caps on the phone + puck +
+           signal/dynamic-island so they scale with the larger stage.
+           The base values target a 380 px-wide mobile stage; at the
+           embed stage size (up to 560 px) they'd otherwise stay at
+           their original pixel widths and look proportionally tiny. */
+        body.embed .phone-rig { max-width: 300px; }
+        body.embed .puck-on-surface svg { width: 152px; height: 146px; }
     </style>
 </head>
 <body>
