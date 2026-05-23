@@ -310,14 +310,27 @@
             /* Hold while the sheet is up — give it a real beat */
             80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg) scale(1); opacity: 1;
                    animation-timing-function: cubic-bezier(0.5, 0, 1, 1); }
-            /* Exit RIGHT into the glass overlay — translate just far
-               enough to enter the text-column area (~100 % of stage
-               width clears the visible left region), and simultaneously
-               shrink to ~0.5 + fade to 0. Reads as the phone receding
-               into the distance behind the glass rather than freezing
-               at the iframe boundary and disappearing in one frame. */
-            96%  { transform: translate(110%, 8px)   rotateZ(10deg)  rotateX(20deg) scale(0.5); opacity: 0; }
-            100% { transform: translate(110%, 8px)   rotateZ(10deg)  rotateX(20deg) scale(0.5); opacity: 0; }
+            /* Exit RIGHT into the glass overlay. The text column on
+               the parent (RyznTagSection) covers iframe-internal
+               x = 648 → 1128. Phone-rig anchor is at iframe x = 333
+               (rest center). For the phone to clearly enter the
+               overlay zone (where the parent's backdrop-filter
+               can blur it), the translate needs to push the phone
+               center well past x = 648. Phone width is 206 px, so:
+                 - translate(180 %) → center at 333 + 371 = 704
+                   (just inside overlay edge)
+                 - translate(280 %) → center at 333 + 577 = 910
+                   (mid-overlay)
+                 - translate(380 %) → center at 333 + 783 = 1116
+                   (near iframe right edge — about to clip)
+               Opacity stays above 0 while the phone is INSIDE the
+               overlay zone so the backdrop-filter has visible
+               pixels to blur. Scale + opacity ease out together
+               for the receding-behind-glass illusion. */
+            86%  { transform: translate(30%, 4px)    rotateZ(4deg)   rotateX(14deg) scale(0.95); opacity: 1; }
+            92%  { transform: translate(180%, 0)     rotateZ(10deg)  rotateX(20deg) scale(0.75); opacity: 0.85; }
+            96%  { transform: translate(280%, -2px)  rotateZ(14deg)  rotateX(22deg) scale(0.5); opacity: 0.5; }
+            100% { transform: translate(380%, -4px)  rotateZ(16deg)  rotateX(20deg) scale(0.3); opacity: 0; }
         }
 
         .phone-rig .bezel {
