@@ -86,7 +86,7 @@ const RyznTagSection = () => {
             scrolling="no"
             loading="lazy"
             className="block w-full border-0"
-            style={{ height: 'clamp(520px, 62vh, 680px)' }}
+            style={{ height: 'clamp(680px, 75vh, 880px)' }}
           />
         </motion.div>
 
