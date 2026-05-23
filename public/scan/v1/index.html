@@ -307,22 +307,16 @@
             36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(26deg); }
             /* Level out for the sheet rise */
             48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); }
-            /* Hold while the sheet is up — give it a real beat. The
-               same ease-in curve carries through every exit keyframe
-               below so there are no abrupt timing changes between
-               them (the previous mix of curves caused a visible
-               "flicker" at 80→86 where the easing shifted). */
+            /* Hold while the sheet is up — give it a real beat.
+               The exit is now ONE keyframe transition (80 → 100)
+               so translate + scale + opacity all interpolate
+               along the same cubic-bezier in lockstep, reading as
+               a single continuous slide rather than the three-stage
+               staircase the previous keyframes produced. */
             80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg) scale(1); opacity: 1;
-                   animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.55); }
-            /* Exit RIGHT into the glass overlay. Three keyframes
-               (instead of four) over a wider exit window (75→100 %
-               instead of 80→96) so the slide is smooth and gives
-               more visible time in the overlay zone. Same ease-in
-               curve on each transition. */
-            88%  { transform: translate(70%, 4px)    rotateZ(6deg)   rotateX(18deg) scale(0.9); opacity: 1;
-                   animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.55); }
-            94%  { transform: translate(220%, 0)     rotateZ(12deg)  rotateX(22deg) scale(0.65); opacity: 0.7;
-                   animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.55); }
+                   animation-timing-function: cubic-bezier(0.6, 0.04, 0.86, 0.42); }
+            /* Exit fully out — phone slides into the glass overlay
+               area while shrinking + fading on the same curve. */
             100% { transform: translate(380%, -4px)  rotateZ(16deg)  rotateX(20deg) scale(0.3); opacity: 0; }
         }
 
@@ -713,7 +707,13 @@
            embed stage size (up to 560 px) they'd otherwise stay at
            their original pixel widths and look proportionally tiny. */
         body.embed .phone-rig { max-width: 300px; }
+        body.embed .puck-on-surface { width: 240px; height: 240px; border-radius: 36px; }
         body.embed .puck-on-surface svg { width: 152px; height: 146px; }
+        /* Scan ripple anchor follows the bigger puck — base offset
+           is 90 px (= half of 180 px puck height) to center the
+           ripple on the puck. With puck height now 240, offset
+           becomes 120. */
+        body.embed .scan-ripple { top: calc(6% + 120px); width: 280px; height: 280px; }
     </style>
 </head>
 <body>
