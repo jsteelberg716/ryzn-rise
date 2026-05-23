@@ -674,45 +674,30 @@
         body.embed .hero .eyebrow,
         body.embed .hero h1,
         body.embed main > section:not(.hero) { display: none !important; }
-        /* `main` and `.hero` both need explicit height: 100 % so the
-           absolutely-positioned .stage (height: 92 %) has a defined
-           container to size against. Without main's height set, the
-           .hero's `height: 100 %` resolves to 0 (CSS percentage
-           heights ignore an auto-height parent), the stage's
-           top: 50 % then resolves to 0, and translate(-50%, -50%)
-           pushes the stage off the top of the iframe — animation
-           invisible. */
-        body.embed main { padding: 0; height: 100%; }
-        body.embed .hero { padding: 0; min-height: 0; height: 100%; position: relative; }
-        body.embed html, body.embed body { height: 100%; }
-        /* Stage is absolutely anchored to 29 % of the iframe width
-           (= the center of the LEFT 58 % region — the area the
-           parent's text-column overlay doesn't cover). Sized by
-           HEIGHT rather than width so the 1/1.40 aspect ratio can
-           never push the bounding box past the iframe's vertical
-           clip — earlier width-based sizing computed stage height
-           > iframe height on smaller iframes, which pushed the
-           puck + phone-rig (positioned at top: 6 % of stage) off
-           the visible top of the iframe and made the whole
-           animation invisible. */
+        /* Revert to flex-based layout (the version that visibly
+           worked before any absolute-positioning experiments). The
+           three changes from base embed mode that actually matter:
+           1. main loses its 720 px max-width + auto-margin so .hero
+              can span the full iframe width.
+           2. .hero is flex with justify-content: flex-start +
+              padding-left so the stage hugs the LEFT side rather
+              than centering.
+           3. .stage keeps its OWN rules from the base .stage class
+              (position: relative, width 100 %, aspect-ratio 1/1.40);
+              embed mode only overrides max-width + margin + the
+              padding-bottom that the base rule used for caption
+              space we don't render in embed. */
+        body.embed main { padding: 0; max-width: none; margin: 0; }
+        body.embed .hero {
+            padding: 0 0 0 13vw;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+        }
         body.embed .hero .stage {
-            position: absolute;
-            left: 29%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            /* Explicit width AND height (no aspect-ratio derivation
-               from `width: auto`). Earlier auto-width with aspect-ratio
-               made child percentage positioning (puck top: 6 %, phone
-               top: 6 %, surface top: 14 %) resolve against an
-               un-resolved width — children rendered with collapsed /
-               near-zero offsets and stacked invisibly. Sizing via vh
-               (iframe-content height units) keeps the 1:1.40 ratio
-               while staying within iframe bounds; max-* caps cover
-               very tall iframes. */
-            width: 60vh;
-            height: 84vh;
-            max-width: 380px;
-            max-height: 532px;
+            max-width: min(380px, 32vw);
             margin: 0;
             padding-bottom: 0;
         }
