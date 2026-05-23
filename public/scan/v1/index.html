@@ -674,7 +674,15 @@
         body.embed .hero .eyebrow,
         body.embed .hero h1,
         body.embed main > section:not(.hero) { display: none !important; }
-        body.embed main { padding: 0; }
+        /* `main` and `.hero` both need explicit height: 100 % so the
+           absolutely-positioned .stage (height: 92 %) has a defined
+           container to size against. Without main's height set, the
+           .hero's `height: 100 %` resolves to 0 (CSS percentage
+           heights ignore an auto-height parent), the stage's
+           top: 50 % then resolves to 0, and translate(-50%, -50%)
+           pushes the stage off the top of the iframe — animation
+           invisible. */
+        body.embed main { padding: 0; height: 100%; }
         body.embed .hero { padding: 0; min-height: 0; height: 100%; position: relative; }
         body.embed html, body.embed body { height: 100%; }
         /* Stage is absolutely anchored to 29 % of the iframe width
