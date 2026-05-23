@@ -700,10 +700,19 @@
             left: 29%;
             top: 50%;
             transform: translate(-50%, -50%);
-            height: 92%;
-            width: auto;
-            aspect-ratio: 1 / 1.40;
-            max-width: 48vw;
+            /* Explicit width AND height (no aspect-ratio derivation
+               from `width: auto`). Earlier auto-width with aspect-ratio
+               made child percentage positioning (puck top: 6 %, phone
+               top: 6 %, surface top: 14 %) resolve against an
+               un-resolved width — children rendered with collapsed /
+               near-zero offsets and stacked invisibly. Sizing via vh
+               (iframe-content height units) keeps the 1:1.40 ratio
+               while staying within iframe bounds; max-* caps cover
+               very tall iframes. */
+            width: 60vh;
+            height: 84vh;
+            max-width: 380px;
+            max-height: 532px;
             margin: 0;
             padding-bottom: 0;
         }
