@@ -679,16 +679,23 @@
         body.embed html, body.embed body { height: 100%; }
         /* Stage is absolutely anchored to 29 % of the iframe width
            (= the center of the LEFT 58 % region — the area the
-           parent's text-column overlay doesn't cover). Deterministic
-           regardless of flex / margin math. Vertical center via the
-           top:50% + translateY combo. */
+           parent's text-column overlay doesn't cover). Sized by
+           HEIGHT rather than width so the 1/1.40 aspect ratio can
+           never push the bounding box past the iframe's vertical
+           clip — earlier width-based sizing computed stage height
+           > iframe height on smaller iframes, which pushed the
+           puck + phone-rig (positioned at top: 6 % of stage) off
+           the visible top of the iframe and made the whole
+           animation invisible. */
         body.embed .hero .stage {
             position: absolute;
             left: 29%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: min(520px, 48vw);
-            max-width: 520px;
+            height: 92%;
+            width: auto;
+            aspect-ratio: 1 / 1.40;
+            max-width: 48vw;
             margin: 0;
             padding-bottom: 0;
         }
