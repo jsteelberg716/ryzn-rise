@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { ChevronDown, PawPrint } from 'lucide-react';
-import { staggerContainer, wordReveal, EASING, DURATION } from '@/lib/animations';
+import { staggerContainer, wordReveal, fadeUpVariant, EASING, DURATION } from '@/lib/animations';
 import ChooseYourTheme from '@/components/landing/ChooseYourTheme';
 import PhoneMockup from './PhoneMockup';
 import { useIsWildcats } from '@/hooks/useIsWildcats';
@@ -114,7 +114,7 @@ const Hero = () => {
               `align-items: stretch` makes them span the column,
               pushing text off-center and pinching the rounded-pill
               ends against the column edges). */}
-          <motion.div variants={wordReveal} className="mt-8 flex flex-wrap gap-4 items-start">
+          <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap gap-4 items-start">
             <div className="flex flex-col items-start gap-3">
               <a
                 href="#pricing"

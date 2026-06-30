@@ -92,13 +92,15 @@ const sections = [
       <>
         <p>AI inputs are routed through our server-side proxy (<code className="text-xs bg-primary/10 px-1.5 py-0.5 rounded">functions/v1/ai-proxy</code>) to OpenAI (GPT-4.1, primary) or Anthropic (Claude Haiku 4.5, fallback).</p>
         <p className="mt-2">The <strong className="text-foreground">first time you use any AI feature</strong>, the app will explicitly ask for your permission before sending anything. You can revoke that consent at any time in <strong className="text-foreground">Settings → Account → Reset AI Consent</strong>. Declining disables AI features; you can still type meals, log macros manually, and use the rest of the app.</p>
-        <p className="mt-2"><strong className="text-foreground">What is sent:</strong> the photo / transcript / message, the last 24 hours of conversation history, a condensed profile summary (calorie target, fitness goal), and food memories.</p>
+        <p className="mt-2"><strong className="text-foreground">What is sent:</strong> the photo / transcript / message, the last 24 hours of conversation history, a condensed profile summary (calorie target, fitness goal), and food memories. A photo may be a meal you are logging, or a picture of a gym machine or exercise you point the camera at so RYZN can identify it and load the right workout.</p>
+        <p className="mt-2"><strong className="text-foreground">RYZN Coach.</strong> RYZN Coach is a conversational AI feature that designs your weekly workout split and recommends exercises. When you chat with it, the app sends your messages and the training details you share — such as how many days you train, your experience level, and your goal — along with a summary of your current routine, to the providers above. The plan it generates is written into your own account so it appears in your weekly schedule. The Coach also remembers training preferences you tell it (for example, "no barbell exercises") so future plans fit you better; these coach memories are stored privately in your account, are never used to train any model, and are never sold or shared.</p>
         <p className="mt-2"><strong className="text-foreground">Third-party protections.</strong> OpenAI and Anthropic are <strong className="text-foreground">SOC 2 Type II compliant</strong>. Both providers are bound by their commercial API terms not to train models on data submitted through their API and not to retain inputs beyond the immediate response window. They provide privacy and security protections equivalent to or stronger than ours. Their respective data-use policies:</p>
         <ul className="mt-2 space-y-1.5 list-disc list-inside text-muted-foreground">
           <li><a href="https://openai.com/policies/api-data-usage-policies/" target="_blank" rel="noopener noreferrer" className="text-accent-green hover:underline">OpenAI API data usage policy</a></li>
           <li><a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-green hover:underline">Anthropic privacy policy</a></li>
         </ul>
         <p className="mt-2"><strong className="text-foreground">API keys live server-side only</strong> — never embedded in the app binary. AI request metadata (model name, latency, token count, success/failure) is logged for reliability and cost monitoring, but the content of photos, transcripts, and replies is not logged. AI data is never sold or shared with anyone other than the named providers above.</p>
+        <p className="mt-2"><strong className="text-foreground">Usage limits.</strong> AI features (food photo scans, voice and text meal logging, Precision Mode, exercise or equipment identification, and RYZN Coach workout planning) carry daily usage limits so the service stays fast and sustainable to run. Limits are more generous on a paid subscription than during the introductory free trial. Reaching a limit only pauses that AI feature until the next day. The rest of the app, including manual logging, keeps working normally.</p>
       </>
     ),
   },
@@ -136,18 +138,24 @@ const sections = [
     icon: ImageIcon,
     title: '9. Photos & Media',
     body: (
-      <p>
-        Food photos are uploaded to a private Supabase storage bucket. Progress photos and avatars live in private buckets readable <strong className="text-foreground">only by your account</strong>. RYZN does not access your full photo library and does not perform facial recognition.
-      </p>
+      <>
+        <p>
+          Food photos are uploaded to a private Supabase storage bucket. Progress photos and avatars live in private buckets readable <strong className="text-foreground">only by your account</strong>. RYZN does not access your full photo library and does not perform facial recognition.
+        </p>
+        <p className="mt-2"><strong className="text-foreground">Exercise &amp; equipment photos.</strong> When you point the camera at a gym machine or exercise so RYZN can identify it, that photo is sent to the AI vision provider (see Section 6) <strong className="text-foreground">only to recognize the equipment</strong>. It is not uploaded to our storage buckets and is not retained after the identification completes.</p>
+      </>
     ),
   },
   {
     icon: CreditCard,
     title: '10. Subscription & Billing',
     body: (
-      <p>
-        Apple handles all payments via StoreKit. We never see your credit card number. We store your subscription status, transaction ID, and an anonymous account token in a <code className="text-xs bg-primary/10 px-1.5 py-0.5 rounded">subscriptions</code> table.
-      </p>
+      <>
+        <p>
+          Apple handles all payments via StoreKit. We never see your credit card number. We store your subscription status, transaction ID, and an anonymous account token in a <code className="text-xs bg-primary/10 px-1.5 py-0.5 rounded">subscriptions</code> table.
+        </p>
+        <p className="mt-2">New subscriptions may start with a <strong className="text-foreground">3-day free trial</strong>. You will not be charged until the trial ends, and you can cancel anytime before then in your Apple ID subscription settings. During the free trial, some AI features run on tighter daily usage limits (see Section 6).</p>
+      </>
     ),
   },
   {
@@ -183,6 +191,7 @@ const sections = [
           <li>Cached meal photos</li>
           <li>Offline sync queue</li>
           <li>Cached AI personality responses</li>
+          <li>Home-screen widget data — a small summary (calories, macros, muscle map, recent workout, streak) shared with the RYZN widget through an on-device App Group. It stays on your device and is never sent off your phone.</li>
         </ul>
         <p className="mt-3">All local storage is wiped on sign-out or account deletion.</p>
       </>
@@ -304,7 +313,7 @@ const Privacy = () => {
           </motion.h1>
 
           <motion.p variants={fadeUpVariant} className="mt-4 text-muted-foreground" style={{ fontSize: '1.0625rem' }}>
-            Effective May 20, 2026
+            Effective June 29, 2026
           </motion.p>
 
           <motion.div variants={fadeUpVariant} className="mt-6 glass-card rounded-[20px] p-6 border-l-2" style={{ borderLeftColor: 'hsl(var(--accent-green))' }}>
