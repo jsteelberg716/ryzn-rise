@@ -135,9 +135,14 @@ const Pricing = () => {
                 ))}
               </div>
 
-              <button className="w-full mt-8 py-3.5 rounded-[14px] font-bold text-sm bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300">
+              <a
+                href="https://apps.apple.com/us/app/ryzn/id6761982333"
+                target="_blank"
+                rel="noopener"
+                className="block w-full mt-8 py-3.5 rounded-[14px] font-bold text-sm text-center bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300"
+              >
                 Get RYZN
-              </button>
+              </a>
             </div>
           </motion.div>
 

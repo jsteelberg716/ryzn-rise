@@ -601,12 +601,14 @@ const Validation = () => {
             RYZN is the only calorie engine grounded in first-principles physics — not heart-rate proxy.
           </motion.p>
           <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap gap-3 justify-center">
-            <Link
-              to="/"
+            <a
+              href="https://apps.apple.com/us/app/ryzn/id6761982333"
+              target="_blank"
+              rel="noopener"
               className="cta-primary cta-pulse inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]"
             >
               Get RYZN
-            </Link>
+            </a>
             <Link
               to="/"
               className="px-8 py-4 rounded-pill border border-primary/[0.15] text-muted-foreground font-semibold text-[1.0625rem] hover:border-primary/40 hover:text-foreground transition-all duration-200"

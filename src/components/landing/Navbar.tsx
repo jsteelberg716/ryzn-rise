@@ -62,9 +62,13 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <button className="cta-primary px-5 py-2.5 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground text-sm font-semibold">
+          <a
+            href={isWildcats ? '#pricing' : 'https://apps.apple.com/us/app/ryzn/id6761982333'}
+            {...(isWildcats ? {} : { target: '_blank', rel: 'noopener' })}
+            className="cta-primary px-5 py-2.5 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground text-sm font-semibold"
+          >
             {isWildcats ? 'Claim Free Account' : 'Get RYZN'}
-          </button>
+          </a>
         </div>
 
         <button className="md:hidden text-foreground" onClick={() => setMobileOpen(true)}>
@@ -129,14 +133,17 @@ const Navbar = () => {
             <div className="mb-4">
               <RyznIconLogo size={40} />
             </div>
-            <motion.button
+            <motion.a
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
+              href={isWildcats ? '#pricing' : 'https://apps.apple.com/us/app/ryzn/id6761982333'}
+              {...(isWildcats ? {} : { target: '_blank', rel: 'noopener' })}
+              onClick={() => setMobileOpen(false)}
               className="mt-4 px-8 py-3 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-semibold"
             >
               {isWildcats ? 'Claim Free Account' : 'Get RYZN'}
-            </motion.button>
+            </motion.a>
           </motion.div>
         )}
       </AnimatePresence>

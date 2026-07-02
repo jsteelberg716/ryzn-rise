@@ -117,7 +117,8 @@ const Hero = () => {
           <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap gap-4 items-start">
             <div className="flex flex-col items-start gap-3">
               <a
-                href="#pricing"
+                href={isWildcats ? '#pricing' : 'https://apps.apple.com/us/app/ryzn/id6761982333'}
+                {...(isWildcats ? {} : { target: '_blank', rel: 'noopener' })}
                 className="cta-primary cta-pulse inline-block px-8 py-4 rounded-pill bg-gradient-to-r from-primary to-accent-green text-foreground font-bold text-[1.0625rem]"
               >
                 {isWildcats ? 'Claim Your Free Account' : 'Get RYZN'}
@@ -142,7 +143,17 @@ const Hero = () => {
             variants={wordReveal}
             className="mt-8 flex flex-wrap items-center justify-between gap-6 text-sm text-muted-foreground"
           >
-            <span>Coming soon to the <strong className="text-foreground">App Store</strong></span>
+            <span>
+              Available now on the{' '}
+              <a
+                href="https://apps.apple.com/us/app/ryzn/id6761982333"
+                target="_blank"
+                rel="noopener"
+                className="text-foreground font-bold hover:text-primary transition-colors"
+              >
+                App Store
+              </a>
+            </span>
             <ChooseYourTheme />
           </motion.div>
         </motion.div>

@@ -598,7 +598,7 @@ const Mobile = () => {
             The fitness app built for iPhone — not ported to it. Download and start your first session today.
           </p>
           <a
-            href="https://apps.apple.com/app/ryzn"
+            href="https://apps.apple.com/us/app/ryzn/id6761982333"
             className="cta-primary cta-pulse mt-7 inline-flex items-center gap-3 px-7 py-4 rounded-2xl bg-foreground text-background font-bold text-base active:scale-95 transition-transform duration-100"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
