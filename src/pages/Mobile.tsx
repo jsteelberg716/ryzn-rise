@@ -557,6 +557,7 @@ const Mobile = () => {
           <ul className="mt-5 space-y-2.5 text-sm">
             {[
               'Photo + voice food logging',
+              'Exercise photo scan — snap any machine',
               'Real-time muscle map',
               'AI-driven progression',
               'Apple Watch heart-rate sync',
@@ -569,6 +570,10 @@ const Mobile = () => {
               </li>
             ))}
           </ul>
+          <p className="mt-5 pt-4 border-t border-primary/10 text-center text-xs text-muted-foreground/70 leading-relaxed">
+            Built by one passionate developer who lives in the gym —
+            new features ship constantly.
+          </p>
         </motion.div>
       </section>
 
