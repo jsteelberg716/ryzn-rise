@@ -716,13 +716,17 @@
            embed stage size (up to 560 px) they'd otherwise stay at
            their original pixel widths and look proportionally tiny. */
         body.embed .phone-rig { max-width: 300px; }
-        body.embed .puck-on-surface { width: 240px; height: 240px; border-radius: 36px; }
-        body.embed .puck-on-surface svg { width: 152px; height: 146px; }
-        /* Scan ripple anchor follows the bigger puck — base offset
-           is 90 px (= half of 180 px puck height) to center the
-           ripple on the puck. With puck height now 240, offset
-           becomes 120. */
-        body.embed .scan-ripple { top: calc(6% + 120px); width: 280px; height: 280px; }
+        /* Keep the embed puck a true SQUARE that scales with the stage.
+           The old fixed 240×240 px turned into a tall rectangle whenever
+           the stage was narrower than 240 px (width clamped, height held).
+           Percentage width + aspect-ratio 1/1 keeps it square at every
+           size and a touch smaller than before. */
+        body.embed .puck-on-surface { width: 38%; max-width: 200px; height: auto; aspect-ratio: 1 / 1; border-radius: 32px; }
+        body.embed .puck-on-surface svg { width: 58%; height: auto; }
+        /* Ripple tracks the puck center via the same 21 % anchor the
+           base rule uses — square + percentage so it stays aligned as
+           the puck scales. */
+        body.embed .scan-ripple { top: 21%; width: 48%; height: auto; aspect-ratio: 1 / 1; }
     </style>
 </head>
 <body>
