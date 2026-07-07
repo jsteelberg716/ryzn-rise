@@ -85,100 +85,99 @@ const PhoneMockup = () => {
   return (
     <div
       ref={phoneRef}
-      className="relative w-[250px] sm:w-[280px]"
-      style={{ perspective: 800 }}
+      className="relative"
+      style={{ perspective: 1100 }}
       onMouseMove={handlePhoneMove}
       onMouseEnter={() => setIsPhoneHovered(true)}
       onMouseLeave={() => { setIsPhoneHovered(false); setTilt({ rotateX: 0, rotateY: 0 }); }}
     >
-      {/* Phone frame with tilt */}
+      {/* Phone outer bezel — gradient rim, matches the fuel phone */}
       <div
-        className="relative rounded-[35px] bg-black p-[7px] transition-transform duration-300 ease-out"
+        className="relative rounded-[44px] p-[3px] transition-transform duration-300 ease-out"
         style={{
-          border: '2px solid rgb(40, 40, 40)',
-          boxShadow: isPhoneHovered
-            ? `${-tilt.rotateY}px ${tilt.rotateX}px 30px rgba(0,0,0,0.5), 0 0 40px hsl(var(--primary) / 0.15)`
-            : '2px 5px 15px rgba(0, 0, 0, 0.486)',
+          width: 320,
+          background: '#1c1c1e',
           transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
           transformStyle: 'preserve-3d',
+          boxShadow: isPhoneHovered
+            ? `${-tilt.rotateY * 1.8}px ${tilt.rotateX * 1.8 + 36}px 70px rgba(0,0,0,0.55), 0 0 70px hsl(var(--primary) / 0.22)`
+            : '0 40px 80px -20px rgba(0,0,0,0.6)',
         }}
       >
-        {/* Dynamic Island */}
-        <div className="absolute top-0 right-1/2 translate-x-1/2 w-[35%] h-[18px] bg-black rounded-b-[10px] z-20">
-          <div className="absolute top-[2px] right-1/2 translate-x-1/2 w-[40%] h-[2px] rounded-[2px] bg-[rgb(20,20,20)]" />
-          <div className="absolute top-[6px] left-[16%] w-[6px] h-[6px] rounded-full bg-white/5">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] rounded-full bg-blue-500/20" />
-          </div>
-        </div>
-
-        {/* Side buttons */}
-        <div className="absolute w-[2px] h-[45px] top-[30%] -right-[4px] rounded-sm" style={{ backgroundImage: 'linear-gradient(to right, #111, #222, #333, #464646, #595959)' }} />
-        <div className="absolute w-[2px] h-[30px] top-[26%] -left-[4px] rounded-sm" style={{ backgroundImage: 'linear-gradient(to left, #111, #222, #333, #464646, #595959)' }} />
-        <div className="absolute w-[2px] h-[30px] top-[36%] -left-[4px] rounded-sm" style={{ backgroundImage: 'linear-gradient(to left, #111, #222, #333, #464646, #595959)' }} />
-
         {/* Screen */}
-        <div className="rounded-[25px] overflow-hidden bg-[#050505] flex flex-col items-center" style={{ height: 580 }}>
-          {/* RYZN Logo */}
-          <div className="w-full flex flex-col items-center pt-10 pb-2 px-6">
-            <div className="relative w-[75%]">
-              <img src={ryznLogoWhite} alt="RYZN" className="w-full h-auto" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.3))' }} />
-              {/* Accent stripe — inlined as JSX (not <img src=…/>) so
-                  the fill picks up the active theme via CSS variable.
-                  External SVG loaded via <img> renders in an isolated
-                  context that doesn't inherit document-level CSS vars. */}
-              <svg
-                aria-hidden
-                viewBox="0 0 960 720"
-                preserveAspectRatio="xMidYMid meet"
-                className="absolute inset-0 w-full h-auto"
-                style={{ overflow: 'visible' }}
-              >
-                <path
-                  fill="hsl(var(--primary))"
-                  d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"
-                />
-              </svg>
-            </div>
-            <div className="w-[60%] h-[2px] bg-[hsl(var(--primary))] mt-3 rounded-full" />
-          </div>
+        <div
+          className="relative rounded-[41px] overflow-hidden"
+          style={{ background: '#050505', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)' }}
+        >
+          <div className="relative w-full flex flex-col items-center" style={{ aspectRatio: '9/19.5' }}>
+            {/* Dynamic Island */}
+            <div
+              className="absolute top-2 left-1/2 -translate-x-1/2 z-30 rounded-full bg-black"
+              style={{ width: 100, height: 28 }}
+            />
 
-          {/* Muscle map — centered, slightly smaller */}
-          <div className="flex-1 flex items-center justify-center relative w-full px-8">
-            <svg viewBox="330 80 300 440" className="w-full h-auto max-w-[180px]">
-              {MUSCLE_PATHS.map(m => (
-                <path
-                  key={m.id}
-                  d={m.d}
-                  fill={getColor(m.group)}
-                  stroke="rgba(255,255,255,0.04)"
-                  strokeWidth="0.5"
-                  style={{
-                    transition: "fill 0.6s ease, filter 0.6s ease",
-                    filter: getFilter(m.group),
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={() => setHoveredGroup(m.group)}
-                  onMouseLeave={() => setHoveredGroup(null)}
-                />
-              ))}
-            </svg>
-
-            {/* Hover label */}
-            {hoveredLabel && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[hsl(var(--primary))] text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
-                {hoveredLabel}
+            {/* RYZN Logo */}
+            <div className="w-full flex flex-col items-center pt-14 pb-2 px-6">
+              <div className="relative w-[75%]">
+                <img src={ryznLogoWhite} alt="RYZN" className="w-full h-auto" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.3))' }} />
+                {/* Accent stripe — inlined as JSX (not <img src=…/>) so
+                    the fill picks up the active theme via CSS variable.
+                    External SVG loaded via <img> renders in an isolated
+                    context that doesn't inherit document-level CSS vars. */}
+                <svg
+                  aria-hidden
+                  viewBox="0 0 960 720"
+                  preserveAspectRatio="xMidYMid meet"
+                  className="absolute inset-0 w-full h-auto"
+                  style={{ overflow: 'visible' }}
+                >
+                  <path
+                    fill="hsl(var(--primary))"
+                    d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"
+                  />
+                </svg>
               </div>
-            )}
-          </div>
+              <div className="w-[60%] h-[2px] bg-[hsl(var(--primary))] mt-3 rounded-full" />
+            </div>
 
-          {/* Bottom bar */}
-          <div className="w-full px-6 pb-4">
-            <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ background: 'linear-gradient(90deg, rgba(50,50,58,0.5), rgba(69,183,209,0.6), hsl(var(--primary) / 0.8), rgba(255,107,107,0.8))' }} />
-            <div className="flex justify-between mt-1">
-              <span className="text-white/20 text-[6px]">Resting</span>
-              <span className="text-white/20 text-[6px]">Warming Up</span>
-              <span className="text-white/20 text-[6px]">Optimal</span>
-              <span className="text-white/20 text-[6px]">Overworked</span>
+            {/* Muscle map — centered */}
+            <div className="flex-1 flex items-center justify-center relative w-full px-8">
+              <svg viewBox="330 80 300 440" className="w-full h-auto max-w-[190px]">
+                {MUSCLE_PATHS.map(m => (
+                  <path
+                    key={m.id}
+                    d={m.d}
+                    fill={getColor(m.group)}
+                    stroke="rgba(255,255,255,0.04)"
+                    strokeWidth="0.5"
+                    style={{
+                      transition: "fill 0.6s ease, filter 0.6s ease",
+                      filter: getFilter(m.group),
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={() => setHoveredGroup(m.group)}
+                    onMouseLeave={() => setHoveredGroup(null)}
+                  />
+                ))}
+              </svg>
+
+              {/* Hover label */}
+              {hoveredLabel && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[hsl(var(--primary))] text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
+                  {hoveredLabel}
+                </div>
+              )}
+            </div>
+
+            {/* Bottom bar */}
+            <div className="w-full px-6 pb-8">
+              <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ background: 'linear-gradient(90deg, rgba(50,50,58,0.5), rgba(69,183,209,0.6), hsl(var(--primary) / 0.8), rgba(255,107,107,0.8))' }} />
+              <div className="flex justify-between mt-1">
+                <span className="text-white/20 text-[6px]">Resting</span>
+                <span className="text-white/20 text-[6px]">Warming Up</span>
+                <span className="text-white/20 text-[6px]">Optimal</span>
+                <span className="text-white/20 text-[6px]">Overworked</span>
+              </div>
             </div>
           </div>
         </div>

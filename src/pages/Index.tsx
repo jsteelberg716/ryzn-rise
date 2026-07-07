@@ -22,11 +22,11 @@ const Index = () => {
       <Navbar />
       <Hero />
       <StatsBar />
-      <CalorieEngine />
       <MuscleMapSection />
       <CalorieLoggingSection />
       <RyznTagSection />
       <ShareCards />
+      <CalorieEngine />
 
       <Pricing />
       <FAQ />

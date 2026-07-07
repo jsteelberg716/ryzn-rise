@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
@@ -30,13 +30,32 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isWildcats = useIsWildcats();
 
+  // The nav bar CONTENTS are always visible. At the very top of the page
+  // the container is transparent (no glass, no border) so only the logo,
+  // links + CTA float over the hero. Once the visitor scrolls past the
+  // fold, the glass fill + border + shadow fade in, condensing it into
+  // the floating pill. Passive listener; primed on mount for deep links.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 64);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <nav
-      className={`fixed left-0 right-0 z-[1000] h-16 backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(8,8,14,0.8)] border-b border-primary/[0.1] transition-[top] duration-300 ${
-        isWildcats ? 'top-11' : 'top-0'
+      className={`fixed left-0 right-0 z-[1000] flex justify-center px-4 transition-all duration-500 ease-out ${
+        isWildcats ? 'top-[52px]' : 'top-3'
       }`}
     >
-      <div className="max-w-[1200px] mx-auto h-full flex items-center justify-between px-6">
+      <div
+        className={`w-full max-w-[1080px] h-14 rounded-full flex items-center justify-between pl-6 pr-3 transition-all duration-500 ease-out ${
+          scrolled
+            ? 'backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(8,8,14,0.72)] border border-primary/[0.12] shadow-[0_18px_50px_-12px_rgba(0,0,0,0.6)]'
+            : 'bg-transparent border border-transparent shadow-none'
+        }`}
+      >
         <a href="#" className="flex items-center">
           <RyznWordLogo height={28} />
         </a>

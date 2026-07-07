@@ -27,7 +27,7 @@ const Hero = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen pt-[120px] pb-20 bg-background scanlines"
+      className="relative min-h-screen flex items-center pt-28 pb-24 bg-background scanlines"
       style={{
         // overflow: clip + a wide clip-margin so the cta-pulse rings,
         // box-shadow glow, and other off-bounds visuals aren't sliced
@@ -40,7 +40,7 @@ const Hero = () => {
       <div className="hero-background" />
       <div className="hero-grid" />
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6 flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
+      <div className="relative z-10 w-full max-w-[1280px] mx-auto px-6 flex flex-col lg:flex-row items-center gap-12 lg:gap-12">
         {/* Left - Copy */}
         <motion.div
           className="flex-1 max-w-xl"
@@ -79,7 +79,7 @@ const Hero = () => {
               key={i}
               variants={wordReveal}
               className="font-extrabold leading-none tracking-[-0.04em]"
-              style={{ fontSize: 'clamp(3rem, 8vw, 6.5rem)' }}
+              style={{ fontSize: 'clamp(3.25rem, 8.5vw, 7.25rem)' }}
             >
               <span className="text-foreground">{line.text}</span>
               <span className="gradient-text">{line.highlight}</span>

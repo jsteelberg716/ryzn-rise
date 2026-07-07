@@ -81,7 +81,7 @@ const RyznTagSection = () => {
             it disappears past the iframe's right edge. */}
         <motion.div variants={fadeUpVariant} className="w-full">
           <iframe
-            src="/scan/v1/?embed=1"
+            src="/scan/v1/index.html?embed=1"
             title="RYZN tag scan animation"
             scrolling="no"
             loading="lazy"

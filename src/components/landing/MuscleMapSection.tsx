@@ -216,13 +216,6 @@ const MuscleMapSection = () => {
             ))}
           </motion.div>
 
-          <motion.a
-            variants={fadeUpVariant}
-            href="#pricing"
-            className="inline-block mt-6 text-primary font-medium hover:underline"
-          >
-            → Available in Base tier
-          </motion.a>
         </motion.div>
       </div>
     </section>

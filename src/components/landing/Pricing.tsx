@@ -12,8 +12,7 @@ const proFeatures = [
   "Progress photos & workout history",
   "Apple Health & iCloud sync",
   "Patent-pending calorie expenditure engine — measures mechanical work, not heart-rate proxy",
-  "AI camera food logging — 25 image scans/day",
-  "70 voice/keyboard chats per day",
+  "AI camera food logging",
   "Advanced calorie & macro analytics",
   "Priority access to new features",
 ];
@@ -181,19 +180,6 @@ const Pricing = () => {
           </motion.div>
         </motion.div>
 
-        {/* Trust badges */}
-        <motion.div variants={fadeUpVariant} className="mt-10 flex justify-center gap-8 flex-wrap">
-          {[
-            { icon: '🔒', label: 'Secure Apple Pay' },
-            { icon: '↩️', label: 'Cancel Anytime' },
-            { icon: '🎁', label: 'No Card for Trial' },
-          ].map((b) => (
-            <div key={b.label} className="flex items-center gap-1.5 text-muted-foreground/50 text-xs font-medium tracking-wide uppercase">
-              <span>{b.icon}</span>
-              <span>{b.label}</span>
-            </div>
-          ))}
-        </motion.div>
       </motion.div>
 
       {/* RYZN Coach — Learn More modal */}

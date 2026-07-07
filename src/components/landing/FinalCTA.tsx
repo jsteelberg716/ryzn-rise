@@ -5,8 +5,10 @@ import RyznIconLogo from '@/components/RyznIconLogo';
 const FinalCTA = () => {
   return (
     <section className="relative py-32 lg:py-40 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, hsl(240 33% 4%) 0%, hsl(145 30% 6%) 50%, hsl(240 33% 4%) 100%)' }} />
+      {/* Background — neutral dark base (no fixed-green tint); the accent
+          color comes only from the theme-driven radial glow below, so it
+          stays correct across every picked theme. */}
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, hsl(240 33% 4%) 0%, hsl(240 20% 6%) 50%, hsl(240 33% 4%) 100%)' }} />
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 50%, hsl(var(--primary) / 0.15) 0%, transparent 70%)' }} />
       
       {/* Grid pattern */}

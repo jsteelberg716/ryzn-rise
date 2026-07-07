@@ -193,8 +193,12 @@
             position: absolute;
             left: 50%; top: 6%;
             transform: translateX(-50%);
-            width: 180px;
-            height: 180px;
+            /* % of the stage width (like the phone's 54%) so the tag
+               shrinks + grows in lockstep with the phone when the site
+               is resized. aspect-ratio keeps it square. */
+            width: 42%;
+            max-width: 160px;
+            aspect-ratio: 1 / 1;
             border-radius: 28px;
             background: linear-gradient(180deg, hsl(40, 18%, 96%) 0%, hsl(40, 18%, 80%) 100%);
             display: flex; align-items: center; justify-content: center;
@@ -204,7 +208,7 @@
                 0 0 0 1px rgba(0,0,0,0.16);
             z-index: 3;
         }
-        .puck-on-surface svg { width: 104px; height: 100px; display: block; }
+        .puck-on-surface svg { width: 58%; height: auto; display: block; }
         /* Synced to the phone's 7-second cycle:
             0–22 %  full size, slight breathe while phone slides in
             22–32 % shrink into nothing as the phone parks on top
@@ -249,9 +253,13 @@
         .scan-ripple {
             position: absolute;
             left: 50%;
-            top: calc(6% + 90px);
+            /* Puck center = 6% top + half the puck's height. Since the
+               puck is now 42% of stage-width and the stage keeps a
+               fixed 1/1.40 aspect ratio, that center lands at ~21% of
+               stage height at every size — so a plain % tracks it. */
+            top: 21%;
             transform: translate(-50%, -50%);
-            width: 220px; height: 220px;
+            width: 52%; aspect-ratio: 1 / 1;
             pointer-events: none;
             /* z-index 6 sits above the phone-rig (4) and the phone
                screen base (5) so the ripple's top arc isn't masked
@@ -315,9 +323,10 @@
                staircase the previous keyframes produced. */
             80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg) scale(1); opacity: 1;
                    animation-timing-function: cubic-bezier(0.6, 0.04, 0.86, 0.42); }
-            /* Exit fully out — phone slides into the glass overlay
-               area while shrinking + fading on the same curve. */
-            100% { transform: translate(380%, -4px)  rotateZ(16deg)  rotateX(20deg) scale(0.3); opacity: 0; }
+            /* Exit fully out — phone slides off the right edge staying
+               FULLY OPAQUE at full scale (overflow:hidden clips it), so
+               the re-growing tag never shows through a fading phone. */
+            100% { transform: translate(380%, -4px)  rotateZ(16deg)  rotateX(20deg) scale(1); opacity: 1; }
         }
 
         .phone-rig .bezel {
