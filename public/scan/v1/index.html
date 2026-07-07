@@ -721,12 +721,13 @@
            the stage was narrower than 240 px (width clamped, height held).
            Percentage width + aspect-ratio 1/1 keeps it square at every
            size and a touch smaller than before. */
-        body.embed .puck-on-surface { width: 38%; max-width: 200px; height: auto; aspect-ratio: 1 / 1; border-radius: 32px; }
+        body.embed .puck-on-surface { width: 52%; max-width: 288px; height: auto; aspect-ratio: 1 / 1; border-radius: 36px; }
         body.embed .puck-on-surface svg { width: 58%; height: auto; }
         /* Ripple tracks the puck center via the same 21 % anchor the
            base rule uses — square + percentage so it stays aligned as
-           the puck scales. */
-        body.embed .scan-ripple { top: 21%; width: 48%; height: auto; aspect-ratio: 1 / 1; }
+           the puck scales. Sits ~10 pp wider than the puck so the rings
+           read as bursting outward past its edge. */
+        body.embed .scan-ripple { top: 21%; width: 62%; height: auto; aspect-ratio: 1 / 1; }
     </style>
 </head>
 <body>
