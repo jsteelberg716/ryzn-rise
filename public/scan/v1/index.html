@@ -46,6 +46,12 @@
             -webkit-font-smoothing: antialiased; line-height: 1.5;
             overflow-x: clip;
         }
+        /* Kill every scrollbar — the page still scrolls, the bar is just
+           never painted (matches the main site's clean chrome-less look). */
+        html { scrollbar-width: none; -ms-overflow-style: none; }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        *::-webkit-scrollbar { width: 0; height: 0; display: none; }
         .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
         .ambient::before {
             content: ""; position: absolute; top: -25%; left: 50%;
