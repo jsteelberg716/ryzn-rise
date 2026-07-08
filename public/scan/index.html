@@ -17,8 +17,13 @@
             --fg: hsl(0, 0%, 100%);
             --muted: hsl(0, 0%, 64%);
             --tertiary: hsl(0, 0%, 38%);
-            --primary: hsl(145, 72%, 50%);
-            --primary-deep: hsl(160, 70%, 42%);
+            /* Space-separated HSL so slash-notation alpha (e.g.
+               `hsl(var(--primary) / 0.5)`) works AND a theme picker
+               in the parent window can rewrite just the H/S/L values
+               via localStorage. See the inline script just below the
+               <body> tag for theme hydration. */
+            --primary: 145 72% 50%;
+            --primary-deep: 160 70% 42%;
             --card: hsla(0, 0%, 100%, 0.04);
             --border: hsla(0, 0%, 100%, 0.08);
             --border-strong: hsla(0, 0%, 100%, 0.18);
@@ -41,11 +46,17 @@
             -webkit-font-smoothing: antialiased; line-height: 1.5;
             overflow-x: clip;
         }
+        /* Kill every scrollbar — the page still scrolls, the bar is just
+           never painted (matches the main site's clean chrome-less look). */
+        html { scrollbar-width: none; -ms-overflow-style: none; }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        *::-webkit-scrollbar { width: 0; height: 0; display: none; }
         .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
         .ambient::before {
             content: ""; position: absolute; top: -25%; left: 50%;
             width: min(800px, 150vw); height: min(800px, 150vw);
-            background: radial-gradient(circle at center, hsla(145, 72%, 50%, 0.25) 0%, transparent 60%);
+            background: radial-gradient(circle at center, hsl(var(--primary) / 0.25) 0%, transparent 60%);
             transform: translateX(-50%);
             animation: heroPulse 6s ease-in-out infinite;
         }
@@ -58,33 +69,64 @@
             .phone-rig, .sheet, .puck-on-surface, .scan-ripple { animation: none !important; }
         }
 
-        /* ── Nav — actual RYZN wordmark, fits "Get App" without cutoff ── */
+        /* ── Nav — floating pill matching the main site. Transparent at
+           the very top (only logo/links/CTA float over the hero); on
+           scroll past the fold the glass fill + border + shadow fade in,
+           condensing it into the floating pill. ── */
         nav {
-            position: fixed; top: 0; left: 0; right: 0; height: 56px;
-            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
-            background: hsla(225, 8%, 5%, 0.78);
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
+            position: fixed; top: 12px; left: 0; right: 0;
+            display: flex; justify-content: center;
+            padding: 0 16px;
+            z-index: 1000;
         }
         nav .inner {
-            max-width: 1100px; margin: 0 auto; height: 100%;
+            width: 100%; max-width: 1080px; height: 56px;
+            border-radius: 999px;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px;
+            padding: 0 12px 0 24px;
             gap: 12px;
+            border: 1px solid transparent;
+            background: transparent;
+            box-shadow: none;
+            transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, backdrop-filter 0.5s ease;
+        }
+        nav.scrolled .inner {
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(8, 8, 14, 0.72);
+            border-color: hsl(var(--primary) / 0.12);
+            box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.6);
         }
         nav .brand { display: inline-flex; align-items: center; text-decoration: none; flex-shrink: 0; }
         nav .brand svg { display: block; height: 22px; width: auto; }
+        nav .links {
+            display: flex; align-items: center; gap: 30px;
+        }
+        nav .links a {
+            color: var(--muted); font-size: 14px; font-weight: 500;
+            letter-spacing: 0.02em; text-decoration: none;
+            position: relative; white-space: nowrap;
+            transition: color 0.2s ease;
+        }
+        nav .links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px; background: hsl(var(--primary));
+            transition: width 0.3s ease;
+        }
+        nav .links a:hover { color: var(--fg); }
+        nav .links a:hover::after { width: 100%; }
+        nav .links a.current { color: var(--fg); }
+        @media (max-width: 860px) { nav .links { display: none; } }
         nav .cta {
             display: inline-flex; align-items: center; gap: 6px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-deep)));
             color: var(--fg);
-            padding: 9px 16px;
+            padding: 10px 20px;
             border-radius: 999px;
             text-decoration: none;
-            font-weight: 700;
-            font-size: 12.5px;
+            font-weight: 600;
+            font-size: 13px;
             white-space: nowrap;
-            box-shadow: 0 6px 18px hsla(145, 72%, 50%, 0.32);
+            box-shadow: 0 6px 18px hsl(var(--primary) / 0.32);
             flex-shrink: 0;
         }
         nav .cta:active { transform: translateY(1px); }
@@ -111,14 +153,14 @@
             background: hsla(0, 0%, 100%, 0.05);
             border: 1px solid var(--border);
             font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
-            color: var(--primary); margin-bottom: 18px;
+            color: hsl(var(--primary)); margin-bottom: 18px;
         }
         .eyebrow .dot {
-            position: relative; width: 6px; height: 6px; border-radius: 50%; background: var(--primary);
+            position: relative; width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--primary));
         }
         .eyebrow .dot::after {
             content: ""; position: absolute; inset: -3px; border-radius: 50%;
-            background: var(--primary); opacity: 0.4;
+            background: hsl(var(--primary)); opacity: 0.4;
             animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
         @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
@@ -130,7 +172,7 @@
             margin: 0 0 14px;
         }
         h1 .accent {
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-deep)));
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
         .hero .lede {
@@ -172,7 +214,7 @@
             width: 75%; height: 240px;
             background:
                 radial-gradient(ellipse 60% 50% at 50% 50%,
-                    hsla(145, 72%, 50%, 0.18) 0%, transparent 70%);
+                    hsl(var(--primary) / 0.18) 0%, transparent 70%);
             pointer-events: none;
             filter: blur(2px);
         }
@@ -188,8 +230,12 @@
             position: absolute;
             left: 50%; top: 6%;
             transform: translateX(-50%);
-            width: 180px;
-            height: 180px;
+            /* % of the stage width (like the phone's 54%) so the tag
+               shrinks + grows in lockstep with the phone when the site
+               is resized. aspect-ratio keeps it square. */
+            width: 42%;
+            max-width: 160px;
+            aspect-ratio: 1 / 1;
             border-radius: 28px;
             background: linear-gradient(180deg, hsl(40, 18%, 96%) 0%, hsl(40, 18%, 80%) 100%);
             display: flex; align-items: center; justify-content: center;
@@ -199,7 +245,7 @@
                 0 0 0 1px rgba(0,0,0,0.16);
             z-index: 3;
         }
-        .puck-on-surface svg { width: 104px; height: 100px; display: block; }
+        .puck-on-surface svg { width: 58%; height: auto; display: block; }
         /* Synced to the phone's 7-second cycle:
             0–22 %  full size, slight breathe while phone slides in
             22–32 % shrink into nothing as the phone parks on top
@@ -228,7 +274,7 @@
         .puck-on-surface::after {
             content: ""; position: absolute; inset: 0;
             border-radius: 12px;
-            background: radial-gradient(ellipse at top, hsla(145, 72%, 60%, 0.65), transparent 65%);
+            background: radial-gradient(ellipse at top, hsl(var(--primary) / 0.65), transparent 65%);
             opacity: 0;
             animation: puckGlow 7s ease-in-out infinite;
             pointer-events: none;
@@ -244,16 +290,23 @@
         .scan-ripple {
             position: absolute;
             left: 50%;
-            top: calc(6% + 90px);
+            /* Puck center = 6% top + half the puck's height. Since the
+               puck is now 42% of stage-width and the stage keeps a
+               fixed 1/1.40 aspect ratio, that center lands at ~21% of
+               stage height at every size — so a plain % tracks it. */
+            top: 21%;
             transform: translate(-50%, -50%);
-            width: 220px; height: 220px;
+            width: 52%; aspect-ratio: 1 / 1;
             pointer-events: none;
-            z-index: 2;
+            /* z-index 6 sits above the phone-rig (4) and the phone
+               screen base (5) so the ripple's top arc isn't masked
+               by the phone's body when the tap fires. */
+            z-index: 6;
         }
         .scan-ripple::before, .scan-ripple::after {
             content: ""; position: absolute; inset: 0;
             border-radius: 50%;
-            border: 2px solid hsla(145, 72%, 55%, 0.9);
+            border: 2px solid hsl(var(--primary) / 0.9);
             opacity: 0;
             animation: rippleBurst 7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
         }
@@ -282,8 +335,13 @@
         }
         @keyframes phoneSeq {
             /* Off-screen LEFT, tilted toward direction of travel.
-               Single ease-out curve into rest = one continuous slide. */
-            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg);
+               Single ease-out curve into rest = one continuous slide.
+               Opacity stays at 1 throughout — the off-stage positions
+               (±150 %) are hidden by body.embed's overflow:hidden +
+               the frosted .glass-edge overlay on the right makes the
+               exit look like the phone sliding under glass instead
+               of a fade. */
+            0%   { transform: translate(-150%, 14px) rotateZ(-14deg) rotateX(20deg) scale(1); opacity: 1;
                    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
             /* Rest position — top aligned with puck, mid-tilt */
             22%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(18deg);
@@ -294,12 +352,18 @@
             36%  { transform: translate(-50%, -4px)  rotateZ(0deg)   rotateX(26deg); }
             /* Level out for the sheet rise */
             48%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(4deg); }
-            /* Hold while the sheet is up — give it a real beat */
-            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg);
-                   animation-timing-function: cubic-bezier(0.5, 0, 1, 1); }
-            /* Exit OFF to the right (fully clear of the viewport) */
-            96%  { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
-            100% { transform: translate(150%, 14px)  rotateZ(14deg)  rotateX(20deg); }
+            /* Hold while the sheet is up — give it a real beat.
+               The exit is now ONE keyframe transition (80 → 100)
+               so translate + scale + opacity all interpolate
+               along the same cubic-bezier in lockstep, reading as
+               a single continuous slide rather than the three-stage
+               staircase the previous keyframes produced. */
+            80%  { transform: translate(-50%, 0)     rotateZ(0deg)   rotateX(3deg) scale(1); opacity: 1;
+                   animation-timing-function: cubic-bezier(0.6, 0.04, 0.86, 0.42); }
+            /* Exit fully out — phone slides off the right edge staying
+               FULLY OPAQUE at full scale (overflow:hidden clips it), so
+               the re-growing tag never shows through a fading phone. */
+            100% { transform: translate(380%, -4px)  rotateZ(16deg)  rotateX(20deg) scale(1); opacity: 1; }
         }
 
         .phone-rig .bezel {
@@ -310,11 +374,11 @@
             background:
                 linear-gradient(160deg,
                     hsla(0, 0%, 100%, 0.22) 0%,
-                    hsla(145, 72%, 50%, 0.12) 35%,
+                    hsl(var(--primary) / 0.12) 35%,
                     hsla(0, 0%, 100%, 0.06) 100%);
             box-shadow:
                 0 32px 50px -10px rgba(0,0,0,0.7),
-                0 0 60px rgba(34,197,94,0.13);
+                0 0 60px hsl(var(--primary) / 0.13);
         }
         .phone-rig .screen {
             position: relative;
@@ -371,7 +435,7 @@
             width: 58%;
             max-width: 96px;
             opacity: 0.85;
-            filter: drop-shadow(0 0 24px hsla(145, 72%, 50%, 0.35));
+            filter: drop-shadow(0 0 24px hsl(var(--primary) / 0.35));
         }
         .phone-rig .wallpaper .mark svg { display: block; width: 100%; height: auto; }
         .phone-rig .wallpaper .label {
@@ -424,7 +488,7 @@
         .sheet .kicker {
             text-align: center;
             font-size: 8px; font-weight: 800; letter-spacing: 0.2em;
-            color: hsl(145, 72%, 65%);
+            color: hsl(var(--primary));
             text-transform: uppercase;
             margin-bottom: 6px;
         }
@@ -472,14 +536,14 @@
         }
         .sheet .start-btn {
             margin-top: auto;
-            background: hsl(145, 72%, 50%);
-            color: #052414;
+            background: hsl(var(--primary));
+            color: rgba(0, 0, 0, 0.85);
             border-radius: 10px;
             padding: 8px 10px;
             text-align: center;
             font-size: 11px; font-weight: 800;
             letter-spacing: 0.02em;
-            box-shadow: 0 4px 12px hsla(145, 72%, 50%, 0.35);
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.35);
         }
 
         /* Scroll-down hint that lives under the stage. Disappears the
@@ -518,7 +582,7 @@
 
         .cta-primary {
             display: inline-flex; align-items: center; gap: 10px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-deep)));
             color: var(--fg);
             padding: 16px 26px;
             border-radius: 14px;
@@ -526,7 +590,7 @@
             font-weight: 700;
             font-size: 15px;
             letter-spacing: -0.005em;
-            box-shadow: 0 8px 24px hsla(145, 72%, 50%, 0.45);
+            box-shadow: 0 8px 24px hsl(var(--primary) / 0.45);
             transition: transform 0.18s, box-shadow 0.18s;
         }
         .cta-primary:active { transform: translateY(1px); }
@@ -547,7 +611,7 @@
             letter-spacing: -0.005em;
             transition: border-color 0.18s, color 0.18s, transform 0.18s;
         }
-        .cta-secondary:hover { border-color: var(--primary); color: var(--primary); }
+        .cta-secondary:hover { border-color: hsl(var(--primary)); color: hsl(var(--primary)); }
         .cta-secondary:active { transform: translateY(1px); }
 
         /* Stacks the two CTAs vertically on phones, side-by-side once
@@ -575,7 +639,7 @@
             text-align: center;
         }
         h2 .accent {
-            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-deep)));
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
 
@@ -589,11 +653,11 @@
         .step:active { transform: scale(0.985); border-color: var(--border-strong); }
         .step-num {
             flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
-            background: linear-gradient(135deg, hsla(145, 72%, 50%, 0.3), hsla(145, 72%, 50%, 0.08));
-            color: var(--primary);
+            background: linear-gradient(135deg, hsl(var(--primary) / 0.3), hsl(var(--primary) / 0.08));
+            color: hsl(var(--primary));
             font-weight: 800; font-size: 16px;
             display: flex; align-items: center; justify-content: center;
-            border: 1px solid hsla(145, 72%, 50%, 0.4);
+            border: 1px solid hsl(var(--primary) / 0.4);
         }
         .step h3 { font-size: 16.5px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
         .step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
@@ -607,8 +671,8 @@
         }
         .why-card .icon {
             width: 36px; height: 36px; border-radius: 10px;
-            background: hsla(145, 72%, 50%, 0.14);
-            color: var(--primary);
+            background: hsl(var(--primary) / 0.14);
+            color: hsl(var(--primary));
             display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
         .why-card h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
@@ -617,9 +681,9 @@
         .final-cta {
             position: relative; text-align: center;
             background:
-                linear-gradient(135deg, hsla(145, 72%, 50%, 0.10), hsla(160, 70%, 42%, 0.06)),
+                linear-gradient(135deg, hsl(var(--primary) / 0.10), hsl(var(--primary-deep) / 0.06)),
                 var(--card);
-            border: 1px solid hsla(145, 72%, 50%, 0.2);
+            border: 1px solid hsl(var(--primary) / 0.2);
             border-radius: 24px;
             padding: 28px 22px;
             overflow: hidden;
@@ -628,7 +692,7 @@
             content: ""; position: absolute;
             top: -40%; left: 50%; transform: translateX(-50%);
             width: 120%; height: 180%;
-            background: radial-gradient(ellipse, hsla(145, 72%, 50%, 0.22), transparent 60%);
+            background: radial-gradient(ellipse, hsl(var(--primary) / 0.22), transparent 60%);
             pointer-events: none;
         }
         .final-cta .brand-large svg { display: inline-block; height: 26px; width: auto; position: relative; }
@@ -639,9 +703,110 @@
         footer { text-align: center; color: var(--tertiary); padding-bottom: 28px; font-size: 12.5px; }
         footer a { color: var(--muted); text-decoration: none; }
         footer .dot-sep { opacity: 0.4; margin: 0 6px; }
+
+        /* ── Embed mode (?embed=1) ─────────────────────────────────
+           Hides nav, eyebrow, headline, the post-hero CTA, the scroll
+           hint, and every non-hero section so this page can be iframe'd
+           into the desktop landing as a clean animation-only panel.
+           The .stage itself is enlarged so the phone reads at desktop
+           scale rather than the mobile-default 380px max-width.
+           Activated by the inline script just below the body open tag. */
+        body.embed { background: transparent; min-height: 0; overflow: hidden; }
+        body.embed .ambient { display: none; }
+        body.embed nav,
+        body.embed footer,
+        body.embed .hero-hint,
+        body.embed .hero > div:last-child,
+        body.embed .hero .eyebrow,
+        body.embed .hero h1,
+        body.embed main > section:not(.hero) { display: none !important; }
+        /* Revert to flex-based layout (the version that visibly
+           worked before any absolute-positioning experiments). The
+           three changes from base embed mode that actually matter:
+           1. main loses its 720 px max-width + auto-margin so .hero
+              can span the full iframe width.
+           2. .hero is flex with justify-content: flex-start +
+              padding-left so the stage hugs the LEFT side rather
+              than centering.
+           3. .stage keeps its OWN rules from the base .stage class
+              (position: relative, width 100 %, aspect-ratio 1/1.40);
+              embed mode only overrides max-width + margin + the
+              padding-bottom that the base rule used for caption
+              space we don't render in embed. */
+        body.embed main { padding: 0; max-width: none; margin: 0; }
+        body.embed .hero {
+            padding: 0 0 0 8vw;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+        }
+        body.embed .hero .stage {
+            max-width: min(560px, 42vw);
+            margin: 0;
+            padding-bottom: 0;
+        }
+        /* Embed mode also lifts the size caps on the phone + puck +
+           signal/dynamic-island so they scale with the larger stage.
+           The base values target a 380 px-wide mobile stage; at the
+           embed stage size (up to 560 px) they'd otherwise stay at
+           their original pixel widths and look proportionally tiny. */
+        body.embed .phone-rig { max-width: 300px; }
+        /* Keep the embed puck a true SQUARE that scales with the stage.
+           The old fixed 240×240 px turned into a tall rectangle whenever
+           the stage was narrower than 240 px (width clamped, height held).
+           Percentage width + aspect-ratio 1/1 keeps it square at every
+           size and a touch smaller than before. */
+        body.embed .puck-on-surface { width: 52%; max-width: 288px; height: auto; aspect-ratio: 1 / 1; border-radius: 36px; }
+        body.embed .puck-on-surface svg { width: 58%; height: auto; }
+        /* Ripple tracks the puck center via the same 21 % anchor the
+           base rule uses — square + percentage so it stays aligned as
+           the puck scales. Sits ~10 pp wider than the puck so the rings
+           read as bursting outward past its edge. */
+        body.embed .scan-ripple { top: 21%; width: 62%; height: auto; aspect-ratio: 1 / 1; }
     </style>
 </head>
 <body>
+    <script>
+        // Activate embed mode if ?embed=1 is in the URL. Has to run
+        // BEFORE first paint so the nav doesn't flash before being
+        // hidden. The script is small enough to inline; no perf cost.
+        if (new URLSearchParams(location.search).get('embed') === '1') {
+            document.body.classList.add('embed');
+        }
+
+        // Theme hydration — read the accent the visitor picked in the
+        // parent window (same origin, so localStorage is shared) and
+        // apply the same H S% L% triplet this page's --primary expects.
+        // Without this, the iframe's animation (puck, sheet, logo,
+        // eyebrow dot, button gradients) would stay green even when
+        // the rest of the site re-tinted. Listen for `storage` events
+        // too so picking a new theme in the parent updates the iframe
+        // immediately without a reload.
+        (function () {
+            var THEMES = {
+                emerald: '145 72% 50%',
+                coral:   '10 78% 55%',
+                ocean:   '210 64% 46%',
+                blush:   '340 65% 57%',
+                gold:    '45 75% 53%',
+                violet:  '270 47% 52%'
+            };
+            function apply(key) {
+                var v = THEMES[key];
+                if (!v) return;
+                document.documentElement.style.setProperty('--primary', v);
+                document.documentElement.style.setProperty('--primary-deep', v);
+            }
+            try {
+                apply(localStorage.getItem('ryzn-theme'));
+            } catch (_) { /* private mode — fall back to default */ }
+            window.addEventListener('storage', function (e) {
+                if (e.key === 'ryzn-theme') apply(e.newValue);
+            });
+        })();
+    </script>
     <div class="ambient" aria-hidden="true"></div>
 
     <nav>
@@ -664,10 +829,18 @@
                     <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
                     <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
                     <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
-                    <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                    <path fill="hsl(var(--primary))" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
                 </svg>
             </a>
-            <a href="https://apps.apple.com/us/app/ryzn/id6761982333" class="cta">Get App</a>
+            <div class="links">
+                <a href="/#features">Features</a>
+                <a href="/#how-it-works">How It Works</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#faq">FAQ</a>
+                <a href="/scan/" class="current">Scan</a>
+                <a href="/reviews">Reviews</a>
+            </div>
+            <a href="https://apps.apple.com/us/app/ryzn/id6761982333" class="cta">Get RYZN</a>
         </div>
     </nav>
 
@@ -686,7 +859,7 @@
                         <path fill="#0a0a0a" d="m239.02 123.12l481.94 0l0 89.47l-481.94 0z"/>
                         <path fill="#0a0a0a" d="m720.96 123.13l0 275.71l-89.47 0l0 -275.71z"/>
                         <path fill="#0a0a0a" d="m631.61 399.00l-88.84 -88.84l176.97 0.72z"/>
-                        <path fill="hsl(145, 72%, 50%)" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
+                        <path fill="hsl(var(--primary))" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
                     </svg>
                 </div>
 
@@ -708,7 +881,7 @@
                                         <path fill="#ffffff" d="m239.02 123.12l481.94 0l0 89.47l-481.94 0z"/>
                                         <path fill="#ffffff" d="m720.96 123.13l0 275.71l-89.47 0l0 -275.71z"/>
                                         <path fill="#ffffff" d="m631.61 399.00l-88.84 -88.84l176.97 0.72z"/>
-                                        <path fill="hsl(145, 72%, 50%)" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
+                                        <path fill="hsl(var(--primary))" d="m351.50 596.87l-112.47 -110.86l0 -112.38l226.48 223.24z"/>
                                     </svg>
                                 </div>
                                 <div class="label">RYZN</div>
@@ -784,7 +957,7 @@
                         <path fill="#ffffff" d="m830.4105 359.06445l31.40155 -31.40158l-0.12597656 62.677185z"/>
                         <path fill="#ffffff" d="m351.74777 340.42752l-48.408264 -47.723877l21.455841 -21.17862l48.408264 47.723877z"/>
                         <path fill="#ffffff" d="m303.16803 292.83896l43.83972 0.5463867l-44.418335 -43.619125z"/>
-                        <path fill="#22c55e" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
+                        <path fill="hsl(var(--primary))" d="m145.47598 418.69028l-39.352623 -38.78952l0 -39.32071l79.24409 78.11023z"/>
                     </svg>
                 </div>
                 <h2>The next tap opens <span class="accent">your workout</span>.</h2>
@@ -859,6 +1032,17 @@
                     apply();
                 });
             }
+        })();
+
+        // Floating-pill nav: transparent over the hero at the top, glass
+        // fill + border + shadow fade in once scrolled past the fold (same
+        // behaviour as the main-site Navbar). Primed on load for deep links.
+        (function () {
+            var nav = document.querySelector('nav');
+            if (!nav) return;
+            function onNavScroll() { nav.classList.toggle('scrolled', window.scrollY > 64); }
+            onNavScroll();
+            window.addEventListener('scroll', onNavScroll, { passive: true });
         })();
 
         // Hide the "scroll to learn more" hint the moment the user
