@@ -11,120 +11,79 @@ import {
   CheckCircle2,
   Dumbbell,
   LineChart,
+  ArrowRight,
 } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 import RyznWordLogo from '@/components/RyznWordLogo';
 import Footer from '@/components/landing/Footer';
 
-// RYZN for Coaches — Trainer Mode info + pricing page.
+// RYZN for Coaches — image-led Trainer Mode page. NO PRICING anywhere:
+// deals are closed directly over email (Jack, 2026-07-11).
 //
 // UNPUBLISHED: this route ships in the bundle but is intentionally NOT
 // linked from the navbar, footer, or sitemap. The iOS app's "RYZN for
-// Coaches" button deep-links straight to /coaches#pricing. When Jack
-// says go, add it to Navbar routeLinks + Footer and it's live.
+// Coaches" buttons deep-link to /coaches#pricing — that anchor now
+// lives on the final "invite-only" CTA section, so old links land on
+// the register block instead of a dead hash.
 
 const CONTACT_EMAIL = 'hello@ryznrise.com';
-const CONTACT_SUBJECT = encodeURIComponent('RYZN for Coaches — Early Access');
+const CONTACT_SUBJECT = encodeURIComponent('RYZN for Coaches — Register My Team');
 const CONTACT_BODY = encodeURIComponent(
   "Hi Jack,\n\nI'm a coach/trainer interested in RYZN for Coaches.\n\nSport / discipline:\nTeam or client count:\nWhat I'm looking for:\n"
 );
 const contactHref = `mailto:${CONTACT_EMAIL}?subject=${CONTACT_SUBJECT}&body=${CONTACT_BODY}`;
 
-const features = [
+// Real-world photography (Unsplash CDN, license-free).
+const IMG = {
+  hero: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=2000&q=80&auto=format&fit=crop',
+  roster: 'https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=1400&q=80&auto=format&fit=crop',
+  program: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=1400&q=80&auto=format&fit=crop',
+  work: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=1400&q=80&auto=format&fit=crop',
+  cta: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=2000&q=80&auto=format&fit=crop',
+};
+
+// Three image-led bands. Copy is deliberately tight — the photo sells,
+// the bullets confirm.
+const bands = [
   {
-    icon: Users,
-    title: 'Your whole roster, live',
-    desc: 'Invite athletes with a code. See workouts, nutrition, and consistency the moment they log — auto-verified, never self-reported.',
+    img: IMG.roster,
+    alt: 'Team celebrating a win on the court',
+    eyebrow: 'THE ROSTER',
+    title: 'Your whole team, live.',
+    points: [
+      { icon: Users, text: 'Invite the roster with one code' },
+      { icon: Trophy, text: 'Weekly leaderboard from real logs' },
+      { icon: CheckCircle2, text: 'Auto-verified — nothing self-reported' },
+    ],
   },
   {
-    icon: ClipboardList,
-    title: 'Programs & session drops',
-    desc: 'Author standing multi-week programs or drop a one-off session or benchmark. Athletes adopt it into their week with one tap.',
+    img: IMG.program,
+    alt: 'Athlete pressing a barbell overhead in the rack',
+    eyebrow: 'THE PROGRAM',
+    title: 'Write it once. Drop it to everyone.',
+    points: [
+      { icon: ClipboardList, text: 'Multi-week programs & session drops' },
+      { icon: Dumbbell, text: '150+ lifts, full conditioning library' },
+      { icon: CheckCircle2, text: 'Completion boards — who did the work' },
+    ],
   },
   {
-    icon: CheckCircle2,
-    title: 'Completion boards',
-    desc: 'Every assignment shows who adopted it and who finished it — per athlete, per day. No more "did you do the lift?" texts.',
-  },
-  {
-    icon: Trophy,
-    title: 'Team leaderboard',
-    desc: 'Weekly rankings built from real logged data. Workouts and nutrition scores your athletes can\'t fake.',
-  },
-  {
-    icon: BookOpen,
-    title: 'Playbook, drills & resources',
-    desc: 'A team handbook with play diagrams, coach-made drills published to the exercise library, and a binder for rules, schedules, and guides.',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Private-client mode',
-    desc: 'Personal trainers get a 1-on-1 setup: client home page, direct messaging, and per-client macro assignments. No leaderboard noise.',
-  },
-  {
-    icon: LineChart,
-    title: 'Athlete deep-dives',
-    desc: 'Food score and consistency gauges per athlete, computed from verified logs. Assign macros and watch adherence.',
-  },
-  {
-    icon: Dumbbell,
-    title: 'Full conditioning library',
-    desc: 'Sprints, shuttles, sleds, swim, agility, HIIT — every conditioning mode with a built-in timer, plus 150+ lifts with muscle activation data.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Admin seats',
-    desc: 'Invite assistant coaches, nutritionists, or parents-as-admins. They see the same analytics you do — without edit access.',
+    img: IMG.work,
+    alt: 'Athlete grinding out pull-ups in a dark gym',
+    eyebrow: 'THE ATHLETES',
+    title: 'See who\u2019s putting in the work.',
+    points: [
+      { icon: LineChart, text: 'Per-athlete food & consistency scores' },
+      { icon: MessageSquare, text: 'Assign macros, message directly' },
+      { icon: BookOpen, text: 'Playbook, drills & team resources' },
+    ],
   },
 ];
 
-const tiers = [
-  {
-    badge: 'SOLO TRAINER',
-    name: 'Trainer',
-    price: '$29',
-    period: '/ month',
-    sub: 'For personal trainers',
-    features: [
-      'Up to 10 private clients',
-      '1-on-1 client home + messaging',
-      'Per-client programs & macro assignments',
-      'Client progress analytics',
-      'Every client gets RYZN Pro included',
-    ],
-    highlight: false,
-  },
-  {
-    badge: 'MOST POPULAR',
-    name: 'Team Coach',
-    price: '$79',
-    period: '/ month',
-    sub: 'For team sports coaches',
-    features: [
-      'Up to 40 athletes on one team',
-      'Programs, session drops & completion boards',
-      'Leaderboard + auto-verified goals',
-      'Playbook, drills & team resources',
-      '2 admin seats included',
-      'Every athlete gets RYZN Pro included',
-    ],
-    highlight: true,
-  },
-  {
-    badge: 'PROGRAMS & ORGS',
-    name: 'Organization',
-    price: 'Custom',
-    period: '',
-    sub: 'Schools, clubs & multi-team programs',
-    features: [
-      'Multiple teams under one roof',
-      'Unlimited admin seats',
-      'Cross-team analytics',
-      'Onboarding for your staff',
-      'Direct line to the founder',
-    ],
-    highlight: false,
-  },
+const extras = [
+  { icon: MessageSquare, text: 'Private-client mode for trainers' },
+  { icon: ShieldCheck, text: 'Admin seats for your staff' },
+  { icon: Trophy, text: 'Athletes get RYZN Pro included' },
 ];
 
 const Coaches = () => {
@@ -138,8 +97,6 @@ const Coaches = () => {
       const el = document.getElementById(id);
       if (!el) return;
       const lenis = (window as any).__lenis;
-      // Lenis owns scroll on desktop. immediate — a deep link should
-      // land on pricing, not tour the whole page first.
       if (lenis) lenis.scrollTo(el, { offset: -96, immediate: true });
       else el.scrollIntoView({ behavior: 'smooth' }); // touch: native scroll
     }, 100);
@@ -159,113 +116,201 @@ const Coaches = () => {
             href={contactHref}
             className="px-5 py-2.5 rounded-full text-xs font-bold tracking-wide bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300"
           >
-            GET EARLY ACCESS
+            BECOME A COACH
           </a>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative pt-40 pb-20 lg:pb-28 overflow-hidden">
+      {/* Hero — full-bleed real-world photo, minimal copy. */}
+      <section className="relative min-h-[92vh] flex items-end overflow-hidden">
+        <img
+          src={IMG.hero}
+          alt="Sprinter set in the starting blocks on a track"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: 'center 40%' }}
+        />
+        {/* Readability + brand grade over the photo */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, hsl(var(--primary) / 0.14) 0%, transparent 70%)' }}
+          style={{
+            background:
+              'linear-gradient(to top, rgba(8,8,12,0.96) 0%, rgba(8,8,12,0.55) 45%, rgba(8,8,12,0.35) 100%)',
+          }}
         />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 50% at 50% 100%, hsl(var(--primary) / 0.16) 0%, transparent 70%)',
+          }}
+        />
+
         <motion.div
-          className="relative z-10 max-w-[900px] mx-auto px-6 text-center"
+          className="relative z-10 w-full max-w-[1200px] mx-auto px-6 pb-20 lg:pb-28"
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
         >
           <motion.span
             variants={fadeUpVariant}
-            className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-primary bg-[rgba(8,8,14,0.6)] backdrop-blur-md border border-primary/25"
           >
-            RYZN FOR COACHES
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+            </span>
+            RYZN for Coaches
           </motion.span>
           <motion.h1
             variants={fadeUpVariant}
-            className="mt-5 font-bold tracking-tight text-foreground"
-            style={{ fontSize: 'clamp(2.4rem, 6vw, 4.25rem)', lineHeight: 1.08 }}
+            className="mt-6 font-extrabold tracking-[-0.03em] text-foreground max-w-[820px]"
+            style={{ fontSize: 'clamp(2.8rem, 7vw, 5.5rem)', lineHeight: 1.02 }}
           >
-            Coach the team.
+            Your team.
             <br />
-            <span className="gradient-text">RYZN handles the rest.</span>
+            <span className="gradient-text">One app.</span>
           </motion.h1>
           <motion.p
             variants={fadeUpVariant}
-            className="mt-6 text-muted-foreground text-lg lg:text-xl max-w-[640px] mx-auto leading-relaxed"
+            className="mt-5 text-foreground/80 text-lg lg:text-xl max-w-[520px] leading-relaxed"
           >
-            Program the training, drop it to your roster, and watch real completion data
-            roll in — workouts, nutrition, and consistency, verified by the app, not the
-            group chat.
+            Program the training. Watch verified work roll in. No spreadsheets, no group chats.
           </motion.p>
-          <motion.div variants={fadeUpVariant} className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap items-center gap-4">
             <a
               href={contactHref}
-              className="px-8 py-4 rounded-[14px] font-bold text-sm bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-pill font-bold text-sm bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300"
             >
-              Get Early Access
+              Become a RYZN Coach
+              <ArrowRight size={16} />
             </a>
             <a
-              href="#pricing"
-              className="px-8 py-4 rounded-[14px] font-bold text-sm glass-card text-muted-foreground border border-primary/15 hover:border-primary/30 hover:text-foreground transition-all duration-300"
+              href="#toolkit"
+              className="px-8 py-4 rounded-pill font-semibold text-sm text-foreground/80 bg-[rgba(8,8,14,0.55)] backdrop-blur-md border border-white/10 hover:border-primary/40 hover:text-foreground transition-all duration-300"
             >
-              See Pricing
+              See it in action
             </a>
           </motion.div>
-          <motion.p variants={fadeUpVariant} className="mt-4 text-xs text-muted-foreground/60">
-            Early access is limited — every coach onboards directly with the founder.
-          </motion.p>
         </motion.div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="relative py-16 lg:py-24">
+      {/* Image-led feature bands — photo sells, three bullets confirm. */}
+      <section id="toolkit" className="relative py-20 lg:py-28 scroll-mt-24">
+        <div className="max-w-[1200px] mx-auto px-6 space-y-24 lg:space-y-32">
+          {bands.map((band, i) => (
+            <motion.div
+              key={band.title}
+              className={`flex flex-col gap-10 lg:gap-16 items-center ${
+                i % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'
+              }`}
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-100px' }}
+            >
+              {/* Photo */}
+              <motion.div variants={fadeUpVariant} className="w-full lg:w-[55%]">
+                <div className="relative rounded-[24px] overflow-hidden group">
+                  <img
+                    src={band.img}
+                    alt={band.alt}
+                    loading="lazy"
+                    className="w-full h-[320px] lg:h-[440px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  />
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background:
+                        'linear-gradient(to top, rgba(8,8,12,0.45) 0%, transparent 45%)',
+                      boxShadow: 'inset 0 0 0 1px hsl(var(--primary) / 0.15)',
+                      borderRadius: '24px',
+                    }}
+                  />
+                  <div
+                    className="absolute -inset-6 -z-10 blur-[50px] opacity-50"
+                    style={{
+                      background:
+                        'radial-gradient(ellipse 60% 60% at 50% 60%, hsl(var(--primary) / 0.2) 0%, transparent 70%)',
+                    }}
+                  />
+                </div>
+              </motion.div>
+
+              {/* Copy */}
+              <div className="w-full lg:w-[45%]">
+                <motion.span
+                  variants={fadeUpVariant}
+                  className="dmd-concave inline-block px-3 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase text-primary"
+                >
+                  {band.eyebrow}
+                </motion.span>
+                <motion.h2
+                  variants={fadeUpVariant}
+                  className="mt-4 font-bold tracking-tight text-foreground"
+                  style={{ fontSize: 'clamp(1.9rem, 4vw, 2.8rem)', lineHeight: 1.1 }}
+                >
+                  {band.title}
+                </motion.h2>
+                <div className="mt-7 space-y-4">
+                  {band.points.map((p) => (
+                    <motion.div
+                      key={p.text}
+                      variants={fadeUpVariant}
+                      className="flex items-center gap-4"
+                    >
+                      <div className="w-9 h-9 shrink-0 rounded-[10px] dmd-concave flex items-center justify-center text-primary">
+                        <p.icon size={17} />
+                      </div>
+                      <span className="text-foreground/85 text-[1.0625rem]">{p.text}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Extras — one quiet pill row, no card wall. */}
+      <section className="relative pb-6">
         <motion.div
-          className="max-w-[1200px] mx-auto px-6"
+          className="max-w-[1200px] mx-auto px-6 flex flex-wrap justify-center gap-3"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ once: true, margin: '-50px' }}
         >
-          <motion.div variants={fadeUpVariant} className="text-center">
-            <span className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary">
-              THE TOOLKIT
-            </span>
-            <h2
-              className="mt-4 font-bold tracking-tight text-foreground"
-              style={{ fontSize: 'clamp(1.9rem, 4.5vw, 3rem)', lineHeight: 1.15 }}
+          {extras.map((e) => (
+            <motion.span
+              key={e.text}
+              variants={fadeUpVariant}
+              className="dmd-convex inline-flex items-center gap-2.5 px-5 py-2.5 rounded-pill text-sm text-foreground/75"
             >
-              Everything between the whiteboard and the weight room.
-            </h2>
-          </motion.div>
-
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {features.map((f) => (
-              <motion.div
-                key={f.title}
-                variants={fadeUpVariant}
-                className="dmd-convex rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="w-10 h-10 rounded-[12px] dmd-concave flex items-center justify-center text-primary">
-                  <f.icon size={20} />
-                </div>
-                <h3 className="mt-4 font-bold text-foreground text-base">{f.title}</h3>
-                <p className="mt-2 text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+              <e.icon size={15} className="text-primary" />
+              {e.text}
+            </motion.span>
+          ))}
         </motion.div>
       </section>
 
-      {/* Pricing — the app's "RYZN for Coaches" button deep-links here. */}
-      <section id="pricing" className="relative py-16 lg:py-24 scroll-mt-24">
+      {/* Register — invite-only, deals closed directly. Keeps the
+          id="pricing" anchor so existing iOS deep-links land here. */}
+      <section id="pricing" className="relative py-24 lg:py-32 mt-16 overflow-hidden scroll-mt-24">
+        <img
+          src={IMG.cta}
+          alt="Athletes running at dawn"
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, hsl(var(--primary) / 0.08) 0%, transparent 70%)' }}
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(8,8,12,0.97) 0%, rgba(8,8,12,0.72) 50%, rgba(8,8,12,0.95) 100%)',
+          }}
         />
         <motion.div
-          className="relative z-10 max-w-[1200px] mx-auto px-6 text-center"
+          className="relative z-10 max-w-[760px] mx-auto px-6 text-center"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -273,116 +318,36 @@ const Coaches = () => {
         >
           <motion.span
             variants={fadeUpVariant}
-            className="dmd-concave inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase text-primary"
+            className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-primary bg-[rgba(8,8,14,0.6)] backdrop-blur-md border border-primary/25"
           >
-            COACH PRICING
+            Invite-only
           </motion.span>
           <motion.h2
             variants={fadeUpVariant}
-            className="mt-4 font-bold tracking-tight text-foreground"
-            style={{ fontSize: 'clamp(1.9rem, 4.5vw, 3rem)', lineHeight: 1.15 }}
+            className="mt-5 font-bold tracking-tight text-foreground"
+            style={{ fontSize: 'clamp(2rem, 5vw, 3.4rem)', lineHeight: 1.08 }}
           >
-            One subscription. Your whole roster included.
+            Bring your team to <span className="gradient-text">RYZN</span>.
           </motion.h2>
-          <motion.p variants={fadeUpVariant} className="mt-4 text-muted-foreground text-lg max-w-[620px] mx-auto">
-            Your athletes and clients never pay — every seat includes RYZN Pro.
-            Founding coaches lock their rate for life.
-          </motion.p>
-
-          <motion.div variants={staggerContainer} className="mt-12 grid md:grid-cols-3 gap-6 text-left">
-            {tiers.map((t) => (
-              <motion.div
-                key={t.name}
-                variants={fadeUpVariant}
-                className="relative dmd-convex rounded-2xl p-8 flex flex-col transition-all duration-300 hover:-translate-y-1"
-                style={
-                  t.highlight
-                    ? { boxShadow: '0 0 60px hsl(var(--primary) / 0.14), inset 0 1px 0 rgba(255,255,255,0.05)' }
-                    : undefined
-                }
-              >
-                <span className="dmd-concave inline-block self-start px-3 py-1 rounded-pill text-primary text-[10px] font-semibold tracking-widest uppercase mb-4">
-                  {t.badge}
-                </span>
-                <h3 className="font-bold text-foreground text-xl">RYZN {t.name}</h3>
-                <p className="text-muted-foreground text-sm mt-1">{t.sub}</p>
-
-                <div className="mt-5 flex items-baseline gap-1">
-                  <span
-                    className={`font-extrabold ${t.highlight ? 'gradient-text' : 'text-foreground'}`}
-                    style={{ fontSize: t.price === 'Custom' ? '1.9rem' : '2.5rem' }}
-                  >
-                    {t.price}
-                  </span>
-                  {t.period && <span className="text-muted-foreground text-base">{t.period}</span>}
-                </div>
-
-                <div className="mt-6 space-y-3 flex-1">
-                  {t.features.map((f) => (
-                    <div key={f} className="flex items-start gap-3">
-                      <span className="text-primary mt-0.5 font-bold text-sm">✓</span>
-                      <span className="text-foreground/80 text-sm leading-relaxed">{f}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <a
-                  href={contactHref}
-                  className={`block w-full mt-8 py-3.5 rounded-[14px] font-bold text-sm text-center transition-all duration-300 ${
-                    t.highlight
-                      ? 'bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary'
-                      : 'glass-card text-muted-foreground border border-primary/15 hover:border-primary/30 hover:text-foreground'
-                  }`}
-                >
-                  {t.price === 'Custom' ? 'Talk to Jack' : 'Get Early Access'}
-                </a>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.p variants={fadeUpVariant} className="mt-8 text-xs text-muted-foreground/60">
-            Early-access pricing — final plans may change before public launch. Founding coaches keep their rate.
-          </motion.p>
-        </motion.div>
-      </section>
-
-      {/* Contact CTA */}
-      <section className="relative py-16 lg:py-24">
-        <motion.div
-          className="max-w-[760px] mx-auto px-6"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-        >
-          <motion.div
+          <motion.p
             variants={fadeUpVariant}
-            className="dmd-convex rounded-[24px] p-10 lg:p-12 text-center overflow-hidden relative"
+            className="mt-5 text-foreground/75 text-lg leading-relaxed max-w-[540px] mx-auto"
           >
-            <div
-              className="absolute inset-0 -z-10 pointer-events-none opacity-60"
-              style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, hsl(var(--primary) / 0.18), transparent 70%)' }}
-            />
-            <h2
-              className="font-bold tracking-tight text-foreground"
-              style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', lineHeight: 1.15 }}
-            >
-              Bring your team to <span className="gradient-text">RYZN</span>.
-            </h2>
-            <p className="mt-4 text-muted-foreground leading-relaxed max-w-[520px] mx-auto">
-              Tell me about your team or client roster and I'll set you up personally —
-              demo walkthrough, onboarding, and founding-coach pricing.
-            </p>
+            Coaching on RYZN is invite-only. Tell me about your team and I&apos;ll set you up
+            personally — your athletes never pay a cent.
+          </motion.p>
+          <motion.div variants={fadeUpVariant}>
             <a
               href={contactHref}
-              className="inline-block mt-8 px-10 py-4 rounded-[14px] font-bold text-sm bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300"
+              className="inline-flex items-center gap-2 mt-9 px-10 py-4 rounded-pill font-bold text-sm bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300"
             >
-              Email {CONTACT_EMAIL}
+              Register as a Coach
+              <ArrowRight size={16} />
             </a>
-            <p className="mt-3 text-[11px] text-muted-foreground/60">
-              Replies come from the founder. Usually same-day.
-            </p>
           </motion.div>
+          <motion.p variants={fadeUpVariant} className="mt-4 text-xs text-foreground/45">
+            {CONTACT_EMAIL} — replies come from the founder, usually same-day.
+          </motion.p>
         </motion.div>
       </section>
 
