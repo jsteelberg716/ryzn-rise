@@ -80,12 +80,18 @@ const RyznTagSection = () => {
             text column overlay on the right ~42% of this area before
             it disappears past the iframe's right edge. */}
         <motion.div variants={fadeUpVariant} className="w-full">
+          {/* pointer-events: none — the embedded page is a pure
+              animation, but as an iframe it swallows wheel/touch
+              events, which trapped the page scroll (Lenis never saw
+              the gesture). Disabling pointer events lets every scroll
+              pass straight through to the page. */}
           <iframe
             src="/scan/v1/index.html?embed=1"
             title="RYZN tag scan animation"
             scrolling="no"
             loading="lazy"
-            className="block w-full border-0"
+            tabIndex={-1}
+            className="block w-full border-0 pointer-events-none"
             style={{ height: 'clamp(780px, 88vh, 1000px)' }}
           />
         </motion.div>

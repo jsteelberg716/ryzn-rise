@@ -134,12 +134,16 @@ const CalorieLoggingSection = () => {
           transition={{ duration: 0.7, ease: EASING.smooth }}
           className="flex-1 flex justify-center w-full"
         >
+          {/* pointer-events: none — same scroll-trap fix as the tag
+              section: the iframe would swallow wheel/touch and stall
+              Lenis. It's a pure animation, so pass gestures through. */}
           <iframe
             src="/fuel/index.html"
             title="RYZN Fuel snap-to-log animation"
             scrolling="no"
             loading="lazy"
-            className="block border-0 w-full max-w-[420px]"
+            tabIndex={-1}
+            className="block border-0 w-full max-w-[420px] pointer-events-none"
             style={{ height: 'clamp(640px, 82vh, 780px)', background: 'transparent' }}
           />
         </motion.div>
