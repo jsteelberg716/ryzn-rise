@@ -23,6 +23,10 @@ export function useLenis() {
       touchMultiplier: 1.2,
     });
 
+    // Expose the instance so pages can hash-scroll THROUGH Lenis —
+    // its raf loop overrides native scrollTo/scrollIntoView every frame.
+    (window as any).__lenis = lenis;
+
     let rafId = 0;
     const raf = (time: number) => {
       lenis.raf(time);
@@ -32,6 +36,7 @@ export function useLenis() {
 
     return () => {
       cancelAnimationFrame(rafId);
+      if ((window as any).__lenis === lenis) delete (window as any).__lenis;
       lenis.destroy();
     };
   }, []);

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -127,6 +128,24 @@ const tiers = [
 ];
 
 const Coaches = () => {
+  // The app deep-links to /coaches#pricing. On a cold SPA load the
+  // browser's native hash scroll fires before React mounts the section
+  // (and Lenis owns the scroll on desktop), so we scroll manually.
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    const t = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const lenis = (window as any).__lenis;
+      // Lenis owns scroll on desktop. immediate — a deep link should
+      // land on pricing, not tour the whole page first.
+      if (lenis) lenis.scrollTo(el, { offset: -96, immediate: true });
+      else el.scrollIntoView({ behavior: 'smooth' }); // touch: native scroll
+    }, 100);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div className="min-h-screen bg-bg-primary text-foreground">
       {/* Minimal top bar — logo home link only. The main navbar's hash
