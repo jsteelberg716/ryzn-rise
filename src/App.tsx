@@ -13,6 +13,7 @@ import Analytics from "./pages/Analytics.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Reviews from "./pages/Reviews.tsx";
 import Feedback from "./pages/Feedback.tsx";
+import Coaches from "./pages/Coaches.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ChatBubble from "./components/ChatBubble.tsx";
 
@@ -57,6 +58,10 @@ const App = () => {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/feedback" element={<Feedback />} />
+            {/* UNPUBLISHED: /coaches ships in the bundle but is not
+                linked from the nav/footer yet. The iOS app's coach
+                button deep-links to /coaches#pricing. */}
+            <Route path="/coaches" element={<Coaches />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
