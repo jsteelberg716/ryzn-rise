@@ -69,6 +69,17 @@
             .phone-rig, .sheet, .puck-on-surface, .scan-ripple { animation: none !important; }
         }
 
+        /* Scroll-jank guard — when the stage is scrolled off-screen
+           (embed mode shares the landing page's main thread + GPU),
+           freeze every loop animation so it costs nothing. Toggled
+           by the IntersectionObserver at the bottom of the page. */
+        body.anim-off .ambient::before,
+        body.anim-off .hero *,
+        body.anim-off .hero *::before,
+        body.anim-off .hero *::after {
+            animation-play-state: paused !important;
+        }
+
         /* ── Nav — floating pill matching the main site. Transparent at
            the very top (only logo/links/CTA float over the hero); on
            scroll past the fold the glass fill + border + shadow fade in,
@@ -1077,6 +1088,18 @@
                 });
             }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
             document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+        })();
+
+        // Scroll-jank guard — pause the 7s scan loop whenever the
+        // stage isn't visible (scrolled past in embed mode, or the
+        // tab is hidden). IntersectionObserver accounts for the
+        // parent page's viewport in same-origin iframes.
+        (function () {
+            if (!('IntersectionObserver' in window)) return;
+            var stage = document.querySelector('.stage') || document.body;
+            new IntersectionObserver(function (entries) {
+                document.body.classList.toggle('anim-off', !entries[0].isIntersecting);
+            }).observe(stage);
         })();
     </script>
 </body>

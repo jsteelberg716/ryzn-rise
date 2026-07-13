@@ -137,14 +137,19 @@ const CalorieLoggingSection = () => {
           {/* pointer-events: none — same scroll-trap fix as the tag
               section: the iframe would swallow wheel/touch and stall
               Lenis. It's a pure animation, so pass gestures through. */}
+          {/* loading=eager: lazy fired the iframe's fetch/parse/layout
+              exactly as you scrolled onto the section — a visible hitch.
+              Load it up-front instead (tiny static page; its rAF loop
+              self-pauses while off-screen). svh instead of vh so the
+              mobile URL-bar collapse can't resize the iframe mid-scroll. */}
           <iframe
             src="/fuel/index.html"
             title="RYZN Fuel snap-to-log animation"
             scrolling="no"
-            loading="lazy"
+            loading="eager"
             tabIndex={-1}
             className="block border-0 w-full max-w-[420px] pointer-events-none"
-            style={{ height: 'clamp(640px, 82vh, 780px)', background: 'transparent' }}
+            style={{ height: 'clamp(640px, 82svh, 780px)', background: 'transparent' }}
           />
         </motion.div>
       </div>

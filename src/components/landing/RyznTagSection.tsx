@@ -85,14 +85,18 @@ const RyznTagSection = () => {
               events, which trapped the page scroll (Lenis never saw
               the gesture). Disabling pointer events lets every scroll
               pass straight through to the page. */}
+          {/* loading=eager: lazy fired the iframe's fetch/parse/layout
+              exactly as you scrolled onto the section — a visible hitch.
+              svh instead of vh so the mobile URL-bar collapse can't
+              resize the iframe (full page relayout) mid-scroll. */}
           <iframe
             src="/scan/v1/index.html?embed=1"
             title="RYZN tag scan animation"
             scrolling="no"
-            loading="lazy"
+            loading="eager"
             tabIndex={-1}
             className="block w-full border-0 pointer-events-none"
-            style={{ height: 'clamp(780px, 88vh, 1000px)' }}
+            style={{ height: 'clamp(780px, 88svh, 1000px)' }}
           />
         </motion.div>
 
@@ -114,6 +118,7 @@ const RyznTagSection = () => {
             lg:flex lg:flex-col lg:justify-center
             lg:px-10 lg:py-10
             lg:backdrop-blur-lg lg:[backdrop-filter:blur(18px)_saturate(140%)]
+            lg:[transform:translateZ(0)]
             space-y-6 lg:space-y-7
           "
         >
