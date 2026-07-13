@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import {
   Users,
   ClipboardList,
@@ -32,6 +32,66 @@ const CONTACT_BODY = encodeURIComponent(
   "Hi Jack,\n\nI'm a coach/trainer interested in RYZN for Coaches.\n\nSport / discipline:\nTeam or client count:\nWhat I'm looking for:\n"
 );
 const contactHref = `mailto:${CONTACT_EMAIL}?subject=${CONTACT_SUBJECT}&body=${CONTACT_BODY}`;
+
+// Broadcast-style verified-log ticker under the hero — the page opens
+// on PROOF rolling in, like a wire feed off the weight room floor.
+const tickerItems = [
+  'M. CARTER — SESSION COMPLETE · 14,200 LB VOLUME',
+  'SQUAD PROTEIN COMPLIANCE 91%',
+  'D. OKAFOR — 2,140 CAL LOGGED',
+  'FLAG CLEARED — J. REYES BACK ON TARGET',
+  'O-LINE GROUP · 6/6 SESSIONS THIS WEEK',
+  'T. BROOKS — NEW PR · TRAP BAR 585',
+  'SUNDAY REPORT GENERATED — 53 ATHLETES',
+  'MACROS APPLIED — FULL ROSTER · 1 TAP',
+];
+
+// Count-up stat for the proof band. Numbers earn the scroll.
+const BigStat = ({
+  value,
+  suffix,
+  label,
+  sub,
+}: {
+  value: number;
+  suffix?: string;
+  label: string;
+  sub: string;
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const [n, setN] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    const dur = 1200;
+    const t0 = performance.now();
+    let raf: number;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / dur);
+      setN(Math.round(value * (1 - Math.pow(1 - p, 3)))); // easeOutCubic
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, value]);
+
+  return (
+    <div ref={ref} className="text-center lg:text-left">
+      <div
+        className="font-extrabold gradient-text tabular-nums tracking-[-0.04em]"
+        style={{ fontSize: 'clamp(4rem, 9vw, 7.5rem)', lineHeight: 0.95 }}
+      >
+        {n.toLocaleString()}
+        {suffix}
+      </div>
+      <div className="mt-3 text-foreground font-bold text-lg">{label}</div>
+      <div className="mt-1 text-foreground/55 text-sm leading-relaxed max-w-[280px] mx-auto lg:mx-0">
+        {sub}
+      </div>
+    </div>
+  );
+};
 
 // Real-world photography (Unsplash CDN, license-free).
 const IMG = {
@@ -193,25 +253,26 @@ const Coaches = () => {
           </motion.span>
           <motion.h1
             variants={fadeUpVariant}
-            className="mt-6 font-extrabold tracking-[-0.03em] text-foreground max-w-[820px]"
-            style={{ fontSize: 'clamp(2.8rem, 7vw, 5.5rem)', lineHeight: 1.02 }}
+            className="mt-6 font-extrabold tracking-[-0.03em] text-foreground max-w-[900px]"
+            style={{ fontSize: 'clamp(2.6rem, 6.5vw, 5.2rem)', lineHeight: 1.02 }}
           >
-            Your team.
+            Game day is won
             <br />
-            <span className="gradient-text">One app.</span>
+            <span className="gradient-text">Monday through Saturday.</span>
           </motion.h1>
           <motion.p
             variants={fadeUpVariant}
-            className="mt-5 text-foreground/80 text-lg lg:text-xl max-w-[520px] leading-relaxed"
+            className="mt-5 text-foreground/80 text-lg lg:text-xl max-w-[560px] leading-relaxed"
           >
-            Program the training. Watch verified work roll in. No spreadsheets, no group chats.
+            Every rep, every meal, every athlete on your roster — verified and in your
+            pocket. Not self-reported. Not a spreadsheet. Proof.
           </motion.p>
           <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap items-center gap-4">
             <a
               href={contactHref}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-pill font-bold text-sm bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300"
             >
-              Become a RYZN Coach
+              Bring RYZN to your program
               <ArrowRight size={16} />
             </a>
             <a
@@ -222,6 +283,77 @@ const Coaches = () => {
             </a>
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* Verified-log wire — broadcast ticker rolling live proof. */}
+      <div className="relative border-y border-white/[0.06] bg-[rgba(8,8,14,0.85)] overflow-hidden py-3.5 select-none">
+        <div
+          className="absolute inset-y-0 left-0 w-24 z-10 pointer-events-none"
+          style={{ background: 'linear-gradient(to right, hsl(var(--bg-primary)), transparent)' }}
+        />
+        <div
+          className="absolute inset-y-0 right-0 w-24 z-10 pointer-events-none"
+          style={{ background: 'linear-gradient(to left, hsl(var(--bg-primary)), transparent)' }}
+        />
+        <motion.div
+          className="flex whitespace-nowrap w-max"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ repeat: Infinity, ease: 'linear', duration: 36 }}
+        >
+          {[0, 1].map((dup) => (
+            <div key={dup} className="flex items-center">
+              {tickerItems.map((item) => (
+                <span
+                  key={`${dup}-${item}`}
+                  className="flex items-center gap-3 px-7 text-[11px] font-bold tracking-[0.14em] text-foreground/55"
+                >
+                  <CheckCircle2 size={12} className="text-accent-green shrink-0" />
+                  {item}
+                </span>
+              ))}
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Proof band — three numbers an NFL staff can't scroll past. */}
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse 60% 50% at 50% 0%, hsl(var(--primary) / 0.08) 0%, transparent 70%)',
+          }}
+        />
+        <div className="relative max-w-[1200px] mx-auto px-6">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.6 }}
+            className="text-center text-xs font-bold tracking-[0.2em] uppercase text-foreground/40 mb-16"
+          >
+            The gap between talent and performance is what happens off the field
+          </motion.p>
+          <div className="grid gap-14 lg:gap-8 lg:grid-cols-3">
+            <BigStat
+              value={100}
+              suffix="%"
+              label="Verified data"
+              sub="Points, streaks, and rankings come from logged workouts and nutrition — athletes can't game it."
+            />
+            <BigStat
+              value={53}
+              label="Athletes, one screen"
+              sub="The whole roster's week — training, fueling, recovery — readable in the time it takes to walk to practice."
+            />
+            <BigStat
+              value={0}
+              label="Spreadsheets. Group chats. Guesswork."
+              sub="Programs, macros, reports, and messaging live in the same app your athletes already open every day."
+            />
+          </div>
+        </div>
       </section>
 
       {/* Image-led feature bands — photo sells, three bullets confirm. */}
@@ -538,8 +670,9 @@ const Coaches = () => {
             variants={fadeUpVariant}
             className="mt-5 text-foreground/75 text-lg leading-relaxed max-w-[540px] mx-auto"
           >
-            Coaching on RYZN is invite-only. Tell me about your team and I&apos;ll set you up
-            personally — your athletes never pay a cent.
+            RYZN for Coaches is invite-only and priced per program — pro to prep, every
+            deal is built around your roster. Tell me about your team and you&apos;ll talk
+            directly with the founder. Your athletes never pay a cent.
           </motion.p>
           <motion.div variants={fadeUpVariant}>
             <a
