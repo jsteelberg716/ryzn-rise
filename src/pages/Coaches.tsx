@@ -86,6 +86,36 @@ const extras = [
   { icon: Trophy, text: 'Athletes get RYZN Pro included' },
 ];
 
+// ---------------------------------------------------------------------------
+// Team Intelligence — in-app metrics recreated as live web components
+// (Jack 2026-07-13: "take screenshots of some of the cool metrics...
+// or recreate them on the website"). Recreated > screenshots: crisp at
+// every size, on-brand, no App Store review implications.
+// ---------------------------------------------------------------------------
+
+const leaderboardRows = [
+  { rank: 1, name: 'M. Carter', pos: 'QB', pts: 1240, pct: 100 },
+  { rank: 2, name: 'D. Okafor', pos: 'LB', pts: 1105, pct: 89 },
+  { rank: 3, name: 'J. Reyes', pos: 'WR', pts: 980, pct: 79 },
+  { rank: 4, name: 'T. Brooks', pos: 'OL', pts: 845, pct: 68 },
+];
+
+const reportBars = [42, 58, 50, 72, 66, 84, 91];
+
+const IntelCard = ({ children }: { children: React.ReactNode }) => (
+  <motion.div
+    variants={fadeUpVariant}
+    className="rounded-[20px] p-5 lg:p-6 bg-[rgba(255,255,255,0.03)] border border-white/[0.07] backdrop-blur-sm"
+    style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 20px 40px -20px rgba(0,0,0,0.6)' }}
+  >
+    {children}
+  </motion.div>
+);
+
+const IntelEyebrow = ({ text }: { text: string }) => (
+  <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-primary mb-4">{text}</div>
+);
+
 const Coaches = () => {
   // The app deep-links to /coaches#pricing. On a cold SPA load the
   // browser's native hash scroll fires before React mounts the section
@@ -268,6 +298,181 @@ const Coaches = () => {
               </div>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* Team Intelligence — the in-app metrics, recreated live. */}
+      <section className="relative py-20 lg:py-28">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <motion.div
+            className="text-center max-w-[640px] mx-auto"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            <motion.span
+              variants={fadeUpVariant}
+              className="dmd-concave inline-block px-3 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase text-primary"
+            >
+              Team Intelligence
+            </motion.span>
+            <motion.h2
+              variants={fadeUpVariant}
+              className="mt-4 font-bold tracking-tight text-foreground"
+              style={{ fontSize: 'clamp(1.9rem, 4vw, 2.8rem)', lineHeight: 1.1 }}
+            >
+              The numbers do the coaching.
+            </motion.h2>
+            <motion.p variants={fadeUpVariant} className="mt-4 text-foreground/70 text-lg">
+              Every metric below is computed from real logged workouts and nutrition —
+              nothing self-reported, nothing gamed.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            className="mt-14 grid gap-5 lg:gap-6 md:grid-cols-2"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+          >
+            {/* 1 — Verified leaderboard */}
+            <IntelCard>
+              <div className="flex items-center justify-between">
+                <IntelEyebrow text="Weekly Leaderboard" />
+                <span className="text-[9px] font-bold tracking-widest uppercase text-accent-green/80 border border-accent-green/25 rounded-full px-2.5 py-1 mb-4">
+                  Auto-verified
+                </span>
+              </div>
+              <div className="space-y-3">
+                {leaderboardRows.map((r) => (
+                  <div key={r.rank} className="flex items-center gap-3">
+                    <span
+                      className={`w-5 text-sm font-extrabold ${
+                        r.rank === 1 ? 'text-primary' : 'text-foreground/40'
+                      }`}
+                    >
+                      {r.rank}
+                    </span>
+                    <span className="w-24 shrink-0 text-sm font-semibold text-foreground/90">
+                      {r.name}
+                    </span>
+                    <span className="text-[10px] font-bold text-foreground/35 w-7">{r.pos}</span>
+                    <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-primary to-accent-green"
+                        style={{ width: `${r.pct}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-bold text-foreground/70 tabular-nums">
+                      {r.pts.toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-5 text-xs text-foreground/45">
+                Points from completed sessions, protein targets hit, and logging streaks.
+                Filter by position group with one tap.
+              </p>
+            </IntelCard>
+
+            {/* 2 — AI flags inbox */}
+            <IntelCard>
+              <IntelEyebrow text="AI Flags" />
+              <div className="rounded-[14px] p-4 bg-white/[0.03] border border-red-500/20">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-red-500" />
+                  <span className="text-sm font-bold text-foreground">
+                    J. Reyes — protein down 32% this week
+                  </span>
+                </div>
+                <div className="mt-3 space-y-2 text-xs leading-relaxed">
+                  <p>
+                    <span className="font-bold text-foreground/60">WHAT&nbsp;&nbsp;</span>
+                    <span className="text-foreground/70">Avg 96g vs a 142g target across 5 days.</span>
+                  </p>
+                  <p>
+                    <span className="font-bold text-foreground/60">WHY&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span className="text-foreground/70">Skipped breakfast logs Tue–Fri; dinner unchanged.</span>
+                  </p>
+                  <p>
+                    <span className="font-bold text-foreground/60">IMPACT</span>
+                    <span className="text-foreground/70"> Recovery risk before Saturday's game.</span>
+                  </p>
+                </div>
+              </div>
+              <p className="mt-5 text-xs text-foreground/45">
+                Anomalies surface to your inbox before they become problems — every flag
+                explains what changed, why it matters, and what to do.
+              </p>
+            </IntelCard>
+
+            {/* 3 — Sunday report card */}
+            <IntelCard>
+              <IntelEyebrow text="Sunday Report" />
+              <p className="text-sm font-bold text-foreground">
+                Team protein compliance up 12% — best week this season.
+              </p>
+              <div className="mt-5 flex items-end gap-2 h-24">
+                {reportBars.map((v, i) => (
+                  <div key={i} className="flex-1 flex flex-col justify-end h-full">
+                    <div
+                      className={`rounded-t-[4px] ${
+                        i === reportBars.length - 1
+                          ? 'bg-gradient-to-t from-primary to-accent-green'
+                          : 'bg-white/[0.12]'
+                      }`}
+                      style={{ height: `${v}%` }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 flex justify-between text-[9px] font-semibold text-foreground/30 uppercase tracking-wider">
+                <span>Mon</span>
+                <span>Sun</span>
+              </div>
+              <p className="mt-4 text-xs text-foreground/45">
+                A full analytics report card lands every Sunday morning — team-wide for
+                staff, personal for every athlete.
+              </p>
+            </IntelCard>
+
+            {/* 4 — Macro autopilot */}
+            <IntelCard>
+              <div className="flex items-center justify-between">
+                <IntelEyebrow text="Macro Autopilot" />
+                <span className="text-[9px] font-bold tracking-widest uppercase text-primary/80 border border-primary/25 rounded-full px-2.5 py-1 mb-4">
+                  AI Recommended
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-extrabold tracking-tight gradient-text tabular-nums">
+                  3,490
+                </span>
+                <span className="text-sm font-semibold text-foreground/60">cal / day</span>
+              </div>
+              <p className="mt-1 text-xs text-foreground/50">Quarterback · High school · In-season</p>
+              <div className="mt-4 flex gap-2.5">
+                {[
+                  ['Protein', '196g'],
+                  ['Carbs', '452g'],
+                  ['Fat', '97g'],
+                ].map(([label, v]) => (
+                  <span
+                    key={label}
+                    className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/[0.05] border border-white/[0.08] text-foreground/80"
+                  >
+                    {label} <span className="text-primary font-bold">{v}</span>
+                  </span>
+                ))}
+              </div>
+              <p className="mt-5 text-xs text-foreground/45">
+                Position- and league-aware targets for the whole roster, one tap to apply —
+                tuned per athlete from their real bodyweight and training load.
+              </p>
+            </IntelCard>
+          </motion.div>
         </div>
       </section>
 
