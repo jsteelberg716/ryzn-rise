@@ -96,10 +96,11 @@ const BigStat = ({
 
 // Real-world photography (Unsplash CDN, license-free).
 const IMG = {
-  hero: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=2000&q=80&auto=format&fit=crop',
+  // Brandless athletic photography — no visible logos (Jack, 2026-07-13).
+  hero: 'https://images.unsplash.com/photo-1502904550040-7534597429ae?w=2000&q=80&auto=format&fit=crop',
   roster: 'https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=1400&q=80&auto=format&fit=crop',
-  program: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=1400&q=80&auto=format&fit=crop',
-  work: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=1400&q=80&auto=format&fit=crop',
+  program: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1400&q=80&auto=format&fit=crop',
+  work: 'https://images.unsplash.com/photo-1546483875-ad9014c88eba?w=1400&q=80&auto=format&fit=crop',
   cta: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=2000&q=80&auto=format&fit=crop',
 };
 
@@ -119,7 +120,7 @@ const bands = [
   },
   {
     img: IMG.program,
-    alt: 'Athlete pressing a barbell overhead in the rack',
+    alt: 'Athlete setting up a heavy barbell deadlift',
     eyebrow: 'THE PROGRAM',
     title: 'Write it once. Drop it to everyone.',
     points: [
@@ -130,7 +131,7 @@ const bands = [
   },
   {
     img: IMG.work,
-    alt: 'Athlete grinding out pull-ups in a dark gym',
+    alt: 'Athlete grinding through a training set',
     eyebrow: 'THE ATHLETES',
     title: 'See who\u2019s putting in the work.',
     points: [
@@ -173,10 +174,17 @@ const reportBars = [42, 58, 50, 72, 66, 84, 91];
 const IntelCard = ({ children }: { children: React.ReactNode }) => (
   <motion.div
     variants={fadeUpVariant}
-    className="rounded-[20px] p-5 lg:p-6 bg-[rgba(255,255,255,0.03)] border border-white/[0.07] backdrop-blur-sm"
+    whileHover={{ y: -6 }}
+    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+    className="group relative rounded-[20px] p-5 lg:p-6 bg-[rgba(255,255,255,0.03)] border border-white/[0.07] backdrop-blur-sm transition-colors duration-300 hover:border-primary/35"
     style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 20px 40px -20px rgba(0,0,0,0.6)' }}
   >
-    {children}
+    {/* Green glow bloom on hover — the Steelberg card lift. */}
+    <div
+      className="pointer-events-none absolute -inset-px rounded-[20px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      style={{ boxShadow: '0 0 0 1px hsl(var(--primary) / 0.18), 0 34px 70px -28px hsl(var(--primary) / 0.4)' }}
+    />
+    <div className="relative">{children}</div>
   </motion.div>
 );
 
@@ -223,7 +231,7 @@ const Coaches = () => {
       <section className="relative min-h-[92vh] flex items-end overflow-hidden">
         <img
           src={IMG.hero}
-          alt="Sprinter set in the starting blocks on a track"
+          alt="Sprinters racing down a track, seen from above"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: 'center 40%' }}
         />
@@ -343,17 +351,12 @@ const Coaches = () => {
           >
             The gap between talent and performance is what happens off the field
           </motion.p>
-          <div className="grid gap-14 lg:gap-8 lg:grid-cols-3">
+          <div className="grid gap-14 lg:gap-16 lg:grid-cols-2 max-w-[900px] mx-auto">
             <BigStat
               value={100}
               suffix="%"
               label="Verified data"
               sub="Points, streaks, and rankings come from logged workouts and nutrition — athletes can't game it."
-            />
-            <BigStat
-              value={53}
-              label="Athletes, one screen"
-              sub="The whole roster's week — training, fueling, recovery — readable in the time it takes to walk to practice."
             />
             <BigStat
               value={0}
@@ -507,7 +510,7 @@ const Coaches = () => {
                 {leaderboardRows.map((r) => (
                   <div
                     key={r.rank}
-                    className="flex items-center gap-3 rounded-[14px] px-3 py-2.5 bg-white/[0.03] border border-white/[0.05]"
+                    className="flex items-center gap-3 rounded-[14px] px-3 py-2.5 bg-white/[0.03] border border-white/[0.05] transition-all duration-200 hover:bg-white/[0.06] hover:border-primary/25 hover:translate-x-0.5"
                   >
                     <span
                       className={`w-6 h-6 shrink-0 rounded-full grid place-items-center text-[11px] font-extrabold ${
@@ -577,7 +580,7 @@ const Coaches = () => {
                     recovery — the body fighting something instead of absorbing training.
                   </p>
                 </div>
-                <button className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25">
+                <button className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25 transition-colors duration-200 hover:bg-accent-green/[0.16] hover:border-accent-green/40">
                   ✓ Mark handled
                 </button>
               </div>
@@ -616,12 +619,12 @@ const Coaches = () => {
                 {reportBars.map((v, i) => (
                   <div key={i} className="flex-1 flex flex-col justify-end h-full">
                     <div
-                      className={`rounded-t-[4px] ${
+                      className={`rounded-t-[4px] origin-bottom transition-transform duration-500 group-hover:scale-y-110 ${
                         i === reportBars.length - 1
                           ? 'bg-gradient-to-t from-primary to-accent-green'
                           : 'bg-white/[0.12]'
                       }`}
-                      style={{ height: `${v}%` }}
+                      style={{ height: `${v}%`, transitionDelay: `${i * 45}ms` }}
                     />
                   </div>
                 ))}
@@ -669,7 +672,7 @@ const Coaches = () => {
                 <p className="mt-2 text-[11px] text-foreground/55">
                   Quarterback · High School — maintenance fueling, steady energy.
                 </p>
-                <button className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25">
+                <button className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25 transition-colors duration-200 hover:bg-accent-green/[0.16] hover:border-accent-green/40">
                   Apply recommendation
                 </button>
               </div>
