@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 import RyznWordLogo from '@/components/RyznWordLogo';
+import TeamReachMap from '@/components/coaches/TeamReachMap';
 import Footer from '@/components/landing/Footer';
 
 // RYZN for Coaches — image-led Trainer Mode page. NO PRICING anywhere:
@@ -355,6 +356,9 @@ const Coaches = () => {
           </div>
         </div>
       </section>
+
+      {/* The board — interactive reach map: every athlete is the market. */}
+      <TeamReachMap />
 
       {/* Image-led feature bands — photo sells, three bullets confirm. */}
       <section id="toolkit" className="relative py-20 lg:py-28 scroll-mt-24">
