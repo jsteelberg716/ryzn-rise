@@ -19,7 +19,7 @@ import {
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 import Footer from '@/components/landing/Footer';
 import SubpageNav from '@/components/landing/SubpageNav';
-import AthleteAccountability from '@/components/coaches/AthleteAccountability';
+import CoachDashboardPreview from '@/components/coaches/CoachDashboardPreview';
 
 // RYZN for Coaches — image-led Trainer Mode page. NO PRICING anywhere:
 // deals are closed directly over email (Jack, 2026-07-11).
@@ -844,8 +844,8 @@ const Coaches = () => {
         </div>
       </section>
 
-      {/* Accountability proof — coaches care that athletes follow through. */}
-      <AthleteAccountability />
+      {/* Interactive coach dashboard — recreate the in-app Teammate view. */}
+      <CoachDashboardPreview />
 
       {/* Image-led feature bands — photo sells, three bullets confirm. */}
       <section id="toolkit" className="relative py-20 lg:py-28 scroll-mt-24">

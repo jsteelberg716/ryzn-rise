@@ -63,7 +63,7 @@ export const STATES: Record<string, number>[] = [
 ];
 
 /* Back view remaps front muscle groups to their posterior equivalents */
-const BACK_REMAP: Record<string, string> = {
+export const BACK_REMAP: Record<string, string> = {
   chest: "lats",
   shoulders: "rear_delts",
   arms: "triceps",
