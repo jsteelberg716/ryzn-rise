@@ -141,25 +141,178 @@ const TEAMS: Row[] = [
   ['Baylor', 'NCAA', 'college', 'Waco, TX', -97.115, 31.549],
   ['Washington State', 'NCAA', 'college', 'Pullman, WA', -117.18, 46.731],
   ['Oregon State', 'NCAA', 'college', 'Corvallis, OR', -123.262, 44.564],
-  // HIGH SCHOOL — state athletic associations
-  ['Texas HS Athletics', 'UIL', 'hs', 'Dallas–Fort Worth, TX', -96.797, 32.777, 600000],
-  ['Texas HS Athletics', 'UIL', 'hs', 'Houston, TX', -95.369, 29.76, 480000],
-  ['California HS Athletics', 'CIF', 'hs', 'Los Angeles, CA', -118.244, 34.052, 700000],
-  ['California HS Athletics', 'CIF', 'hs', 'SF Bay Area, CA', -122.271, 37.804, 300000],
-  ['Florida HS Athletics', 'FHSAA', 'hs', 'Miami, FL', -80.192, 25.762, 300000],
+  // HIGH SCHOOL — every state association, anchored on major metros so the
+  // board reads fully saturated coast to coast (Jack, 2026-07-13). Weights
+  // are per-metro HS participants; the HS category sums to the ~5M market.
+  // California
+  ['California HS Athletics', 'CIF', 'hs', 'Los Angeles, CA', -118.244, 34.052, 250000],
+  ['California HS Athletics', 'CIF', 'hs', 'SF Bay Area, CA', -122.271, 37.804, 120000],
+  ['California HS Athletics', 'CIF', 'hs', 'San Diego, CA', -117.161, 32.716, 75000],
+  ['California HS Athletics', 'CIF', 'hs', 'Sacramento, CA', -121.494, 38.582, 45000],
+  ['California HS Athletics', 'CIF', 'hs', 'Fresno, CA', -119.772, 36.746, 30000],
+  // Texas
+  ['Texas HS Athletics', 'UIL', 'hs', 'Dallas–Fort Worth, TX', -96.797, 32.777, 180000],
+  ['Texas HS Athletics', 'UIL', 'hs', 'Houston, TX', -95.369, 29.76, 145000],
+  ['Texas HS Athletics', 'UIL', 'hs', 'San Antonio, TX', -98.494, 29.424, 70000],
+  ['Texas HS Athletics', 'UIL', 'hs', 'Austin, TX', -97.743, 30.267, 55000],
+  ['Texas HS Athletics', 'UIL', 'hs', 'El Paso, TX', -106.485, 31.762, 30000],
+  // Florida
+  ['Florida HS Athletics', 'FHSAA', 'hs', 'Miami, FL', -80.192, 25.762, 95000],
+  ['Florida HS Athletics', 'FHSAA', 'hs', 'Orlando, FL', -81.379, 28.538, 60000],
+  ['Florida HS Athletics', 'FHSAA', 'hs', 'Tampa, FL', -82.458, 27.95, 55000],
+  ['Florida HS Athletics', 'FHSAA', 'hs', 'Jacksonville, FL', -81.656, 30.332, 40000],
   ['IMG Academy', 'Prep', 'hs', 'Bradenton, FL', -82.583, 27.47, 1400],
-  ['Georgia HS Athletics', 'GHSA', 'hs', 'Atlanta, GA', -84.388, 33.749, 250000],
-  ['Ohio HS Athletics', 'OHSAA', 'hs', 'Columbus, OH', -82.999, 39.961, 300000],
-  ['Pennsylvania HS Athletics', 'PIAA', 'hs', 'Pittsburgh, PA', -79.996, 40.441, 250000],
-  ['New Jersey HS Athletics', 'NJSIAA', 'hs', 'Newark, NJ', -74.172, 40.735, 220000],
-  ['New York HS Athletics', 'NYSPHSAA', 'hs', 'Long Island, NY', -73.59, 40.789, 300000],
-  ['Illinois HS Athletics', 'IHSA', 'hs', 'Chicago, IL', -87.617, 41.862, 300000],
-  ['Louisiana HS Athletics', 'LHSAA', 'hs', 'New Orleans, LA', -90.071, 29.951, 150000],
-  ['Arizona HS Athletics', 'AIA', 'hs', 'Phoenix, AZ', -112.074, 33.448, 200000],
-  ['Tennessee HS Athletics', 'TSSAA', 'hs', 'Nashville, TN', -86.781, 36.162, 180000],
-  ['Michigan HS Athletics', 'MHSAA', 'hs', 'Detroit, MI', -83.046, 42.331, 240000],
-  ['Washington HS Athletics', 'WIAA', 'hs', 'Seattle, WA', -122.332, 47.606, 180000],
-  ['Colorado HS Athletics', 'CHSAA', 'hs', 'Denver, CO', -104.991, 39.739, 160000],
+  // New York
+  ['New York HS Athletics', 'NYSPHSAA', 'hs', 'New York, NY', -73.99, 40.712, 130000],
+  ['New York HS Athletics', 'NYSPHSAA', 'hs', 'Long Island, NY', -73.13, 40.789, 60000],
+  ['New York HS Athletics', 'NYSPHSAA', 'hs', 'Buffalo, NY', -78.878, 42.886, 35000],
+  ['New York HS Athletics', 'NYSPHSAA', 'hs', 'Albany, NY', -73.756, 42.652, 20000],
+  // Illinois
+  ['Illinois HS Athletics', 'IHSA', 'hs', 'Chicago, IL', -87.63, 41.878, 125000],
+  ['Illinois HS Athletics', 'IHSA', 'hs', 'Peoria, IL', -89.589, 40.693, 28000],
+  ['Illinois HS Athletics', 'IHSA', 'hs', 'Rockford, IL', -89.094, 42.271, 22000],
+  // Pennsylvania
+  ['Pennsylvania HS Athletics', 'PIAA', 'hs', 'Philadelphia, PA', -75.163, 39.952, 80000],
+  ['Pennsylvania HS Athletics', 'PIAA', 'hs', 'Pittsburgh, PA', -79.996, 40.441, 60000],
+  ['Pennsylvania HS Athletics', 'PIAA', 'hs', 'Harrisburg, PA', -76.882, 40.273, 35000],
+  // Ohio
+  ['Ohio HS Athletics', 'OHSAA', 'hs', 'Cleveland, OH', -81.694, 41.499, 55000],
+  ['Ohio HS Athletics', 'OHSAA', 'hs', 'Columbus, OH', -82.999, 39.961, 55000],
+  ['Ohio HS Athletics', 'OHSAA', 'hs', 'Cincinnati, OH', -84.512, 39.103, 55000],
+  // Georgia
+  ['Georgia HS Athletics', 'GHSA', 'hs', 'Atlanta, GA', -84.388, 33.749, 105000],
+  ['Georgia HS Athletics', 'GHSA', 'hs', 'Savannah, GA', -81.099, 32.083, 22000],
+  ['Georgia HS Athletics', 'GHSA', 'hs', 'Columbus, GA', -84.988, 32.461, 18000],
+  // Michigan
+  ['Michigan HS Athletics', 'MHSAA', 'hs', 'Detroit, MI', -83.046, 42.331, 82000],
+  ['Michigan HS Athletics', 'MHSAA', 'hs', 'Grand Rapids, MI', -85.669, 42.963, 35000],
+  ['Michigan HS Athletics', 'MHSAA', 'hs', 'Lansing, MI', -84.556, 42.732, 23000],
+  // North Carolina
+  ['North Carolina HS Athletics', 'NCHSAA', 'hs', 'Charlotte, NC', -80.843, 35.227, 58000],
+  ['North Carolina HS Athletics', 'NCHSAA', 'hs', 'Raleigh, NC', -78.638, 35.779, 45000],
+  ['North Carolina HS Athletics', 'NCHSAA', 'hs', 'Greensboro, NC', -79.791, 36.073, 27000],
+  // New Jersey
+  ['New Jersey HS Athletics', 'NJSIAA', 'hs', 'Newark, NJ', -74.172, 40.735, 68000],
+  ['New Jersey HS Athletics', 'NJSIAA', 'hs', 'Trenton, NJ', -74.764, 40.217, 37000],
+  ['New Jersey HS Athletics', 'NJSIAA', 'hs', 'Camden, NJ', -75.119, 39.945, 25000],
+  // Virginia
+  ['Virginia HS Athletics', 'VHSL', 'hs', 'Virginia Beach, VA', -75.978, 36.853, 50000],
+  ['Virginia HS Athletics', 'VHSL', 'hs', 'Richmond, VA', -77.436, 37.541, 40000],
+  ['Virginia HS Athletics', 'VHSL', 'hs', 'Arlington, VA', -77.087, 38.88, 30000],
+  // Washington
+  ['Washington HS Athletics', 'WIAA', 'hs', 'Seattle, WA', -122.332, 47.606, 70000],
+  ['Washington HS Athletics', 'WIAA', 'hs', 'Spokane, WA', -117.426, 47.659, 30000],
+  ['Washington HS Athletics', 'WIAA', 'hs', 'Tacoma, WA', -122.444, 47.253, 20000],
+  // Arizona
+  ['Arizona HS Athletics', 'AIA', 'hs', 'Phoenix, AZ', -112.074, 33.448, 75000],
+  ['Arizona HS Athletics', 'AIA', 'hs', 'Tucson, AZ', -110.975, 32.222, 35000],
+  // Massachusetts
+  ['Massachusetts HS Athletics', 'MIAA', 'hs', 'Boston, MA', -71.058, 42.36, 80000],
+  ['Massachusetts HS Athletics', 'MIAA', 'hs', 'Worcester, MA', -71.802, 42.263, 30000],
+  // Tennessee
+  ['Tennessee HS Athletics', 'TSSAA', 'hs', 'Nashville, TN', -86.781, 36.162, 50000],
+  ['Tennessee HS Athletics', 'TSSAA', 'hs', 'Memphis, TN', -90.049, 35.149, 40000],
+  ['Tennessee HS Athletics', 'TSSAA', 'hs', 'Knoxville, TN', -83.921, 35.96, 20000],
+  // Indiana
+  ['Indiana HS Athletics', 'IHSAA', 'hs', 'Indianapolis, IN', -86.158, 39.768, 60000],
+  ['Indiana HS Athletics', 'IHSAA', 'hs', 'Fort Wayne, IN', -85.139, 41.079, 30000],
+  ['Indiana HS Athletics', 'IHSAA', 'hs', 'Evansville, IN', -87.571, 37.975, 15000],
+  // Missouri
+  ['Missouri HS Athletics', 'MSHSAA', 'hs', 'St. Louis, MO', -90.199, 38.627, 50000],
+  ['Missouri HS Athletics', 'MSHSAA', 'hs', 'Kansas City, MO', -94.578, 39.1, 50000],
+  // Wisconsin
+  ['Wisconsin HS Athletics', 'WIAA', 'hs', 'Milwaukee, WI', -87.906, 43.039, 50000],
+  ['Wisconsin HS Athletics', 'WIAA', 'hs', 'Madison, WI', -89.384, 43.073, 30000],
+  ['Wisconsin HS Athletics', 'WIAA', 'hs', 'Green Bay, WI', -88.014, 44.513, 20000],
+  // Minnesota
+  ['Minnesota HS Athletics', 'MSHSL', 'hs', 'Minneapolis, MN', -93.265, 44.978, 60000],
+  ['Minnesota HS Athletics', 'MSHSL', 'hs', 'St. Paul, MN', -93.09, 44.954, 40000],
+  // Colorado
+  ['Colorado HS Athletics', 'CHSAA', 'hs', 'Denver, CO', -104.991, 39.739, 60000],
+  ['Colorado HS Athletics', 'CHSAA', 'hs', 'Colorado Springs, CO', -104.821, 38.834, 35000],
+  // Maryland
+  ['Maryland HS Athletics', 'MPSSAA', 'hs', 'Baltimore, MD', -76.612, 39.29, 55000],
+  ['Maryland HS Athletics', 'MPSSAA', 'hs', 'Silver Spring, MD', -77.026, 38.991, 40000],
+  // Alabama
+  ['Alabama HS Athletics', 'AHSAA', 'hs', 'Birmingham, AL', -86.802, 33.521, 40000],
+  ['Alabama HS Athletics', 'AHSAA', 'hs', 'Montgomery, AL', -86.301, 32.367, 30000],
+  ['Alabama HS Athletics', 'AHSAA', 'hs', 'Mobile, AL', -88.043, 30.695, 20000],
+  // South Carolina
+  ['South Carolina HS Athletics', 'SCHSL', 'hs', 'Columbia, SC', -81.035, 34.001, 40000],
+  ['South Carolina HS Athletics', 'SCHSL', 'hs', 'Charleston, SC', -79.931, 32.777, 25000],
+  ['South Carolina HS Athletics', 'SCHSL', 'hs', 'Greenville, SC', -82.394, 34.853, 20000],
+  // Louisiana
+  ['Louisiana HS Athletics', 'LHSAA', 'hs', 'New Orleans, LA', -90.071, 29.951, 45000],
+  ['Louisiana HS Athletics', 'LHSAA', 'hs', 'Baton Rouge, LA', -91.187, 30.451, 40000],
+  // Kentucky
+  ['Kentucky HS Athletics', 'KHSAA', 'hs', 'Louisville, KY', -85.759, 38.253, 45000],
+  ['Kentucky HS Athletics', 'KHSAA', 'hs', 'Lexington, KY', -84.504, 38.048, 35000],
+  // Oregon
+  ['Oregon HS Athletics', 'OSAA', 'hs', 'Portland, OR', -122.676, 45.523, 50000],
+  ['Oregon HS Athletics', 'OSAA', 'hs', 'Eugene, OR', -123.089, 44.052, 30000],
+  // Oklahoma
+  ['Oklahoma HS Athletics', 'OSSAA', 'hs', 'Oklahoma City, OK', -97.517, 35.467, 45000],
+  ['Oklahoma HS Athletics', 'OSSAA', 'hs', 'Tulsa, OK', -95.993, 36.154, 35000],
+  // Connecticut
+  ['Connecticut HS Athletics', 'CIAC', 'hs', 'Hartford, CT', -72.685, 41.764, 35000],
+  ['Connecticut HS Athletics', 'CIAC', 'hs', 'Bridgeport, CT', -73.189, 41.179, 25000],
+  // Iowa
+  ['Iowa HS Athletics', 'IHSAA', 'hs', 'Des Moines, IA', -93.62, 41.586, 40000],
+  ['Iowa HS Athletics', 'IHSAA', 'hs', 'Cedar Rapids, IA', -91.665, 41.978, 20000],
+  // Utah
+  ['Utah HS Athletics', 'UHSAA', 'hs', 'Salt Lake City, UT', -111.891, 40.761, 45000],
+  ['Utah HS Athletics', 'UHSAA', 'hs', 'Provo, UT', -111.658, 40.234, 20000],
+  // Nevada
+  ['Nevada HS Athletics', 'NIAA', 'hs', 'Las Vegas, NV', -115.139, 36.169, 45000],
+  ['Nevada HS Athletics', 'NIAA', 'hs', 'Reno, NV', -119.814, 39.53, 15000],
+  // Arkansas
+  ['Arkansas HS Athletics', 'AAA', 'hs', 'Little Rock, AR', -92.289, 34.746, 35000],
+  ['Arkansas HS Athletics', 'AAA', 'hs', 'Fayetteville, AR', -94.157, 36.062, 20000],
+  // Mississippi
+  ['Mississippi HS Athletics', 'MHSAA', 'hs', 'Jackson, MS', -90.185, 32.299, 35000],
+  ['Mississippi HS Athletics', 'MHSAA', 'hs', 'Gulfport, MS', -89.093, 30.367, 20000],
+  // Kansas
+  ['Kansas HS Athletics', 'KSHSAA', 'hs', 'Wichita, KS', -97.336, 37.687, 30000],
+  ['Kansas HS Athletics', 'KSHSAA', 'hs', 'Overland Park, KS', -94.671, 38.982, 25000],
+  // Nebraska
+  ['Nebraska HS Athletics', 'NSAA', 'hs', 'Omaha, NE', -95.936, 41.257, 30000],
+  ['Nebraska HS Athletics', 'NSAA', 'hs', 'Lincoln, NE', -96.706, 40.814, 15000],
+  // New Mexico
+  ['New Mexico HS Athletics', 'NMAA', 'hs', 'Albuquerque, NM', -106.61, 35.084, 32000],
+  ['New Mexico HS Athletics', 'NMAA', 'hs', 'Las Cruces, NM', -106.778, 32.312, 10000],
+  // Idaho
+  ['Idaho HS Athletics', 'IHSAA', 'hs', 'Boise, ID', -116.201, 43.615, 30000],
+  ['Idaho HS Athletics', 'IHSAA', 'hs', 'Idaho Falls, ID', -112.034, 43.492, 10000],
+  // West Virginia
+  ['West Virginia HS Athletics', 'WVSSAC', 'hs', 'Charleston, WV', -81.633, 38.349, 25000],
+  ['West Virginia HS Athletics', 'WVSSAC', 'hs', 'Morgantown, WV', -79.956, 39.629, 15000],
+  // Hawaii
+  ['Hawaii HS Athletics', 'HHSAA', 'hs', 'Honolulu, HI', -157.858, 21.306, 30000],
+  ['Hawaii HS Athletics', 'HHSAA', 'hs', 'Hilo, HI', -155.089, 19.706, 8000],
+  // New Hampshire
+  ['New Hampshire HS Athletics', 'NHIAA', 'hs', 'Manchester, NH', -71.455, 42.995, 30000],
+  // Maine
+  ['Maine HS Athletics', 'MPA', 'hs', 'Portland, ME', -70.255, 43.662, 30000],
+  // Montana
+  ['Montana HS Athletics', 'MHSA', 'hs', 'Billings, MT', -108.5, 45.783, 20000],
+  ['Montana HS Athletics', 'MHSA', 'hs', 'Missoula, MT', -113.994, 46.872, 12000],
+  // Alaska
+  ['Alaska HS Athletics', 'ASAA', 'hs', 'Anchorage, AK', -149.9, 61.218, 25000],
+  ['Alaska HS Athletics', 'ASAA', 'hs', 'Fairbanks, AK', -147.716, 64.838, 7000],
+  // Rhode Island
+  ['Rhode Island HS Athletics', 'RIIL', 'hs', 'Providence, RI', -71.413, 41.824, 26000],
+  // Delaware
+  ['Delaware HS Athletics', 'DIAA', 'hs', 'Wilmington, DE', -75.546, 39.739, 24000],
+  // South Dakota
+  ['South Dakota HS Athletics', 'SDHSAA', 'hs', 'Sioux Falls, SD', -96.7, 43.55, 24000],
+  // North Dakota
+  ['North Dakota HS Athletics', 'NDHSAA', 'hs', 'Fargo, ND', -96.79, 46.877, 24000],
+  // Vermont
+  ['Vermont HS Athletics', 'VPA', 'hs', 'Burlington, VT', -73.213, 44.476, 20000],
+  // Wyoming
+  ['Wyoming HS Athletics', 'WHSAA', 'hs', 'Cheyenne, WY', -104.82, 41.14, 20000],
+  // Washington, D.C.
+  ['DC HS Athletics', 'DCSAA', 'hs', 'Washington, DC', -77.037, 38.907, 22000],
   // OLYMPIC & INDIVIDUAL — federations, combat, tour sports
   ['Team USA Training Center', 'USOPC', 'ind', 'Colorado Springs, CO', -104.821, 38.834, 15000],
   ['USA Track & Field', 'USATF', 'ind', 'Eugene, OR', -123.021, 44.058, 4000],

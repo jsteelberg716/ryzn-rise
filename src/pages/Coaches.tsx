@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
   Users,
   ClipboardList,
@@ -12,6 +12,10 @@ import {
   Dumbbell,
   LineChart,
   ArrowRight,
+  ChevronDown,
+  Flame,
+  Utensils,
+  Activity,
 } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
 import RyznWordLogo from '@/components/RyznWordLogo';
@@ -156,10 +160,54 @@ const extras = [
 // ---------------------------------------------------------------------------
 
 const leaderboardRows = [
-  { rank: 1, name: 'Marcus Lee', init: 'M', meta: '6 workouts · 7 days logged', pts: 982 },
-  { rank: 2, name: 'Sofia Chen', init: 'S', meta: '5 workouts · 7 days logged', pts: 913 },
-  { rank: 3, name: 'Jordan Miles', init: 'J', meta: '5 workouts · 6 days logged', pts: 847 },
-  { rank: 4, name: 'Diego Fuentes', init: 'D', meta: '4 workouts · 6 days logged', pts: 792 },
+  {
+    rank: 1,
+    name: 'Marcus Lee',
+    init: 'M',
+    meta: '6 workouts · 7 days logged',
+    pts: 982,
+    pos: 'Quarterback',
+    food: 92,
+    consistency: 100,
+    streak: 34,
+    lift: 'Trap bar 585 lb',
+  },
+  {
+    rank: 2,
+    name: 'Sofia Chen',
+    init: 'S',
+    meta: '5 workouts · 7 days logged',
+    pts: 913,
+    pos: 'Midfielder',
+    food: 88,
+    consistency: 100,
+    streak: 21,
+    lift: 'Back squat 245 lb',
+  },
+  {
+    rank: 3,
+    name: 'Jordan Miles',
+    init: 'J',
+    meta: '5 workouts · 6 days logged',
+    pts: 847,
+    pos: 'Wide Receiver',
+    food: 79,
+    consistency: 86,
+    streak: 12,
+    lift: 'Power clean 275 lb',
+  },
+  {
+    rank: 4,
+    name: 'Diego Fuentes',
+    init: 'D',
+    meta: '4 workouts · 6 days logged',
+    pts: 792,
+    pos: 'Guard',
+    food: 74,
+    consistency: 86,
+    streak: 9,
+    lift: 'Bench press 315 lb',
+  },
 ];
 
 // Rank-badge palettes — gold / silver / bronze podium, then muted.
@@ -169,7 +217,17 @@ const rankStyle: Record<number, string> = {
   3: 'bg-gradient-to-br from-[#d69a63] to-[#a26a34] text-black',
 };
 
-const reportBars = [42, 58, 50, 72, 66, 84, 91];
+// Weekly report bars — one per weekday, with a short label + team-fueling
+// readout that surfaces on hover.
+const reportDays = [
+  { label: 'Mon', v: 42, note: 'Team fueling at 42% of target' },
+  { label: 'Tue', v: 58, note: 'Recovery day — 58% logged' },
+  { label: 'Wed', v: 50, note: 'Mid-week dip, 50% on plan' },
+  { label: 'Thu', v: 72, note: 'Back on track — 72% fueled' },
+  { label: 'Fri', v: 66, note: 'Pre-game taper, 66%' },
+  { label: 'Sat', v: 84, note: 'Game day — 84% dialed in' },
+  { label: 'Sun', v: 91, note: 'Best day: 91% team compliance' },
+];
 
 const IntelCard = ({ children }: { children: React.ReactNode }) => (
   <motion.div
@@ -191,6 +249,438 @@ const IntelCard = ({ children }: { children: React.ReactNode }) => (
 const IntelEyebrow = ({ text }: { text: string }) => (
   <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-primary mb-4">{text}</div>
 );
+
+// A little inline gauge used inside the expanded athlete detail.
+const MiniGauge = ({
+  icon: Icon,
+  label,
+  value,
+  suffix,
+  color,
+}: {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  label: string;
+  value: number;
+  suffix: string;
+  color: string;
+}) => (
+  <div className="rounded-[10px] p-2.5 bg-white/[0.03] border border-white/[0.05]">
+    <div className="flex items-center gap-1.5 text-[9px] font-bold tracking-widest uppercase text-foreground/40">
+      <Icon size={11} className={color} />
+      {label}
+    </div>
+    <div className="mt-1 text-base font-extrabold tabular-nums text-foreground">
+      {value}
+      <span className="text-[11px] font-semibold text-foreground/45">{suffix}</span>
+    </div>
+  </div>
+);
+
+// 1 — Verified leaderboard. Rows expand on click to reveal the athlete
+// breakdown (Jack, 2026-07-13: "make the players' names expand when clicked").
+const LeaderboardIntelCard = () => {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <IntelCard>
+      <div className="flex items-center justify-between">
+        <IntelEyebrow text="Weekly Leaderboard" />
+        <span className="text-[9px] font-bold tracking-widest uppercase text-accent-green/80 border border-accent-green/25 rounded-full px-2.5 py-1 mb-4">
+          Auto-verified
+        </span>
+      </div>
+      <div className="flex gap-1.5 mb-4">
+        {['Week', 'Month', 'Overall', 'Position'].map((t, i) => (
+          <span
+            key={t}
+            className={`px-3 py-1 rounded-full text-[11px] font-semibold ${
+              i === 0
+                ? 'bg-primary/15 text-primary border border-primary/30'
+                : 'text-foreground/45 border border-white/[0.06]'
+            }`}
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+      <div className="space-y-2">
+        {leaderboardRows.map((r) => {
+          const isOpen = open === r.rank;
+          return (
+            <div
+              key={r.rank}
+              className={`rounded-[14px] border transition-all duration-200 overflow-hidden ${
+                isOpen
+                  ? 'bg-white/[0.06] border-primary/30'
+                  : 'bg-white/[0.03] border-white/[0.05] hover:bg-white/[0.06] hover:border-primary/25'
+              }`}
+            >
+              <button
+                onClick={() => setOpen(isOpen ? null : r.rank)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-left"
+              >
+                <span
+                  className={`w-6 h-6 shrink-0 rounded-full grid place-items-center text-[11px] font-extrabold ${
+                    rankStyle[r.rank] ?? 'bg-white/[0.08] text-foreground/50'
+                  }`}
+                >
+                  {r.rank}
+                </span>
+                <span className="w-8 h-8 shrink-0 rounded-[9px] grid place-items-center text-sm font-bold text-accent-blue bg-accent-blue/15 border border-accent-blue/20">
+                  {r.init}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-bold text-foreground truncate">{r.name}</div>
+                  <div className="text-[11px] text-foreground/45 truncate">{r.meta}</div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="text-lg font-extrabold text-accent-blue tabular-nums leading-none">
+                    {r.pts.toLocaleString()}
+                  </div>
+                  <div className="text-[8px] font-bold tracking-[0.15em] text-foreground/35 mt-0.5">
+                    PTS
+                  </div>
+                </div>
+                <ChevronDown
+                  size={15}
+                  className={`shrink-0 text-foreground/35 transition-transform duration-300 ${
+                    isOpen ? 'rotate-180 text-primary' : ''
+                  }`}
+                />
+              </button>
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-3 pb-3">
+                      <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20">
+                        {r.pos}
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <MiniGauge
+                          icon={Utensils}
+                          label="Food"
+                          value={r.food}
+                          suffix="/100"
+                          color="text-[hsl(38_92%_55%)]"
+                        />
+                        <MiniGauge
+                          icon={Activity}
+                          label="Consistency"
+                          value={r.consistency}
+                          suffix="%"
+                          color="text-accent-blue"
+                        />
+                        <MiniGauge
+                          icon={Flame}
+                          label="Streak"
+                          value={r.streak}
+                          suffix="d"
+                          color="text-primary"
+                        />
+                      </div>
+                      <div className="mt-2 flex items-center gap-2 rounded-[10px] px-2.5 py-2 bg-white/[0.03] border border-white/[0.05]">
+                        <Trophy size={13} className="text-primary shrink-0" />
+                        <span className="text-[11px] text-foreground/70">
+                          Top lift this week ·{' '}
+                          <span className="font-bold text-foreground/90">{r.lift}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </div>
+      <p className="mt-5 text-xs text-foreground/45">
+        Points from completed sessions, protein targets hit, and logging streaks. Tap any
+        athlete to open their verified breakdown.
+      </p>
+    </IntelCard>
+  );
+};
+
+// 2 — AI flags inbox. "Mark handled" swaps the card body for a success
+// screen (Jack: "make the mark handled button have a little screen").
+const FlagIntelCard = () => {
+  const [handled, setHandled] = useState(false);
+  return (
+    <IntelCard>
+      <div className="flex items-center justify-between">
+        <IntelEyebrow text="AI Flags" />
+        <span
+          className={`text-[9px] font-bold text-white rounded-full px-2 py-0.5 mb-4 tabular-nums transition-colors duration-300 ${
+            handled ? 'bg-accent-green' : 'bg-red-500'
+          }`}
+        >
+          {handled ? 3 : 4}
+        </span>
+      </div>
+      <div className="relative min-h-[268px]">
+        <AnimatePresence mode="wait">
+          {handled ? (
+            <motion.div
+              key="done"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              className="rounded-[14px] p-6 bg-accent-green/[0.06] border border-accent-green/25 flex flex-col items-center text-center"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.08, type: 'spring', stiffness: 320, damping: 18 }}
+                className="w-14 h-14 rounded-full grid place-items-center bg-accent-green/15 border border-accent-green/30 text-accent-green"
+              >
+                <CheckCircle2 size={30} />
+              </motion.div>
+              <div className="mt-4 text-base font-extrabold text-foreground">Flag handled</div>
+              <p className="mt-1.5 text-xs leading-relaxed text-foreground/60 max-w-[240px]">
+                Marcus Lee moved to your Watchlist. His resting-HR trend will re-alert if it
+                stays elevated another 48 hours.
+              </p>
+              <button
+                onClick={() => setHandled(false)}
+                className="mt-4 text-[11px] font-bold text-foreground/45 hover:text-foreground/70 transition-colors"
+              >
+                Undo
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="flag"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-[14px] p-4 bg-red-500/[0.06] border border-red-500/25"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-7 h-7 shrink-0 rounded-full grid place-items-center bg-red-500/15 text-red-400 text-sm">
+                    ♥
+                  </span>
+                  <div>
+                    <div className="text-sm font-bold text-foreground leading-tight">
+                      Marcus Lee
+                    </div>
+                    <div className="text-[11px] text-red-300/80 font-medium">Resting HR Spike</div>
+                  </div>
+                </div>
+                <span className="text-[8px] font-extrabold tracking-widest uppercase text-red-400">
+                  Critical
+                </span>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-foreground/75">
+                Resting heart rate is up 18 bpm over his 4-week baseline, 3 days running.
+              </p>
+              <div className="mt-3 rounded-[10px] p-3 bg-red-500/[0.05] border border-red-500/15">
+                <div className="text-[9px] font-extrabold tracking-widest uppercase text-red-400/90 mb-1">
+                  Why it matters
+                </div>
+                <p className="text-[11px] leading-relaxed text-foreground/65">
+                  Sustained resting-HR elevation usually means illness, overtraining, or poor
+                  recovery — the body fighting something instead of absorbing training.
+                </p>
+              </div>
+              <button
+                onClick={() => setHandled(true)}
+                className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25 transition-colors duration-200 hover:bg-accent-green/[0.16] hover:border-accent-green/40"
+              >
+                ✓ Mark handled
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <p className="mt-5 text-xs text-foreground/45">
+        Anomalies surface to your inbox before they become problems — every flag explains what
+        changed, why it matters, and its team impact.
+      </p>
+    </IntelCard>
+  );
+};
+
+// 3 — Sunday report card. Each bar highlights on hover with a live readout
+// (Jack: "each day gets highlighted as I hover over them").
+const ReportIntelCard = () => {
+  const [hover, setHover] = useState<number | null>(null);
+  const active = hover ?? reportDays.length - 1;
+  return (
+    <IntelCard>
+      <div className="flex items-center justify-between">
+        <IntelEyebrow text="Team Weekly Report" />
+        <span className="text-[10px] font-semibold text-foreground/35 mb-4">Jul 7</span>
+      </div>
+      <p className="text-[15px] font-bold text-foreground leading-snug">
+        Team fueling is up 9% — three athletes need eyes this week.
+      </p>
+      <div className="mt-4 space-y-2.5">
+        <div className="flex gap-2.5">
+          <LineChart size={14} className="text-accent-blue shrink-0 mt-0.5" />
+          <p className="text-[11px] leading-relaxed text-foreground/65">
+            <span className="font-bold text-foreground/80">Trends&nbsp;·&nbsp;</span>7 of 8
+            athletes logged 5+ days. Protein avg climbed to 141g/day (up from 129).
+          </p>
+        </div>
+        <div className="flex gap-2.5">
+          <Trophy size={14} className="text-primary shrink-0 mt-0.5" />
+          <p className="text-[11px] leading-relaxed text-foreground/65">
+            <span className="font-bold text-foreground/80">Climbing&nbsp;·&nbsp;</span>Sofia
+            jumped two leaderboard spots; Jordan put up his biggest volume week.
+          </p>
+        </div>
+      </div>
+      <div className="mt-4 flex items-end gap-2 h-20">
+        {reportDays.map((d, i) => {
+          const isActive = active === i;
+          const isLast = i === reportDays.length - 1;
+          return (
+            <button
+              key={d.label}
+              onMouseEnter={() => setHover(i)}
+              onMouseLeave={() => setHover(null)}
+              className="flex-1 flex flex-col justify-end h-full group/bar"
+              aria-label={d.note}
+            >
+              <div
+                className={`rounded-t-[4px] origin-bottom transition-all duration-200 ${
+                  isActive
+                    ? 'bg-gradient-to-t from-primary to-accent-green scale-y-105'
+                    : isLast
+                      ? 'bg-gradient-to-t from-primary/70 to-accent-green/70'
+                      : 'bg-white/[0.12] group-hover/bar:bg-white/25'
+                }`}
+                style={{ height: `${d.v}%` }}
+              />
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-1.5 flex justify-between text-[9px] font-semibold uppercase tracking-wider">
+        {reportDays.map((d, i) => (
+          <span
+            key={d.label}
+            className={`flex-1 text-center transition-colors duration-200 ${
+              active === i ? 'text-primary' : 'text-foreground/30'
+            }`}
+          >
+            {d.label}
+          </span>
+        ))}
+      </div>
+      <div className="mt-3 rounded-[10px] px-3 py-2 bg-white/[0.03] border border-white/[0.05] text-[11px] text-foreground/70">
+        <span className="font-bold text-foreground/90 tabular-nums">{reportDays[active].v}%</span>
+        <span className="mx-1.5 text-foreground/25">·</span>
+        {reportDays[active].note}
+      </div>
+      <p className="mt-4 text-xs text-foreground/45">
+        A full report card lands every Sunday morning — team-wide for staff, personal for every
+        athlete. Hover any day to break it down.
+      </p>
+    </IntelCard>
+  );
+};
+
+// 4 — Macro autopilot. "Apply recommendation" swaps to a success screen
+// (Jack: "make apply recommendation actually have a little screen").
+const MacroIntelCard = () => {
+  const [applied, setApplied] = useState(false);
+  return (
+    <IntelCard>
+      <IntelEyebrow text="Macro Autopilot" />
+      <div className="relative min-h-[176px]">
+        <AnimatePresence mode="wait">
+          {applied ? (
+            <motion.div
+              key="done"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              className="rounded-[14px] p-6 bg-accent-green/[0.06] border border-accent-green/25 flex flex-col items-center text-center"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.08, type: 'spring', stiffness: 320, damping: 18 }}
+                className="w-14 h-14 rounded-full grid place-items-center bg-accent-green/15 border border-accent-green/30 text-accent-green"
+              >
+                <CheckCircle2 size={30} />
+              </motion.div>
+              <div className="mt-4 text-base font-extrabold text-foreground">Targets applied</div>
+              <p className="mt-1.5 text-xs leading-relaxed text-foreground/60 max-w-[240px]">
+                3,490 cal &middot; 174P / 419C / 124F pushed to the athlete's plan. They'll see it
+                on their next app open.
+              </p>
+              <button
+                onClick={() => setApplied(false)}
+                className="mt-4 text-[11px] font-bold text-foreground/45 hover:text-foreground/70 transition-colors"
+              >
+                Undo
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="rec"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-[14px] p-4 bg-accent-green/[0.05] border border-accent-green/25"
+            >
+              <div className="text-[9px] font-extrabold tracking-widest uppercase text-accent-green mb-2">
+                ✦ AI Recommended
+              </div>
+              <div className="flex items-end justify-between gap-3">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
+                    3,490
+                  </span>
+                  <span className="text-sm font-semibold text-foreground/55">cal</span>
+                </div>
+                <div className="flex gap-3 text-xs font-bold tabular-nums">
+                  <span>
+                    <span className="text-primary">P</span>{' '}
+                    <span className="text-foreground/80">174g</span>
+                  </span>
+                  <span>
+                    <span className="text-[hsl(38_92%_55%)]">C</span>{' '}
+                    <span className="text-foreground/80">419g</span>
+                  </span>
+                  <span>
+                    <span className="text-accent-blue">F</span>{' '}
+                    <span className="text-foreground/80">124g</span>
+                  </span>
+                </div>
+              </div>
+              <p className="mt-2 text-[11px] text-foreground/55">
+                Quarterback · High School — maintenance fueling, steady energy.
+              </p>
+              <button
+                onClick={() => setApplied(true)}
+                className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25 transition-colors duration-200 hover:bg-accent-green/[0.16] hover:border-accent-green/40"
+              >
+                Apply recommendation
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <p className="mt-5 text-xs text-foreground/45">
+        Position- and league-aware targets for the whole roster, one tap to apply — tuned per
+        athlete from their real bodyweight and training load.
+      </p>
+    </IntelCard>
+  );
+};
 
 const Coaches = () => {
   // The app deep-links to /coaches#pricing. On a cold SPA load the
@@ -483,204 +973,17 @@ const Coaches = () => {
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
           >
-            {/* 1 — Verified leaderboard */}
-            <IntelCard>
-              <div className="flex items-center justify-between">
-                <IntelEyebrow text="Weekly Leaderboard" />
-                <span className="text-[9px] font-bold tracking-widest uppercase text-accent-green/80 border border-accent-green/25 rounded-full px-2.5 py-1 mb-4">
-                  Auto-verified
-                </span>
-              </div>
-              {/* Filter tabs — mirror the in-app segmented control. */}
-              <div className="flex gap-1.5 mb-4">
-                {['Week', 'Month', 'Overall', 'Position'].map((t, i) => (
-                  <span
-                    key={t}
-                    className={`px-3 py-1 rounded-full text-[11px] font-semibold ${
-                      i === 0
-                        ? 'bg-primary/15 text-primary border border-primary/30'
-                        : 'text-foreground/45 border border-white/[0.06]'
-                    }`}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-              <div className="space-y-2">
-                {leaderboardRows.map((r) => (
-                  <div
-                    key={r.rank}
-                    className="flex items-center gap-3 rounded-[14px] px-3 py-2.5 bg-white/[0.03] border border-white/[0.05] transition-all duration-200 hover:bg-white/[0.06] hover:border-primary/25 hover:translate-x-0.5"
-                  >
-                    <span
-                      className={`w-6 h-6 shrink-0 rounded-full grid place-items-center text-[11px] font-extrabold ${
-                        rankStyle[r.rank] ?? 'bg-white/[0.08] text-foreground/50'
-                      }`}
-                    >
-                      {r.rank}
-                    </span>
-                    <span className="w-8 h-8 shrink-0 rounded-[9px] grid place-items-center text-sm font-bold text-accent-blue bg-accent-blue/15 border border-accent-blue/20">
-                      {r.init}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-bold text-foreground truncate">{r.name}</div>
-                      <div className="text-[11px] text-foreground/45 truncate">{r.meta}</div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-lg font-extrabold text-accent-blue tabular-nums leading-none">
-                        {r.pts.toLocaleString()}
-                      </div>
-                      <div className="text-[8px] font-bold tracking-[0.15em] text-foreground/35 mt-0.5">
-                        PTS
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-5 text-xs text-foreground/45">
-                Points from completed sessions, protein targets hit, and logging streaks.
-                Filter by week, position group, or all-time with one tap.
-              </p>
-            </IntelCard>
+            {/* 1 — Verified leaderboard (click-to-expand athlete detail) */}
+            <LeaderboardIntelCard />
 
-            {/* 2 — AI flags inbox */}
-            <IntelCard>
-              <div className="flex items-center justify-between">
-                <IntelEyebrow text="AI Flags" />
-                <span className="text-[9px] font-bold text-white bg-red-500 rounded-full px-2 py-0.5 mb-4 tabular-nums">
-                  4
-                </span>
-              </div>
-              <div className="rounded-[14px] p-4 bg-red-500/[0.06] border border-red-500/25">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-7 h-7 shrink-0 rounded-full grid place-items-center bg-red-500/15 text-red-400 text-sm">
-                      ♥
-                    </span>
-                    <div>
-                      <div className="text-sm font-bold text-foreground leading-tight">
-                        Marcus Lee
-                      </div>
-                      <div className="text-[11px] text-red-300/80 font-medium">Resting HR Spike</div>
-                    </div>
-                  </div>
-                  <span className="text-[8px] font-extrabold tracking-widest uppercase text-red-400">
-                    Critical
-                  </span>
-                </div>
-                <p className="mt-3 text-xs leading-relaxed text-foreground/75">
-                  Resting heart rate is up 18 bpm over his 4-week baseline, 3 days running.
-                </p>
-                <div className="mt-3 rounded-[10px] p-3 bg-red-500/[0.05] border border-red-500/15">
-                  <div className="text-[9px] font-extrabold tracking-widest uppercase text-red-400/90 mb-1">
-                    Why it matters
-                  </div>
-                  <p className="text-[11px] leading-relaxed text-foreground/65">
-                    Sustained resting-HR elevation usually means illness, overtraining, or poor
-                    recovery — the body fighting something instead of absorbing training.
-                  </p>
-                </div>
-                <button className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25 transition-colors duration-200 hover:bg-accent-green/[0.16] hover:border-accent-green/40">
-                  ✓ Mark handled
-                </button>
-              </div>
-              <p className="mt-5 text-xs text-foreground/45">
-                Anomalies surface to your inbox before they become problems — every flag
-                explains what changed, why it matters, and its team impact.
-              </p>
-            </IntelCard>
+            {/* 2 — AI flags inbox (Mark-handled success screen) */}
+            <FlagIntelCard />
 
-            {/* 3 — Sunday report card */}
-            <IntelCard>
-              <div className="flex items-center justify-between">
-                <IntelEyebrow text="Team Weekly Report" />
-                <span className="text-[10px] font-semibold text-foreground/35 mb-4">Jul 7</span>
-              </div>
-              <p className="text-[15px] font-bold text-foreground leading-snug">
-                Team fueling is up 9% — three athletes need eyes this week.
-              </p>
-              <div className="mt-4 space-y-2.5">
-                <div className="flex gap-2.5">
-                  <LineChart size={14} className="text-accent-blue shrink-0 mt-0.5" />
-                  <p className="text-[11px] leading-relaxed text-foreground/65">
-                    <span className="font-bold text-foreground/80">Trends&nbsp;·&nbsp;</span>
-                    7 of 8 athletes logged 5+ days. Protein avg climbed to 141g/day (up from 129).
-                  </p>
-                </div>
-                <div className="flex gap-2.5">
-                  <Trophy size={14} className="text-primary shrink-0 mt-0.5" />
-                  <p className="text-[11px] leading-relaxed text-foreground/65">
-                    <span className="font-bold text-foreground/80">Climbing&nbsp;·&nbsp;</span>
-                    Sofia jumped two leaderboard spots; Jordan put up his biggest volume week.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 flex items-end gap-2 h-20">
-                {reportBars.map((v, i) => (
-                  <div key={i} className="flex-1 flex flex-col justify-end h-full">
-                    <div
-                      className={`rounded-t-[4px] origin-bottom transition-transform duration-500 group-hover:scale-y-110 ${
-                        i === reportBars.length - 1
-                          ? 'bg-gradient-to-t from-primary to-accent-green'
-                          : 'bg-white/[0.12]'
-                      }`}
-                      style={{ height: `${v}%`, transitionDelay: `${i * 45}ms` }}
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="mt-1.5 flex justify-between text-[9px] font-semibold text-foreground/30 uppercase tracking-wider">
-                <span>Mon</span>
-                <span>Sun</span>
-              </div>
-              <p className="mt-4 text-xs text-foreground/45">
-                A full report card lands every Sunday morning — team-wide for staff,
-                personal for every athlete.
-              </p>
-            </IntelCard>
+            {/* 3 — Sunday report card (per-day hover readout) */}
+            <ReportIntelCard />
 
-            {/* 4 — Macro autopilot */}
-            <IntelCard>
-              <IntelEyebrow text="Macro Autopilot" />
-              {/* AI-recommended card — green frame, exactly like the app. */}
-              <div className="rounded-[14px] p-4 bg-accent-green/[0.05] border border-accent-green/25">
-                <div className="text-[9px] font-extrabold tracking-widest uppercase text-accent-green mb-2">
-                  ✦ AI Recommended
-                </div>
-                <div className="flex items-end justify-between gap-3">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
-                      3,490
-                    </span>
-                    <span className="text-sm font-semibold text-foreground/55">cal</span>
-                  </div>
-                  <div className="flex gap-3 text-xs font-bold tabular-nums">
-                    <span>
-                      <span className="text-primary">P</span>{' '}
-                      <span className="text-foreground/80">174g</span>
-                    </span>
-                    <span>
-                      <span className="text-[hsl(38_92%_55%)]">C</span>{' '}
-                      <span className="text-foreground/80">419g</span>
-                    </span>
-                    <span>
-                      <span className="text-accent-blue">F</span>{' '}
-                      <span className="text-foreground/80">124g</span>
-                    </span>
-                  </div>
-                </div>
-                <p className="mt-2 text-[11px] text-foreground/55">
-                  Quarterback · High School — maintenance fueling, steady energy.
-                </p>
-                <button className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25 transition-colors duration-200 hover:bg-accent-green/[0.16] hover:border-accent-green/40">
-                  Apply recommendation
-                </button>
-              </div>
-              <p className="mt-5 text-xs text-foreground/45">
-                Position- and league-aware targets for the whole roster, one tap to apply —
-                tuned per athlete from their real bodyweight and training load.
-              </p>
-            </IntelCard>
+            {/* 4 — Macro autopilot (Apply-recommendation success screen) */}
+            <MacroIntelCard />
           </motion.div>
         </div>
       </section>

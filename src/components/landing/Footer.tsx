@@ -3,11 +3,12 @@ import RyznWordLogo from '@/components/RyznWordLogo';
 
 const footerLinks = {
   Product: ['Features', 'Pricing', 'FAQ', 'Download'],
-  Company: ['About', 'Contact', 'Privacy Policy', 'Terms of Service'],
+  Company: ['About', 'For Coaches', 'Contact', 'Privacy Policy', 'Terms of Service'],
 };
 
 const routeMap: Record<string, string> = {
   'Privacy Policy': '/privacy',
+  'For Coaches': '/coaches',
 };
 
 const Footer = () => {

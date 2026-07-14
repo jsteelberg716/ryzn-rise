@@ -22,8 +22,9 @@ const hashLinks = ['Features', 'How It Works', 'Pricing', 'FAQ'];
 // the route table, and render NotFound (404). Use a plain anchor so
 // the browser does a full page load and hits the static file.
 const routeLinks = [
-  { label: 'Scan',    to: '/scan/',   external: true },
-  { label: 'Reviews', to: '/reviews', external: false },
+  { label: 'Scan',        to: '/scan/',   external: true },
+  { label: 'For Coaches', to: '/coaches', external: false },
+  { label: 'Reviews',     to: '/reviews', external: false },
 ];
 
 const Navbar = () => {
