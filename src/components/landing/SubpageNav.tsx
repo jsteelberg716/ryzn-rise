@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
@@ -39,9 +39,26 @@ const currentClass =
 const SubpageNav = ({ current, cta }: SubpageNavProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Match the homepage Navbar: transparent at the top of the page (only
+  // logo/links float over the hero), glass fill + border fade in once the
+  // visitor scrolls past the fold. Primed on mount for deep links.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 64);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-3 left-0 right-0 z-[1000] flex justify-center px-4">
-      <div className="w-full max-w-[1080px] h-14 rounded-full flex items-center justify-between pl-6 pr-3 backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(8,8,14,0.72)] border border-primary/[0.12] shadow-[0_18px_50px_-12px_rgba(0,0,0,0.6)]">
+    <nav className="fixed top-3 left-0 right-0 z-[1000] flex justify-center px-4 transition-all duration-500 ease-out">
+      <div
+        className={`w-full max-w-[1080px] h-14 rounded-full flex items-center justify-between pl-6 pr-3 transition-all duration-500 ease-out ${
+          scrolled
+            ? 'backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(8,8,14,0.72)] border border-primary/[0.12] shadow-[0_18px_50px_-12px_rgba(0,0,0,0.6)]'
+            : 'bg-transparent border border-transparent shadow-none'
+        }`}
+      >
         <Link to="/" className="flex items-center">
           <RyznWordLogo height={28} />
         </Link>

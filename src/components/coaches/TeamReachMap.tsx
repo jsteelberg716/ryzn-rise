@@ -355,6 +355,7 @@ const TeamReachMap = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const pinsRef = useRef<any>(null);
+  const scatterRef = useRef<any>(null);
   const [active, setActive] = useState<Cat | 'ALL'>('ALL');
   const [reach, setReach] = useState(0);
   const reachRAF = useRef<number>();
@@ -395,6 +396,59 @@ const TeamReachMap = () => {
             .attr('fill', 'rgba(255,255,255,0.035)')
             .attr('stroke', 'rgba(255,255,255,0.10)')
             .attr('stroke-width', 0.7);
+
+          // ---- Saturation scatter -------------------------------------
+          // The named TEAMS are the interactive hover pins, but Jack's
+          // market is ~5M athletes — the board should read WALL-TO-WALL
+          // full, not a handful of dots. Procedurally scatter a dense
+          // decorative dot field across the whole country (continental +
+          // AK + HI insets + tight metro clusters). geoAlbersUsa returns
+          // null outside US land, so off-map candidates self-clip. These
+          // dots are non-interactive and sit UNDER the real pins.
+          const scatterData: { x: number; y: number; cat: Cat }[] = [];
+          const catPool: Cat[] = ['hs','hs','hs','hs','hs','college','hs','hs','ind','hs','womens','hs','pro','hs'];
+          const pickCat = () => catPool[(Math.random() * catPool.length) | 0];
+          const drop = (lon: number, lat: number, cat: Cat) => {
+            const p = projection([lon, lat]);
+            if (p) scatterData.push({ x: p[0], y: p[1], cat });
+          };
+          // Continental grid
+          for (let lon = -124; lon <= -67; lon += 0.9)
+            for (let lat = 25; lat <= 49; lat += 0.9)
+              drop(lon + (Math.random() * 0.7 - 0.35), lat + (Math.random() * 0.7 - 0.35), pickCat());
+          // Alaska inset
+          for (let lon = -165; lon <= -141; lon += 1.8)
+            for (let lat = 56; lat <= 69; lat += 1.4)
+              drop(lon + (Math.random() * 1.2 - 0.6), lat + (Math.random() * 1 - 0.5), pickCat());
+          // Hawaii inset
+          for (let lon = -160; lon <= -154.5; lon += 0.55)
+            for (let lat = 18.8; lat <= 22.3; lat += 0.5)
+              drop(lon + (Math.random() * 0.35 - 0.175), lat + (Math.random() * 0.35 - 0.175), pickCat());
+          // Tight clusters around every HS metro so cities read dense
+          TEAMS.filter((t) => t[2] === 'hs').forEach((t) => {
+            const n = 8 + ((Math.random() * 10) | 0);
+            for (let i = 0; i < n; i++)
+              drop(t[4] + (Math.random() * 1.7 - 0.85), t[5] + (Math.random() * 1.7 - 0.85), 'hs');
+          });
+
+          const scatterG = svg.append('g').style('pointer-events', 'none');
+          const scatter = scatterG
+            .selectAll('circle')
+            .data(scatterData)
+            .join('circle')
+            .attr('class', 'trm-scatter')
+            .attr('cx', (d: any) => d.x)
+            .attr('cy', (d: any) => d.y)
+            .attr('r', () => (1.2 + Math.random() * 1.3).toFixed(2))
+            .attr('fill', (d: any) => CATS[d.cat as Cat].color)
+            .style('opacity', 0);
+          scatterRef.current = scatter;
+          scatter.each(function (this: any, _d: any, i: number) {
+            setTimeout(() => {
+              this.style.transition = 'opacity .5s';
+              this.style.opacity = (0.32 + Math.random() * 0.33).toFixed(2);
+            }, 120 + i * 1.5);
+          });
 
           const jit: Record<Cat, [number, number]> = {
             pro: [0, -5],
@@ -496,6 +550,8 @@ const TeamReachMap = () => {
   const applyFilter = (k: Cat | 'ALL') => {
     if (pinsRef.current)
       pinsRef.current.classed('trm-dim', (d: any) => k !== 'ALL' && d.cat !== k);
+    if (scatterRef.current)
+      scatterRef.current.classed('trm-dim', (d: any) => k !== 'ALL' && d.cat !== k);
     const target = TEAMS.reduce(
       (s, t) => (k === 'ALL' || t[2] === k ? s + (t[6] || CATS[t[2]].w) : s),
       0
@@ -525,6 +581,8 @@ const TeamReachMap = () => {
         @keyframes trm-pulse { 0%{ stroke-opacity:.9; r:5 } 70%{ stroke-opacity:0; r:13 } 100%{ stroke-opacity:0; r:13 } }
         g.trm-pin { transition: opacity .35s; cursor: default; }
         g.trm-pin.trm-dim { opacity: .09 !important; }
+        circle.trm-scatter { transition: opacity .35s; }
+        circle.trm-scatter.trm-dim { opacity: .04 !important; }
       `}</style>
       <div
         className="absolute inset-0 pointer-events-none"
