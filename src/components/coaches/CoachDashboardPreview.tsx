@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
-  Share, Dumbbell, Weight, Utensils, Zap, BarChart3, Droplets,
+  Dumbbell, Weight, Utensils, Zap, BarChart3, Droplets,
   Heart, PieChart, Plus, Minus, Search, ChevronDown, Stethoscope,
   PersonStanding, Check,
 } from 'lucide-react';
@@ -13,11 +13,16 @@ import { RealMuscleMap, BACK_REMAP } from '@/components/landing/MuscleMapSection
 // recreation of the real RYZN "Teammate" detail screen a coach sees when they
 // tap an athlete: season score, auto-verified stats, muscle focus, coach
 // insights, assignable macros, deep-dive tabs. Coaches toggle between three
-// mock athletes and can actually poke the macros + deep-dive tabs. Everything
-// inside the phone uses the app's iOS-blue chrome so it reads as the product.
+// mock athletes; switching morphs every value IN PLACE (numbers count, rings
+// re-fill, bars re-height) rather than a full fade. The phone matches the
+// house frame + the app's own dark-gray surface, and scrolls with a custom
+// draggable scrollbar on the right edge.
 // ---------------------------------------------------------------------------
 
 const BLUE = '#0A84FF';
+const APP_BG = '#0D0D0F';
+const CARD_BG = 'rgba(255,255,255,0.04)';
+const CARD_BORDER = 'rgba(255,255,255,0.06)';
 
 type Emphasis = Record<string, number>;
 type Macros = { calories: number; protein: number; carbs: number; fat: number };
@@ -100,8 +105,42 @@ const ATHLETES: Athlete[] = [
 
 const fmtVol = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
 
+// Count-up number that tweens whenever its target changes — this is what makes
+// an athlete switch feel like the values "shift" instead of fade out and in.
+const AnimatedNumber = ({
+  value,
+  format,
+}: {
+  value: number;
+  format?: (n: number) => string;
+}) => {
+  const [display, setDisplay] = useState(value);
+  const prev = useRef(value);
+  useEffect(() => {
+    const from = prev.current;
+    const to = value;
+    prev.current = value;
+    if (from === to) {
+      setDisplay(to);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const dur = 620;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplay(Math.round(from + (to - from) * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+  return <>{format ? format(display) : display.toLocaleString()}</>;
+};
+
 // Small circular progress ring used for Score / Food Score / Consistency.
-const Ring = ({ value, color, size = 62, label }: { value: number; color: string; size?: number; label?: string }) => {
+const Ring = ({ value, color, size = 54, label }: { value: number; color: string; size?: number; label?: string }) => {
   const r = size / 2 - 5;
   const c = 2 * Math.PI * r;
   return (
@@ -114,42 +153,49 @@ const Ring = ({ value, color, size = 62, label }: { value: number; color: string
             strokeDasharray={c}
             initial={false}
             animate={{ strokeDashoffset: c - (Math.min(100, value) / 100) * c }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center font-bold" style={{ color, fontSize: size * 0.3 }}>
-          {value}
+          <AnimatedNumber value={value} format={(n) => `${n}`} />
         </div>
       </div>
-      {label && <span className="mt-1.5 text-[11px] font-semibold tracking-wide text-white/45 uppercase">{label}</span>}
+      {label && <span className="mt-1 text-[10px] font-semibold tracking-wide text-white/45 uppercase">{label}</span>}
     </div>
   );
 };
 
-const StatTile = ({ icon: Icon, value, label }: { icon: any; value: string; label: string }) => (
-  <div className="flex flex-col items-center gap-1 py-3">
-    <Icon size={17} style={{ color: BLUE }} />
-    <span className="text-white font-bold text-[19px] leading-none tabular-nums">{value}</span>
-    <span className="text-white/40 text-[11px]">{label}</span>
+const StatTile = ({ icon: Icon, value, label, format }: { icon: any; value: number; label: string; format?: (n: number) => string }) => (
+  <div className="flex flex-col items-center gap-1 py-2.5">
+    <Icon size={15} style={{ color: BLUE }} />
+    <span className="text-white font-bold text-[16px] leading-none tabular-nums">
+      <AnimatedNumber value={value} format={format} />
+    </span>
+    <span className="text-white/40 text-[10px]">{label}</span>
   </div>
 );
 
-const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-[18px] bg-[#1c1c1e] p-4 ${className}`}>{children}</div>
+const Card = ({ children, className = '', pad = true }: { children: React.ReactNode; className?: string; pad?: boolean }) => (
+  <div
+    className={`rounded-2xl ${pad ? 'p-3.5' : ''} ${className}`}
+    style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}
+  >
+    {children}
+  </div>
 );
 
 const MiniBars = ({ data, color = BLUE }: { data: number[]; color?: string }) => {
   const max = Math.max(...data);
   return (
-    <div className="flex items-end gap-1 h-12">
+    <div className="flex items-end gap-1 h-11">
       {data.map((d, i) => (
         <motion.div
           key={i}
           className="flex-1 rounded-t-[3px]"
           style={{ background: i === data.length - 1 ? color : `${color}55` }}
-          initial={{ height: 0 }}
+          initial={false}
           animate={{ height: `${(d / max) * 100}%` }}
-          transition={{ duration: 0.5, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
         />
       ))}
     </div>
@@ -183,6 +229,48 @@ const CoachDashboardPreview = () => {
     setTimeout(() => setSavedFlash(false), 1600);
   };
 
+  // ---- custom draggable scrollbar -----------------------------------------
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [scroll, setScroll] = useState({ progress: 0, thumb: 0.28 });
+
+  const measure = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const max = el.scrollHeight - el.clientHeight;
+    setScroll({
+      progress: max > 0 ? el.scrollTop / max : 0,
+      thumb: Math.max(0.14, Math.min(1, el.clientHeight / el.scrollHeight)),
+    });
+  };
+
+  useEffect(() => {
+    measure();
+    // Content height changes when athlete / editor / tab changes.
+    const id = requestAnimationFrame(measure);
+    return () => cancelAnimationFrame(id);
+  }, [athlete, editingMacros, deepTab]);
+
+  const startThumbDrag = (e: React.PointerEvent) => {
+    e.preventDefault();
+    const move = (ev: PointerEvent) => {
+      const el = scrollRef.current;
+      const track = trackRef.current;
+      if (!el || !track) return;
+      const rect = track.getBoundingClientRect();
+      const thumbH = scroll.thumb * rect.height;
+      let p = (ev.clientY - rect.top - thumbH / 2) / (rect.height - thumbH);
+      p = Math.max(0, Math.min(1, p));
+      el.scrollTop = p * (el.scrollHeight - el.clientHeight);
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
   return (
     <section className="relative py-20 lg:py-28">
       <div
@@ -213,7 +301,7 @@ const CoachDashboardPreview = () => {
           <motion.p variants={fadeUpVariant} className="mt-4 text-foreground/70 text-lg">
             This is the exact screen you get on every athlete — auto-verified training and
             nutrition, a live muscle map, and macros you assign in a tap. No self-reporting,
-            no chasing. Switch between athletes below and try it.
+            no chasing. Switch between athletes below and scroll through it.
           </motion.p>
         </motion.div>
 
@@ -227,39 +315,40 @@ const CoachDashboardPreview = () => {
           {/* Left: athlete switcher + coach-facing bullets */}
           <div className="order-2 lg:order-1">
             <p className="text-foreground/45 text-xs font-semibold tracking-widest uppercase mb-3">Your roster</p>
-            <div className="space-y-2.5">
+            <div className="space-y-2 max-w-[320px]">
               {ATHLETES.map((a) => {
                 const on = a.id === activeId;
                 return (
                   <button
                     key={a.id}
                     onClick={() => setActiveId(a.id)}
-                    className={`w-full flex items-center gap-3 rounded-2xl p-3 text-left transition-all duration-300 border ${
-                      on
-                        ? 'bg-[rgba(255,255,255,0.05)] border-primary/40 shadow-[0_10px_30px_-12px_rgba(34,197,94,0.4)]'
-                        : 'bg-[rgba(255,255,255,0.02)] border-white/[0.06] hover:border-white/20'
-                    }`}
+                    className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-all duration-300 border"
+                    style={{
+                      background: on ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
+                      borderColor: on ? 'hsl(var(--primary) / 0.45)' : 'rgba(255,255,255,0.06)',
+                      boxShadow: on ? '0 10px 30px -12px hsl(var(--primary) / 0.45)' : 'none',
+                    }}
                   >
                     <span
-                      className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-sm"
+                      className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-[13px]"
                       style={{ background: `linear-gradient(135deg, ${a.grad[0]}, ${a.grad[1]})` }}
                     >
                       {a.initials}
                     </span>
                     <span className="flex-1 min-w-0">
-                      <span className="block text-foreground font-semibold text-[15px] truncate">{a.name}</span>
-                      <span className="block text-foreground/45 text-[13px]">{a.position}</span>
+                      <span className="block text-foreground font-semibold text-[13.5px] truncate">{a.name}</span>
+                      <span className="block text-foreground/45 text-[11.5px]">{a.position}</span>
                     </span>
-                    <span className="text-right">
-                      <span className="block font-bold tabular-nums" style={{ color: on ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.6)' }}>{a.score}</span>
-                      <span className="block text-foreground/35 text-[10px] tracking-wider uppercase">Score</span>
+                    <span className="text-right shrink-0">
+                      <span className="block font-bold text-[15px] tabular-nums leading-none" style={{ color: on ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.6)' }}>{a.score}</span>
+                      <span className="block text-foreground/35 text-[9px] tracking-wider uppercase mt-0.5">Score</span>
                     </span>
                   </button>
                 );
               })}
             </div>
 
-            <div className="mt-6 space-y-2.5">
+            <div className="mt-6 space-y-2.5 max-w-[340px]">
               {[
                 'Every stat auto-verified from their logs — never self-reported',
                 'Live muscle-focus map from their real training volume',
@@ -274,242 +363,255 @@ const CoachDashboardPreview = () => {
             </div>
           </div>
 
-          {/* Right: the phone */}
+          {/* Right: the phone — house frame, app surface, custom scrollbar */}
           <div className="order-1 lg:order-2 justify-self-center">
             <div
-              className="relative w-[340px] rounded-[46px] p-[10px] bg-black shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)]"
-              style={{ border: '1px solid rgba(255,255,255,0.08)' }}
+              className="relative w-[330px] rounded-[44px] p-[3px]"
+              style={{
+                background: '#1c1c1e',
+                boxShadow: '0 40px 90px -30px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.05)',
+              }}
             >
               {/* screen */}
-              <div className="relative rounded-[38px] overflow-hidden bg-black h-[680px]">
-                {/* status bar */}
-                <div className="absolute top-0 left-0 right-0 z-20 h-11 px-7 flex items-center justify-between text-white text-[13px] font-semibold pointer-events-none">
-                  <span>10:49</span>
-                  <span className="absolute left-1/2 -translate-x-1/2 top-2 w-[92px] h-[26px] bg-black rounded-full" />
-                  <span className="flex items-center gap-1.5">
-                    <span className="tracking-[-2px] text-[10px]">••••</span>
-                    <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><path d="M8 2.5c2 0 3.8.8 5.2 2l1.1-1.2C13.7 1.6 11 .5 8 .5S2.3 1.6.7 3.3L1.8 4.5C3.2 3.3 6 2.5 8 2.5z" opacity="0.9"/><path d="M8 6c1.1 0 2.1.4 2.8 1.1l1.1-1.2C10.9 4.8 9.5 4.2 8 4.2s-2.9.6-3.9 1.7l1.1 1.2C6 6.4 6.9 6 8 6z"/><circle cx="8" cy="9.5" r="1.5"/></svg>
-                    <span className="ml-0.5 inline-block w-6 h-3 rounded-[3px] border border-white/60 relative"><span className="absolute inset-[1.5px] right-[3px] bg-white rounded-[1px]" /></span>
-                  </span>
-                </div>
+              <div className="relative rounded-[41px] overflow-hidden" style={{ background: APP_BG, height: 660 }}>
+                {/* dynamic island */}
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 w-[96px] h-[26px] rounded-full bg-black" />
 
                 {/* scrollable content */}
-                <div className="absolute inset-0 pt-11 overflow-y-auto hide-scrollbar">
-                  {/* sheet header */}
-                  <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-md px-4 py-3 flex items-center justify-between">
-                    <span className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center" style={{ color: BLUE }}>
-                      <Share size={16} />
-                    </span>
-                    <span className="text-white font-semibold text-[17px]">Teammate</span>
-                    <span className="px-4 py-1.5 rounded-full border border-white/15 font-semibold text-[15px]" style={{ color: BLUE }}>Done</span>
-                  </div>
+                <div
+                  ref={scrollRef}
+                  onScroll={measure}
+                  className="absolute inset-0 pt-10 pb-8 px-3.5 overflow-y-auto hide-scrollbar"
+                >
+                  <div className="space-y-3">
+                    {/* profile */}
+                    <Card className="flex items-center gap-3">
+                      <span
+                        className="shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white text-[15px]"
+                        style={{ background: `linear-gradient(135deg, ${athlete.grad[0]}, ${athlete.grad[1]})` }}
+                      >
+                        {athlete.initials}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-white font-bold text-[16px] leading-tight truncate">{athlete.name}</div>
+                        <div className="text-white/40 text-[10px] font-semibold tracking-widest uppercase mt-0.5">{athlete.position} · This season</div>
+                      </div>
+                      <Ring value={athlete.score} color={BLUE} label="Score" />
+                    </Card>
 
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={athlete.id}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.3 }}
-                      className="px-4 pb-8 space-y-3"
-                    >
-                      {/* profile */}
-                      <Card className="flex items-center gap-3">
-                        <span
-                          className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-white text-lg"
-                          style={{ background: `linear-gradient(135deg, ${athlete.grad[0]}, ${athlete.grad[1]})` }}
-                        >
-                          {athlete.initials}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-white font-bold text-[22px] leading-tight truncate">{athlete.name}</div>
-                          <div className="text-white/40 text-[12px] font-semibold tracking-widest uppercase">This season</div>
-                        </div>
-                        <Ring value={athlete.score} color={BLUE} label="Score" />
-                      </Card>
+                    {/* stats grid */}
+                    <Card pad={false} className="overflow-hidden">
+                      <div className="grid grid-cols-3 divide-x divide-y divide-white/[0.06]">
+                        <StatTile icon={Dumbbell} value={athlete.workouts} label="Workouts" />
+                        <StatTile icon={Weight} value={athlete.volume} label="Volume" format={(n) => `${fmtVol(n)} lb`} />
+                        <StatTile icon={Utensils} value={athlete.daysLogged} label="Days Logged" />
+                        <StatTile icon={Zap} value={athlete.avgProtein} label="Avg Protein" format={(n) => `${n}g`} />
+                        <StatTile icon={BarChart3} value={athlete.volPerWorkout} label="Vol / Workout" format={(n) => `${fmtVol(n)} lb`} />
+                        <StatTile icon={Droplets} value={athlete.loggingRate} label="Logging Rate" format={(n) => `${n}%`} />
+                      </div>
+                    </Card>
+                    <p className="text-white/35 text-[11px] text-center leading-snug px-3">
+                      All stats are auto-verified from {athlete.first}'s logged workouts and nutrition — no self-reporting.
+                    </p>
 
-                      {/* stats grid */}
-                      <Card className="!p-0 overflow-hidden">
-                        <div className="grid grid-cols-3 divide-x divide-y divide-white/[0.06]">
-                          <StatTile icon={Dumbbell} value={`${athlete.workouts}`} label="Workouts" />
-                          <StatTile icon={Weight} value={`${fmtVol(athlete.volume)} lb`} label="Volume" />
-                          <StatTile icon={Utensils} value={`${athlete.daysLogged}`} label="Days Logged" />
-                          <StatTile icon={Zap} value={`${athlete.avgProtein}g`} label="Avg Protein" />
-                          <StatTile icon={BarChart3} value={`${fmtVol(athlete.volPerWorkout)} lb`} label="Vol / Workout" />
-                          <StatTile icon={Droplets} value={`${athlete.loggingRate}%`} label="Logging Rate" />
+                    {/* muscle focus */}
+                    <Card>
+                      <div className="flex items-center gap-2 mb-2">
+                        <PersonStanding size={15} style={{ color: BLUE }} />
+                        <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: BLUE }}>Muscle Focus</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-3">
+                        <div className="flex flex-col items-center">
+                          <RealMuscleMap state={athlete.front} className="w-[108px] h-auto" />
+                          <span className="text-white/30 text-[9px] tracking-widest uppercase">Front</span>
                         </div>
-                      </Card>
-                      <p className="text-white/35 text-[12px] text-center leading-snug px-3">
-                        All stats are auto-verified from {athlete.first}'s logged workouts and nutrition — no self-reporting.
+                        <div className="flex flex-col items-center">
+                          <div style={{ transform: 'scaleX(-1)' }}>
+                            <RealMuscleMap state={athlete.back} remap={BACK_REMAP} className="w-[108px] h-auto" />
+                          </div>
+                          <span className="text-white/30 text-[9px] tracking-widest uppercase">Back</span>
+                        </div>
+                      </div>
+                      <p className="text-white/35 text-[10.5px] leading-snug mt-1">
+                        Emphasis spread from {athlete.first}'s verified training volume — green is dialed, red is heavy.
                       </p>
+                    </Card>
 
-                      {/* muscle focus */}
-                      <Card>
-                        <div className="flex items-center gap-2 mb-2">
-                          <PersonStanding size={16} style={{ color: BLUE }} />
-                          <span className="text-[12px] font-bold tracking-widest uppercase" style={{ color: BLUE }}>Muscle Focus</span>
-                        </div>
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="flex flex-col items-center">
-                            <RealMuscleMap state={athlete.front} className="w-[120px] h-auto" />
-                            <span className="text-white/30 text-[9px] tracking-widest uppercase">Front</span>
+                    {/* coach insights */}
+                    <Card>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Stethoscope size={15} style={{ color: BLUE }} />
+                        <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: BLUE }}>Coach Insights</span>
+                      </div>
+                      <div className="flex items-start justify-around">
+                        <Ring value={athlete.foodScore} color="#ff453a" size={52} label="Food Score" />
+                        <Ring value={athlete.consistency} color="#ff453a" size={52} label="Consistency" />
+                        <div className="flex flex-col items-center">
+                          <div className="flex items-center justify-center" style={{ width: 52, height: 52 }}>
+                            <Heart size={20} className="fill-[#ff453a] text-[#ff453a]" />
                           </div>
-                          <div className="flex flex-col items-center">
-                            <RealMuscleMap state={athlete.back} remap={BACK_REMAP} className="w-[120px] h-auto" />
-                            <span className="text-white/30 text-[9px] tracking-widest uppercase">Back</span>
-                          </div>
+                          <span className="text-white font-bold text-[14px] leading-none -mt-2 tabular-nums">
+                            <AnimatedNumber value={athlete.avgHR} format={(n) => `${n}`} />
+                          </span>
+                          <span className="mt-1 text-[10px] font-semibold tracking-wide text-white/45 uppercase">Avg HR</span>
                         </div>
-                        <p className="text-white/35 text-[11px] leading-snug mt-1">
-                          Emphasis spread from {athlete.first}'s verified training volume — green is dialed, red is heavy.
-                        </p>
-                      </Card>
+                      </div>
+                    </Card>
 
-                      {/* coach insights */}
-                      <Card>
-                        <div className="flex items-center gap-2 mb-3">
-                          <Stethoscope size={16} style={{ color: BLUE }} />
-                          <span className="text-[12px] font-bold tracking-widest uppercase" style={{ color: BLUE }}>Coach Insights</span>
+                    {/* assigned macros — interactive */}
+                    <Card>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <PieChart size={15} style={{ color: BLUE }} />
+                          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: BLUE }}>Assigned Macros</span>
                         </div>
-                        <div className="flex items-start justify-around">
-                          <Ring value={athlete.foodScore} color="#ff453a" size={58} label="Food Score" />
-                          <Ring value={athlete.consistency} color="#ff453a" size={58} label="Consistency" />
-                          <div className="flex flex-col items-center">
-                            <div className="flex items-center justify-center" style={{ width: 58, height: 58 }}>
-                              <Heart size={22} className="fill-[#ff453a] text-[#ff453a]" />
-                            </div>
-                            <span className="text-white font-bold text-[15px] leading-none -mt-2">{athlete.avgHR}</span>
-                            <span className="mt-1.5 text-[11px] font-semibold tracking-wide text-white/45 uppercase">Avg HR</span>
-                          </div>
-                        </div>
-                      </Card>
-
-                      {/* assigned macros — interactive */}
-                      <Card>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <PieChart size={16} style={{ color: BLUE }} />
-                            <span className="text-[12px] font-bold tracking-widest uppercase" style={{ color: BLUE }}>Assigned Macros</span>
-                          </div>
-                          {savedFlash && (
-                            <span className="flex items-center gap-1 text-[11px] font-semibold" style={{ color: '#30d158' }}>
-                              <Check size={13} /> Saved
-                            </span>
-                          )}
-                        </div>
-
-                        {!editingMacros ? (
-                          <>
-                            <div className="flex items-end justify-between">
-                              <div>
-                                <div className="text-white font-bold text-[26px] leading-none tabular-nums">{draft.calories.toLocaleString()}</div>
-                                <div className="text-white/40 text-[11px] mt-0.5">daily calories</div>
-                              </div>
-                              <div className="flex gap-4 text-center">
-                                {([['P', draft.protein, '#0A84FF'], ['C', draft.carbs, '#30d158'], ['F', draft.fat, '#ff9f0a']] as const).map(([k, v, c]) => (
-                                  <div key={k}>
-                                    <div className="font-bold text-[15px] tabular-nums" style={{ color: c }}>{v}g</div>
-                                    <div className="text-white/35 text-[10px]">{k}</div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => setEditingMacros(true)}
-                              className="mt-3 w-full py-2.5 rounded-full font-semibold text-white text-[14px] flex items-center justify-center gap-1.5"
-                              style={{ background: BLUE }}
-                            >
-                              <Plus size={15} /> Assign Macros
-                            </button>
-                          </>
-                        ) : (
-                          <div className="space-y-2.5">
-                            {([['Calories', 'calories', 50], ['Protein', 'protein', 5], ['Carbs', 'carbs', 5], ['Fat', 'fat', 5]] as const).map(([label, key, d]) => (
-                              <div key={key} className="flex items-center justify-between">
-                                <span className="text-white/70 text-[13px]">{label}</span>
-                                <div className="flex items-center gap-3">
-                                  <button onClick={() => step(key, -d)} className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-90 transition">
-                                    <Minus size={14} />
-                                  </button>
-                                  <span className="text-white font-bold text-[14px] tabular-nums w-14 text-center">
-                                    {draft[key].toLocaleString()}{key === 'calories' ? '' : 'g'}
-                                  </span>
-                                  <button onClick={() => step(key, d)} className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-90 transition">
-                                    <Plus size={14} />
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                            <button
-                              onClick={saveMacros}
-                              className="mt-1 w-full py-2.5 rounded-full font-semibold text-white text-[14px]"
-                              style={{ background: BLUE }}
-                            >
-                              Save targets
-                            </button>
-                          </div>
+                        {savedFlash && (
+                          <span className="flex items-center gap-1 text-[11px] font-semibold" style={{ color: '#30d158' }}>
+                            <Check size={13} /> Saved
+                          </span>
                         )}
-                      </Card>
+                      </div>
 
-                      {/* deep dive — interactive tabs */}
-                      <Card>
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <Search size={15} style={{ color: BLUE }} />
-                            <span className="text-[12px] font-bold tracking-widest uppercase" style={{ color: BLUE }}>Deep Dive</span>
+                      {!editingMacros ? (
+                        <>
+                          <div className="flex items-end justify-between">
+                            <div>
+                              <div className="text-white font-bold text-[24px] leading-none tabular-nums">
+                                <AnimatedNumber value={draft.calories} />
+                              </div>
+                              <div className="text-white/40 text-[11px] mt-0.5">daily calories</div>
+                            </div>
+                            <div className="flex gap-4 text-center">
+                              {([['P', draft.protein, '#0A84FF'], ['C', draft.carbs, '#30d158'], ['F', draft.fat, '#ff9f0a']] as const).map(([k, v, c]) => (
+                                <div key={k}>
+                                  <div className="font-bold text-[14px] tabular-nums" style={{ color: c }}>
+                                    <AnimatedNumber value={v} format={(n) => `${n}g`} />
+                                  </div>
+                                  <div className="text-white/35 text-[10px]">{k}</div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                          <span className="flex items-center gap-1 text-[12px]" style={{ color: BLUE }}>Last 30 days <ChevronDown size={13} /></span>
+                          <button
+                            onClick={() => setEditingMacros(true)}
+                            className="mt-3 w-full py-2.5 rounded-full font-semibold text-white text-[13px] flex items-center justify-center gap-1.5"
+                            style={{ background: BLUE }}
+                          >
+                            <Plus size={14} /> Assign Macros
+                          </button>
+                        </>
+                      ) : (
+                        <div className="space-y-2.5">
+                          {([['Calories', 'calories', 50], ['Protein', 'protein', 5], ['Carbs', 'carbs', 5], ['Fat', 'fat', 5]] as const).map(([label, key, d]) => (
+                            <div key={key} className="flex items-center justify-between">
+                              <span className="text-white/70 text-[12px]">{label}</span>
+                              <div className="flex items-center gap-3">
+                                <button onClick={() => step(key, -d)} className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-90 transition">
+                                  <Minus size={13} />
+                                </button>
+                                <span className="text-white font-bold text-[13px] tabular-nums w-14 text-center">
+                                  {draft[key].toLocaleString()}{key === 'calories' ? '' : 'g'}
+                                </span>
+                                <button onClick={() => step(key, d)} className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-90 transition">
+                                  <Plus size={13} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                          <button
+                            onClick={saveMacros}
+                            className="mt-1 w-full py-2.5 rounded-full font-semibold text-white text-[13px]"
+                            style={{ background: BLUE }}
+                          >
+                            Save targets
+                          </button>
                         </div>
-                        <div className="flex gap-1 p-1 rounded-full bg-white/[0.06] mb-3">
-                          {DEEP_TABS.map((t) => (
-                            <button
-                              key={t}
-                              onClick={() => setDeepTab(t)}
-                              className={`flex-1 py-1.5 rounded-full text-[13px] font-semibold transition ${deepTab === t ? 'bg-white/15 text-white' : 'text-white/45'}`}
-                            >
-                              {t}
-                            </button>
+                      )}
+                    </Card>
+
+                    {/* deep dive — interactive tabs */}
+                    <Card>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Search size={14} style={{ color: BLUE }} />
+                          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: BLUE }}>Deep Dive</span>
+                        </div>
+                        <span className="flex items-center gap-1 text-[11px]" style={{ color: BLUE }}>Last 30 days <ChevronDown size={12} /></span>
+                      </div>
+                      <div className="flex gap-1 p-1 rounded-full bg-white/[0.06] mb-3">
+                        {DEEP_TABS.map((t) => (
+                          <button
+                            key={t}
+                            onClick={() => setDeepTab(t)}
+                            className={`flex-1 py-1.5 rounded-full text-[12px] font-semibold transition ${deepTab === t ? 'bg-white/15 text-white' : 'text-white/45'}`}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+
+                      {deepTab === 'Nutrition' && (
+                        <div>
+                          <MiniBars data={athlete.nutrition} color="#30d158" />
+                          <div className="flex justify-between mt-3 text-center">
+                            <div><div className="text-white font-bold text-[14px] tabular-nums"><AnimatedNumber value={Math.round(athlete.nutrition.reduce((a, b) => a + b, 0) / athlete.nutrition.length)} /></div><div className="text-white/35 text-[10px]">avg cal</div></div>
+                            <div><div className="text-white font-bold text-[14px] tabular-nums"><AnimatedNumber value={athlete.loggingRate} format={(n) => `${n}%`} /></div><div className="text-white/35 text-[10px]">logged</div></div>
+                            <div><div className="text-white font-bold text-[14px] tabular-nums"><AnimatedNumber value={athlete.avgProtein} format={(n) => `${n}g`} /></div><div className="text-white/35 text-[10px]">avg protein</div></div>
+                          </div>
+                        </div>
+                      )}
+                      {deepTab === 'Workouts' && (
+                        <div>
+                          <MiniBars data={athlete.workoutsBars} color={BLUE} />
+                          <div className="flex justify-between mt-3 text-center">
+                            <div><div className="text-white font-bold text-[14px] tabular-nums"><AnimatedNumber value={athlete.workouts} format={(n) => `${n}`} /></div><div className="text-white/35 text-[10px]">sessions</div></div>
+                            <div><div className="text-white font-bold text-[14px] tabular-nums"><AnimatedNumber value={athlete.volume} format={(n) => fmtVol(n)} /></div><div className="text-white/35 text-[10px]">total lb</div></div>
+                            <div><div className="text-white font-bold text-[14px] tabular-nums"><AnimatedNumber value={athlete.daysLogged} format={(n) => `${n}`} /></div><div className="text-white/35 text-[10px]">days active</div></div>
+                          </div>
+                        </div>
+                      )}
+                      {deepTab === 'Strength' && (
+                        <div className="space-y-2.5">
+                          {athlete.lifts.map((l) => (
+                            <div key={l.name} className="flex items-center gap-3">
+                              <span className="flex-1 text-white/75 text-[12px]">{l.name}</span>
+                              <div className="flex items-end gap-[3px] h-6">
+                                {l.trend.map((v, i) => {
+                                  const mx = Math.max(...l.trend);
+                                  return (
+                                    <motion.div
+                                      key={i}
+                                      className="w-[5px] rounded-t-[2px]"
+                                      initial={false}
+                                      animate={{ height: `${(v / mx) * 100}%` }}
+                                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                      style={{ background: i === l.trend.length - 1 ? BLUE : `${BLUE}55` }}
+                                    />
+                                  );
+                                })}
+                              </div>
+                              <span className="text-white font-bold text-[13px] tabular-nums w-14 text-right"><AnimatedNumber value={l.value} format={(n) => `${n} lb`} /></span>
+                            </div>
                           ))}
                         </div>
+                      )}
+                    </Card>
+                  </div>
+                </div>
 
-                        {deepTab === 'Nutrition' && (
-                          <div>
-                            <MiniBars data={athlete.nutrition} color="#30d158" />
-                            <div className="flex justify-between mt-3 text-center">
-                              <div><div className="text-white font-bold text-[15px] tabular-nums">{Math.round(athlete.nutrition.reduce((a, b) => a + b, 0) / athlete.nutrition.length).toLocaleString()}</div><div className="text-white/35 text-[10px]">avg cal</div></div>
-                              <div><div className="text-white font-bold text-[15px] tabular-nums">{athlete.loggingRate}%</div><div className="text-white/35 text-[10px]">logged</div></div>
-                              <div><div className="text-white font-bold text-[15px] tabular-nums">{athlete.avgProtein}g</div><div className="text-white/35 text-[10px]">avg protein</div></div>
-                            </div>
-                          </div>
-                        )}
-                        {deepTab === 'Workouts' && (
-                          <div>
-                            <MiniBars data={athlete.workoutsBars} color={BLUE} />
-                            <div className="flex justify-between mt-3 text-center">
-                              <div><div className="text-white font-bold text-[15px] tabular-nums">{athlete.workouts}</div><div className="text-white/35 text-[10px]">sessions</div></div>
-                              <div><div className="text-white font-bold text-[15px] tabular-nums">{fmtVol(athlete.volume)}</div><div className="text-white/35 text-[10px]">total lb</div></div>
-                              <div><div className="text-white font-bold text-[15px] tabular-nums">{athlete.daysLogged}</div><div className="text-white/35 text-[10px]">days active</div></div>
-                            </div>
-                          </div>
-                        )}
-                        {deepTab === 'Strength' && (
-                          <div className="space-y-2.5">
-                            {athlete.lifts.map((l) => (
-                              <div key={l.name} className="flex items-center gap-3">
-                                <span className="flex-1 text-white/75 text-[13px]">{l.name}</span>
-                                <div className="flex items-end gap-[3px] h-6">
-                                  {l.trend.map((v, i) => {
-                                    const mx = Math.max(...l.trend);
-                                    return <div key={i} className="w-[5px] rounded-t-[2px]" style={{ height: `${(v / mx) * 100}%`, background: i === l.trend.length - 1 ? BLUE : `${BLUE}55` }} />;
-                                  })}
-                                </div>
-                                <span className="text-white font-bold text-[14px] tabular-nums w-14 text-right">{l.value} lb</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </Card>
-                    </motion.div>
-                  </AnimatePresence>
+                {/* custom draggable scrollbar */}
+                <div ref={trackRef} className="absolute right-1.5 top-10 bottom-3 w-1.5 z-30">
+                  <div className="relative w-full h-full">
+                    <div
+                      onPointerDown={startThumbDrag}
+                      className="absolute left-0 w-full rounded-full cursor-grab active:cursor-grabbing transition-colors"
+                      style={{
+                        height: `${scroll.thumb * 100}%`,
+                        top: `${scroll.progress * (1 - scroll.thumb) * 100}%`,
+                        background: 'rgba(255,255,255,0.28)',
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
