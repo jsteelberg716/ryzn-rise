@@ -303,6 +303,7 @@ const CoachDashboardPreview = () => {
   }, [athlete, editingMacros, deepTab]);
 
   const HANDLE = 14; // px — the draggable circle sitting on the external rail
+  const RAIL = 360; // px — height of the external scrollbar rail
   const startThumbDrag = (e: React.PointerEvent) => {
     e.preventDefault();
     const move = (ev: PointerEvent) => {
@@ -478,7 +479,7 @@ const CoachDashboardPreview = () => {
                           <span className="text-white/30 text-[9px] tracking-widest uppercase">Front</span>
                         </div>
                         <div className="flex flex-col items-center">
-                          <BackMuscleMap state={athlete.back} className="w-[108px] h-auto" />
+                          <BackMuscleMap state={athlete.back} className="w-[85px] h-auto" />
                           <span className="text-white/30 text-[9px] tracking-widest uppercase">Back</span>
                         </div>
                       </div>
@@ -652,14 +653,14 @@ const CoachDashboardPreview = () => {
             </div>
 
             {/* external draggable scrollbar with circle handle */}
-            <div ref={trackRef} className="relative w-4 shrink-0 mt-6" style={{ height: 600 }}>
+            <div ref={trackRef} className="relative w-4 shrink-0 self-center" style={{ height: RAIL }}>
               {/* rail line */}
               <div className="absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-[2px] rounded-full bg-white/10" />
               {/* progress fill */}
               <div
                 className="absolute left-1/2 -translate-x-1/2 top-2 w-[2px] rounded-full"
                 style={{
-                  height: `${scroll.progress * (600 - 16 - HANDLE)}px`,
+                  height: `${scroll.progress * (RAIL - 16 - HANDLE)}px`,
                   background: 'hsl(var(--primary) / 0.5)',
                 }}
               />
@@ -670,7 +671,7 @@ const CoachDashboardPreview = () => {
                 style={{
                   width: HANDLE,
                   height: HANDLE,
-                  top: `${8 + scroll.progress * (600 - 16 - HANDLE)}px`,
+                  top: `${8 + scroll.progress * (RAIL - 16 - HANDLE)}px`,
                   background: 'hsl(var(--primary))',
                   boxShadow: '0 0 0 4px hsl(var(--primary) / 0.18), 0 4px 12px -2px rgba(0,0,0,0.6)',
                 }}
