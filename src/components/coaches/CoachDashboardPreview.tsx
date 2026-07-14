@@ -59,7 +59,7 @@ const ATHLETES: Athlete[] = [
     workouts: 47, volume: 214600, daysLogged: 58, avgProtein: 172, volPerWorkout: 4570, loggingRate: 91,
     foodScore: 79, consistency: 88, avgHR: 148,
     front: { shoulders: 1, chest: 1, arms: 1, forearms: 1, core: 2, upper_back: 1, quads: 3 },
-    back: { lats: 1, rear_delts: 1, triceps: 1, forearms: 1, lower_back: 2, upper_back: 1, hamstrings: 3 },
+    back: { lats: 1, rear_delts: 1, triceps: 1, forearms: 1, lower_back: 2, upper_back: 1, hamstrings: 3, glutes: 3, calves: 2 },
     macros: { calories: 3200, protein: 195, carbs: 360, fat: 90 },
     nutrition: [3100, 3260, 2980, 3340, 3180, 2890, 3220],
     workoutsBars: [38, 52, 44, 61, 49, 57],
@@ -75,7 +75,7 @@ const ATHLETES: Athlete[] = [
     workouts: 39, volume: 168200, daysLogged: 51, avgProtein: 158, volPerWorkout: 4310, loggingRate: 84,
     foodScore: 82, consistency: 80, avgHR: 156,
     front: { shoulders: 2, chest: 2, arms: 2, forearms: 1, core: 2, upper_back: 1, quads: 2 },
-    back: { lats: 2, rear_delts: 2, triceps: 2, forearms: 1, lower_back: 1, upper_back: 2, hamstrings: 2 },
+    back: { lats: 2, rear_delts: 2, triceps: 2, forearms: 1, lower_back: 1, upper_back: 2, hamstrings: 2, glutes: 2, calves: 2 },
     macros: { calories: 2850, protein: 180, carbs: 300, fat: 78 },
     nutrition: [2790, 2910, 2680, 2950, 2830, 2710, 2880],
     workoutsBars: [30, 41, 36, 47, 39, 43],
@@ -91,7 +91,7 @@ const ATHLETES: Athlete[] = [
     workouts: 54, volume: 262400, daysLogged: 63, avgProtein: 188, volPerWorkout: 4860, loggingRate: 95,
     foodScore: 90, consistency: 93, avgHR: 141,
     front: { shoulders: 3, chest: 3, arms: 2, forearms: 2, core: 2, upper_back: 2, quads: 3 },
-    back: { lats: 3, rear_delts: 3, triceps: 2, forearms: 2, lower_back: 2, upper_back: 3, hamstrings: 2 },
+    back: { lats: 3, rear_delts: 3, triceps: 2, forearms: 2, lower_back: 2, upper_back: 3, hamstrings: 2, glutes: 2, calves: 1 },
     macros: { calories: 3450, protein: 210, carbs: 380, fat: 95 },
     nutrition: [3420, 3510, 3380, 3460, 3400, 3290, 3480],
     workoutsBars: [44, 58, 51, 66, 55, 62],
@@ -105,42 +105,56 @@ const ATHLETES: Athlete[] = [
 
 const fmtVol = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
 
-// Posterior figure — the front silhouette (MUSCLE_PATHS) only reads as a front
-// view, so we author a matching back view here. Same viewBox + scale as
-// RealMuscleMap so the two figures sit side-by-side at equal size. Groups map
-// straight to the athlete.back keys (lats / rear_delts / triceps / forearms /
-// lower_back / upper_back / hamstrings) so the same heat data colors it.
-const BackMuscleMap = ({ state, className = 'w-full h-auto' }: { state: Record<string, number>; className?: string }) => {
-  const fill = (g: string) => getColor(state[g] ?? 0);
-  const stroke = 'rgba(255,255,255,0.06)';
-  const styleFor = (g: string) => ({
-    transition: 'fill 0.8s ease',
-    filter: (state[g] ?? 0) >= 2 ? `drop-shadow(0 0 6px ${fill(g)})` : 'none',
-  });
-  return (
-    <svg viewBox="330 80 300 440" className={className}>
-      {/* traps / upper back */}
-      <path d="M480 148 L513 208 L480 226 L447 208 Z" fill={fill('upper_back')} stroke={stroke} strokeWidth="0.5" style={styleFor('upper_back')} />
-      {/* rear delts */}
-      <ellipse cx="425" cy="177" rx="27" ry="21" fill={fill('rear_delts')} stroke={stroke} strokeWidth="0.5" style={styleFor('rear_delts')} />
-      <ellipse cx="535" cy="177" rx="27" ry="21" fill={fill('rear_delts')} stroke={stroke} strokeWidth="0.5" style={styleFor('rear_delts')} />
-      {/* lats — tapering V toward the waist */}
-      <path d="M472 210 C446 236, 440 284, 468 332 C478 302, 483 252, 481 214 Z" fill={fill('lats')} stroke={stroke} strokeWidth="0.5" style={styleFor('lats')} />
-      <path d="M488 210 C514 236, 520 284, 492 332 C482 302, 477 252, 479 214 Z" fill={fill('lats')} stroke={stroke} strokeWidth="0.5" style={styleFor('lats')} />
-      {/* triceps — back of the upper arms */}
-      <ellipse cx="397" cy="245" rx="17" ry="45" fill={fill('triceps')} stroke={stroke} strokeWidth="0.5" style={styleFor('triceps')} />
-      <ellipse cx="563" cy="245" rx="17" ry="45" fill={fill('triceps')} stroke={stroke} strokeWidth="0.5" style={styleFor('triceps')} />
-      {/* forearms */}
-      <ellipse cx="379" cy="325" rx="13" ry="46" fill={fill('forearms')} stroke={stroke} strokeWidth="0.5" style={styleFor('forearms')} />
-      <ellipse cx="581" cy="325" rx="13" ry="46" fill={fill('forearms')} stroke={stroke} strokeWidth="0.5" style={styleFor('forearms')} />
-      {/* lower back — erector column */}
-      <path d="M462 300 C456 332, 460 374, 480 394 C500 374, 504 332, 498 300 C489 313, 471 313, 462 300 Z" fill={fill('lower_back')} stroke={stroke} strokeWidth="0.5" style={styleFor('lower_back')} />
-      {/* hamstrings */}
-      <ellipse cx="453" cy="448" rx="23" ry="62" fill={fill('hamstrings')} stroke={stroke} strokeWidth="0.5" style={styleFor('hamstrings')} />
-      <ellipse cx="507" cy="448" rx="23" ry="62" fill={fill('hamstrings')} stroke={stroke} strokeWidth="0.5" style={styleFor('hamstrings')} />
-    </svg>
-  );
-};
+// Posterior figure — the REAL anatomical back paths ported straight from the
+// RYZN iOS app (MuscleMapBackView, male silhouette). Each SVG group maps onto
+// the athlete.back heat keys so the same data colors it. viewBox uses the app's
+// back crop (330 80 300 560) so the full posterior chain renders.
+const BACK_MUSCLE_PATHS: { id: string; group: string; d: string }[] = [
+  { id: 'mb_spine_right', group: 'upper_back', d: 'm485.74503 99.88413c3.6417236 3.6412964 5.550293 25.317154 13.527557 33.29397c7.977234 7.9768066 32.750183 8.4973755 34.335938 14.566925c1.5857544 6.0695496 -19.296997 11.965881 -24.821503 21.850403c-5.5245056 9.884506 -3.4448853 22.196838 -8.32547 37.45668c-4.8805847 15.259842 -17.29132 61.559067 -20.958008 54.10237c-3.6666565 -7.4566956 -1.9089966 -78.20691 -1.0419922 -98.84253c0.8670349 -20.635605 6.417328 -16.474182 6.24411 -24.97113c-0.17324829 -8.496933 -7.4566956 -19.767708 -7.283478 -26.01049c0.17321777 -6.2427826 4.6810913 -15.087486 8.322845 -11.4461975z' },
+  { id: 'mb_delt_right', group: 'rear_delts', d: 'm520.2297 168.55328c0.5201416 4.6819763 19.09668 8.496933 26.900269 12.485565c7.803589 3.988617 14.173218 7.9776764 19.921265 11.446182c5.748047 3.4685059 12.312805 12.832901 14.566956 9.364838c2.2541504 -3.4680634 1.732727 -22.542877 -1.0419922 -30.173233c-2.7747192 -7.630356 -9.511841 -12.48732 -15.606323 -15.608917c-6.0944824 -3.1216125 -13.503906 -5.2016754 -20.960632 -3.1207428c-7.456665 2.0809326 -24.299622 10.924332 -23.779541 15.606308z' },
+  { id: 'mb_teres_right', group: 'triceps', d: 'm574.1836 235.14505c1.2392578 9.363968 -2.1036987 15.259857 -0.8897705 22.88977c1.2139282 7.6299133 4.9037476 21.84909 8.173218 22.88977c3.2694702 1.0406799 11.4436035 -5.8945923 11.4436035 -16.64566c0 -10.751114 -6.9348145 -37.45627 -11.4436035 -47.8609c-4.508728 -10.404648 -14.39502 -17.68811 -15.608887 -14.56694c-1.2139282 3.12117 7.0861816 23.930008 8.325439 33.29396z' },
+  { id: 'mb_ulat_right', group: 'upper_back', d: 'm545.0513 188.32306c1.8823242 5.8958893 -13.873108 19.94313 -19.769043 23.931747c-5.895874 3.9886322 -13.203369 3.4680786 -15.606262 0c-2.402893 -3.4680634 0.47024536 -14.912506 1.1889648 -20.808395c0.7187195 -5.8958893 -2.5743713 -14.046371 3.123352 -14.566925c5.697754 -0.5205536 29.180664 5.5476837 31.062988 11.443573z' },
+  { id: 'mb_mid_right', group: 'lats', d: 'm546.0895 207.05254c2.6010132 2.9483795 -2.4541016 21.850388 -4.162781 34.335953c-1.7086182 12.485565 -2.8201904 27.398499 -6.0892334 40.577423c-3.268982 13.178925 -9.16449 37.802704 -13.524902 38.496063c-4.3604736 0.6933594 -7.9558105 -24.971985 -12.637817 -34.335968c-4.6819763 -9.363953 -15.2803955 -10.576111 -15.454071 -21.847748c-0.17364502 -11.271652 9.062134 -39.018814 14.412079 -45.782166c5.3499756 -6.763336 11.444885 7.109375 17.687683 5.2021027c6.242798 -1.9072571 17.167969 -19.59404 19.769043 -16.64566z' },
+  { id: 'mb_llat_right', group: 'lower_back', d: 'm504.62427 296.5328c-3.6163635 -6.416443 -8.670593 -11.100159 -12.485565 -15.608917c-3.814972 -4.5087585 -8.843384 -22.541992 -10.404205 -11.443573c-1.560791 11.098419 -2.4033203 69.19031 1.0393677 78.03412c3.4427185 8.843842 14.439636 -20.289154 19.616821 -24.97113c5.1771545 -4.6819763 11.073914 1.2143555 11.446167 -3.1207275c0.37225342 -4.335083 -5.596222 -16.473297 -9.212585 -22.88977z' },
+  { id: 'mb_ham_outer_right', group: 'hamstrings', d: 'm538.8089 391.21167c1.9072266 4.3355103 8.14917 19.250214 6.241455 40.580048c-1.9077148 21.329834 -13.3526 87.74582 -17.687683 87.39896c-4.335083 -0.34692383 -9.363525 -70.57831 -8.322815 -89.480316c1.0406494 -18.902008 11.272095 -17.51532 14.566895 -23.931763c3.2948608 -6.416443 3.2948608 -18.902435 5.2021484 -14.566925z' },
+  { id: 'mb_ham_inner_right', group: 'hamstrings', d: 'm511.75903 419.3073c-2.7746887 -3.4685059 -9.736206 -0.17495728 -14.566925 -1.0419922c-4.8306885 -0.8670044 -12.683289 -10.923431 -14.417297 -4.160095c-1.7340393 6.763336 1.6102295 28.439636 4.0131226 44.740143c2.4028625 16.300537 7.9763794 40.924347 10.404175 53.06302c2.427826 12.138672 1.2147827 20.46283 4.1627502 19.769043c2.947937 -0.69384766 11.44397 -8.498291 13.524902 -23.931793c2.0809326 -15.433502 -0.5192261 -53.929565 -1.0393677 -68.66928c-0.52008057 -14.739716 0.6933594 -16.300537 -2.0813599 -19.769043z' },
+  { id: 'mb_tricep_upper_right', group: 'triceps', d: 'm556.4981 195.60545c3.2948608 3.9886322 10.751526 32.60193 12.485596 41.619415c1.7340088 9.017502 -2.0813599 6.2427826 -2.0813599 12.485565c0 6.2427826 4.5091553 23.757217 2.0813599 24.971146c-2.4278564 1.2138977 -13.353455 -7.4562683 -16.648315 -17.687683c-3.2947998 -10.2314 -3.8145142 -33.469376 -3.1207275 -43.700775c0.6937866 -10.231415 3.9886475 -21.6763 7.2834473 -17.687668z' },
+  { id: 'mb_tricep_lower_right', group: 'forearms', d: 'm569.1327 283.00433c-2.4278564 2.947937 -6.8565674 10.225708 -3.123352 24.9711c3.7331543 14.745422 22.57434 59.339478 25.522278 63.501312c2.947937 4.161865 -6.7025146 -27.599731 -7.834656 -38.53018c-1.1320801 -10.93042 1.5621338 -19.942688 1.0419922 -27.05249c-0.52008057 -7.1098022 -1.5616455 -11.791321 -4.1627197 -15.606293c-2.6010742 -3.814972 -9.015747 -10.231415 -11.4435425 -7.2834473z' },
+  { id: 'mb_forearm_right', group: 'forearms', d: 'm591.58636 289.05115c2.229187 -3.814972 7.951416 4.855652 10.404175 19.769043c2.4527588 14.913361 6.541565 65.8963 4.312378 69.71127c-2.229248 3.814972 -15.234924 -31.908142 -17.687683 -46.821533c-2.4527588 -14.913361 0.7418823 -38.84381 2.9711304 -42.658783z' },
+  { id: 'mb_glute_right', group: 'glutes', d: 'm479.50342 397.45795c2.947937 7.976837 11.6189575 13.004822 19.769012 13.524933c8.150055 0.5201416 23.062103 -3.1211548 29.131256 -10.404175c6.069092 -7.2830505 7.258484 -23.063019 7.2834473 -33.293976c0.024902344 -10.230957 -2.9969482 -21.328949 -7.13385 -28.091858c-4.136902 -6.762909 -9.859619 -16.473755 -17.687683 -12.485565c-7.828064 3.9881897 -24.053802 24.622925 -29.280823 36.414703c-5.227051 11.791779 -5.0293274 26.35913 -2.0813599 34.335938z' },
+  { id: 'mb_calf_right', group: 'calves', d: 'm525.28143 528.5525c3.8149414 7.456299 12.312317 25.838196 14.566956 37.456726c2.2545776 11.61853 1.3884277 26.185059 -1.0394287 32.254578c-2.4277954 6.06958 -9.538879 4.856079 -13.527527 4.1627197c-3.9886475 -0.69329834 -7.28302 -9.363037 -10.404175 -8.322815c-3.1211853 1.0402222 -4.8547974 11.616394 -8.322876 14.564331c-3.468048 2.947937 -9.537598 9.539368 -12.485565 3.123352c-2.947937 -6.4160156 -6.24234 -29.82721 -5.2020874 -41.619446c1.0402527 -11.792236 6.7615967 -20.983826 11.443573 -29.13385c4.6819763 -8.150024 12.48645 -17.685486 16.648315 -19.766418c4.161804 -2.0809326 4.5078735 -0.17541504 8.322815 7.2808228z' },
+  { id: 'mb_spine_left', group: 'upper_back', d: 'm463.83133 99.88413c-3.6417236 3.6412964 -5.550293 25.317154 -13.527557 33.29397c-7.9772644 7.9768066 -32.750214 8.4973755 -34.335968 14.566925c-1.5857239 6.0695496 19.297028 11.965881 24.821533 21.850403c5.5245056 9.884506 3.4448853 22.196838 8.32547 37.45668c4.880554 15.259842 17.29132 61.559067 20.958008 54.10237c3.6666565 -7.4566956 1.9089966 -78.20691 1.0419922 -98.84253c-0.8670349 -20.635605 -6.417328 -16.474182 -6.24411 -24.97113c0.17321777 -8.496933 7.4566956 -19.767708 7.283478 -26.01049c-0.17324829 -6.2427826 -4.681122 -15.087486 -8.322845 -11.4461975z' },
+  { id: 'mb_delt_left', group: 'rear_delts', d: 'm429.34665 168.55328c-0.5201111 4.6819763 -19.09668 8.496933 -26.900269 12.485565c-7.803589 3.988617 -14.173218 7.9776764 -19.921234 11.446182c-5.748047 3.4685059 -12.312775 12.832901 -14.566956 9.364838c-2.2541504 -3.4680634 -1.7326965 -22.542877 1.0420227 -30.173233c2.7746887 -7.630356 9.51181 -12.48732 15.606293 -15.608917c6.0944824 -3.1216125 13.503937 -5.2016754 20.960632 -3.1207428c7.4566956 2.0809326 24.299652 10.924332 23.77951 15.606308z' },
+  { id: 'mb_teres_left', group: 'triceps', d: 'm375.39276 235.14505c-1.2392883 9.363968 2.1036682 15.259857 0.8897705 22.88977c-1.2139282 7.6299133 -4.903778 21.84909 -8.173248 22.88977c-3.2694702 1.0406799 -11.443573 -5.8945923 -11.443573 -16.64566c0 -10.751114 6.934845 -37.45627 11.443573 -47.8609c4.5087585 -10.404648 14.39502 -17.68811 15.608948 -14.56694c1.2138977 3.12117 -7.0861816 23.930008 -8.32547 33.29396z' },
+  { id: 'mb_ulat_left', group: 'upper_back', d: 'm404.52505 188.32306c-1.8823242 5.8958893 13.873138 19.94313 19.769043 23.931747c5.895874 3.9886322 13.2034 3.4680786 15.606293 0c2.402893 -3.4680634 -0.47024536 -14.912506 -1.1889648 -20.808395c-0.7187195 -5.8958893 2.5743408 -14.046371 -3.1233826 -14.566925c-5.6977234 -0.5205536 -29.180664 5.5476837 -31.062988 11.443573z' },
+  { id: 'mb_mid_left', group: 'lats', d: 'm403.4869 207.05254c-2.6010437 2.9483795 2.454071 21.850388 4.1627197 34.335953c1.7086487 12.485565 2.820221 27.398499 6.0892334 40.577423c3.269043 13.178925 9.16449 37.802704 13.524933 38.496063c4.3604736 0.6933594 7.955841 -24.971985 12.637817 -34.335968c4.6819763 -9.363953 15.2803955 -10.576111 15.454041 -21.847748c0.17367554 -11.271652 -9.062103 -39.018814 -14.412048 -45.782166c-5.3499756 -6.763336 -11.444885 7.109375 -17.687683 5.2021027c-6.2427673 -1.9072571 -17.167969 -19.59404 -19.769012 -16.64566z' },
+  { id: 'mb_llat_left', group: 'lower_back', d: 'm444.9521 296.5328c3.6163635 -6.416443 8.670593 -11.100159 12.485565 -15.608917c3.8149414 -4.5087585 8.843384 -22.541992 10.404175 -11.443573c1.5608215 11.098419 2.4033508 69.19031 -1.0393677 78.03412c-3.442688 8.843842 -14.439606 -20.289154 -19.61679 -24.97113c-5.1771545 -4.6819763 -11.073914 1.2143555 -11.4461975 -3.1207275c-0.37225342 -4.335083 5.5962524 -16.473297 9.212616 -22.88977z' },
+  { id: 'mb_ham_outer_left', group: 'hamstrings', d: 'm410.76746 391.21167c-1.9072571 4.3355103 -8.14917 19.250214 -6.241455 40.580048c1.9076843 21.329834 13.35257 87.74582 17.687653 87.39896c4.335083 -0.34692383 9.363525 -70.57831 8.322845 -89.480316c-1.0406799 -18.902008 -11.272095 -17.51532 -14.566925 -23.931763c-3.2948303 -6.416443 -3.2948303 -18.902435 -5.202118 -14.566925z' },
+  { id: 'mb_ham_inner_left', group: 'hamstrings', d: 'm437.8173 419.3073c2.7747192 -3.4685059 9.736237 -0.17495728 14.566925 -1.0419922c4.830719 -0.8670044 12.683289 -10.923431 14.417328 -4.160095c1.7340393 6.763336 -1.6102295 28.439636 -4.0131226 44.740143c-2.402893 16.300537 -7.9763794 40.924347 -10.404205 53.06302c-2.4277954 12.138672 -1.2147827 20.46283 -4.1627197 19.769043c-2.947937 -0.69384766 -11.444 -8.498291 -13.524933 -23.931793c-2.0809326 -15.433502 0.5192566 -53.929565 1.0393677 -68.66928c0.5201111 -14.739716 -0.6933594 -16.300537 2.0813599 -19.769043z' },
+  { id: 'mb_tricep_upper_left', group: 'triceps', d: 'm393.07822 195.60545c-3.2948303 3.9886322 -10.751526 32.60193 -12.485565 41.619415c-1.7340393 9.017502 2.0813599 6.2427826 2.0813599 12.485565c0 6.2427826 -4.509186 23.757217 -2.0813599 24.971146c2.427826 1.2138977 13.353455 -7.4562683 16.648285 -17.687683c3.2948608 -10.2314 3.8145447 -33.469376 3.120758 -43.700775c-0.6937866 -10.231415 -3.9886475 -21.6763 -7.283478 -17.687668z' },
+  { id: 'mb_tricep_lower_left', group: 'forearms', d: 'm380.4437 283.00433c2.4277954 2.947937 6.8565063 10.225708 3.123352 24.9711c-3.7331543 14.745422 -22.574371 59.339478 -25.522308 63.501312c-2.9479675 4.161865 6.7025146 -27.599731 7.8346252 -38.53018c1.1321106 -10.93042 -1.5621033 -19.942688 -1.0419922 -27.05249c0.5201416 -7.1098022 1.561676 -11.791321 4.1627502 -15.606293c2.6010437 -3.814972 9.015747 -10.231415 11.443573 -7.2834473z' },
+  { id: 'mb_forearm_left', group: 'forearms', d: 'm357.99 289.05115c-2.2292175 -3.814972 -7.9514465 4.855652 -10.404205 19.769043c-2.4527588 14.913361 -6.541565 65.8963 -4.312317 69.71127c2.2292175 3.814972 15.234894 -31.908142 17.687653 -46.821533c2.4527588 -14.913361 -0.74191284 -38.84381 -2.9711304 -42.658783z' },
+  { id: 'mb_glute_left', group: 'glutes', d: 'm470.07294 397.45795c-2.947937 7.976837 -11.618988 13.004822 -19.769012 13.524933c-8.150055 0.5201416 -23.062134 -3.1211548 -29.131256 -10.404175c-6.069092 -7.2830505 -7.2585144 -23.063019 -7.2834473 -33.293976c-0.024932861 -10.230957 2.9969482 -21.328949 7.13385 -28.091858c4.1369324 -6.762909 9.859589 -16.473755 17.687683 -12.485565c7.828064 3.9881897 24.053802 24.622925 29.280823 36.414703c5.227051 11.791779 5.029297 26.35913 2.0813599 34.335938z' },
+  { id: 'mb_calf_left', group: 'calves', d: 'm424.29492 528.5525c-3.814972 7.456299 -12.312347 25.838196 -14.566925 37.456726c-2.2546082 11.61853 -1.3884583 26.185059 1.0393677 32.254578c2.427826 6.06958 9.53894 4.856079 13.527557 4.1627197c3.988617 -0.69329834 7.28302 -9.363037 10.404205 -8.322815c3.1211548 1.0402222 4.854767 11.616394 8.322815 14.564331c3.4680786 2.947937 9.537628 9.539368 12.485565 3.123352c2.9479675 -6.4160156 6.24234 -29.82721 5.202118 -41.619446c-1.0402527 -11.792236 -6.7615967 -20.983826 -11.443573 -29.13385c-4.6819763 -8.150024 -12.48645 -17.685486 -16.648285 -19.766418c-4.161865 -2.0809326 -4.5078735 -0.17541504 -8.322845 7.2808228z' },
+];
+
+const BackMuscleMap = ({ state, className = 'w-full h-auto' }: { state: Record<string, number>; className?: string }) => (
+  <svg viewBox="330 80 300 560" className={className}>
+    {BACK_MUSCLE_PATHS.map((m) => {
+      const level = state[m.group] ?? 0;
+      return (
+        <path
+          key={m.id}
+          d={m.d}
+          fill={getColor(level)}
+          stroke="rgba(255,255,255,0.06)"
+          strokeWidth="0.5"
+          style={{ transition: 'fill 0.8s ease', filter: level >= 2 ? `drop-shadow(0 0 6px ${getColor(level)})` : 'none' }}
+        />
+      );
+    })}
+  </svg>
+);
 
 // Count-up number that tweens whenever its target changes — this is what makes
 // an athlete switch feel like the values "shift" instead of fade out and in.
@@ -288,7 +302,7 @@ const CoachDashboardPreview = () => {
     return () => cancelAnimationFrame(id);
   }, [athlete, editingMacros, deepTab]);
 
-  const HANDLE = 20; // px — the draggable circle sitting on the external rail
+  const HANDLE = 14; // px — the draggable circle sitting on the external rail
   const startThumbDrag = (e: React.PointerEvent) => {
     e.preventDefault();
     const move = (ev: PointerEvent) => {
@@ -402,7 +416,7 @@ const CoachDashboardPreview = () => {
           </div>
 
           {/* Right: the phone — house frame, app surface, custom scrollbar */}
-          <div className="order-1 lg:order-2 justify-self-center lg:justify-self-start flex items-start gap-3">
+          <div className="order-1 lg:order-2 justify-self-center lg:justify-self-start flex items-start gap-5">
             <div
               className="relative w-[330px] shrink-0 rounded-[44px] p-[3px]"
               style={{
@@ -483,12 +497,12 @@ const CoachDashboardPreview = () => {
                         <Ring value={athlete.foodScore} color="#ff453a" size={52} label="Food Score" />
                         <Ring value={athlete.consistency} color="#ff453a" size={52} label="Consistency" />
                         <div className="flex flex-col items-center">
-                          <div className="flex items-center justify-center" style={{ width: 52, height: 52 }}>
-                            <Heart size={20} className="fill-[#ff453a] text-[#ff453a]" />
+                          <div className="flex flex-col items-center justify-center gap-0.5" style={{ width: 52, height: 52 }}>
+                            <Heart size={15} className="fill-[#ff453a] text-[#ff453a]" />
+                            <span className="text-[#ff453a] font-bold leading-none tabular-nums" style={{ fontSize: 15.6 }}>
+                              <AnimatedNumber value={athlete.avgHR} format={(n) => `${n}`} />
+                            </span>
                           </div>
-                          <span className="text-white font-bold text-[14px] leading-none -mt-2 tabular-nums">
-                            <AnimatedNumber value={athlete.avgHR} format={(n) => `${n}`} />
-                          </span>
                           <span className="mt-1 text-[10px] font-semibold tracking-wide text-white/45 uppercase">Avg HR</span>
                         </div>
                       </div>
@@ -638,14 +652,14 @@ const CoachDashboardPreview = () => {
             </div>
 
             {/* external draggable scrollbar with circle handle */}
-            <div ref={trackRef} className="relative w-5 shrink-0" style={{ height: 660 }}>
+            <div ref={trackRef} className="relative w-4 shrink-0 mt-6" style={{ height: 600 }}>
               {/* rail line */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-[3px] rounded-full bg-white/10" />
+              <div className="absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-[2px] rounded-full bg-white/10" />
               {/* progress fill */}
               <div
-                className="absolute left-1/2 -translate-x-1/2 top-2 w-[3px] rounded-full"
+                className="absolute left-1/2 -translate-x-1/2 top-2 w-[2px] rounded-full"
                 style={{
-                  height: `${scroll.progress * (660 - 16 - HANDLE)}px`,
+                  height: `${scroll.progress * (600 - 16 - HANDLE)}px`,
                   background: 'hsl(var(--primary) / 0.5)',
                 }}
               />
@@ -656,7 +670,7 @@ const CoachDashboardPreview = () => {
                 style={{
                   width: HANDLE,
                   height: HANDLE,
-                  top: `${8 + scroll.progress * (660 - 16 - HANDLE)}px`,
+                  top: `${8 + scroll.progress * (600 - 16 - HANDLE)}px`,
                   background: 'hsl(var(--primary))',
                   boxShadow: '0 0 0 4px hsl(var(--primary) / 0.18), 0 4px 12px -2px rgba(0,0,0,0.6)',
                 }}
