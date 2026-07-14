@@ -139,7 +139,7 @@ const BACK_MUSCLE_PATHS: { id: string; group: string; d: string }[] = [
 ];
 
 const BackMuscleMap = ({ state, className = 'w-full h-auto' }: { state: Record<string, number>; className?: string }) => (
-  <svg viewBox="330 80 300 560" className={className}>
+  <svg viewBox="330 80 300 440" className={className}>
     {BACK_MUSCLE_PATHS.map((m) => {
       const level = state[m.group] ?? 0;
       return (
@@ -463,9 +463,6 @@ const CoachDashboardPreview = () => {
                         <StatTile icon={Droplets} value={athlete.loggingRate} label="Logging Rate" format={(n) => `${n}%`} />
                       </div>
                     </Card>
-                    <p className="text-white/35 text-[11px] text-center leading-snug px-3">
-                      All stats are auto-verified from {athlete.first}'s logged workouts and nutrition — no self-reporting.
-                    </p>
 
                     {/* muscle focus */}
                     <Card>
@@ -479,13 +476,10 @@ const CoachDashboardPreview = () => {
                           <span className="text-white/30 text-[9px] tracking-widest uppercase">Front</span>
                         </div>
                         <div className="flex flex-col items-center">
-                          <BackMuscleMap state={athlete.back} className="w-[85px] h-auto" />
+                          <BackMuscleMap state={athlete.back} className="w-[108px] h-auto" />
                           <span className="text-white/30 text-[9px] tracking-widest uppercase">Back</span>
                         </div>
                       </div>
-                      <p className="text-white/35 text-[10.5px] leading-snug mt-1">
-                        Emphasis spread from {athlete.first}'s verified training volume — green is dialed, red is heavy.
-                      </p>
                     </Card>
 
                     {/* coach insights */}
