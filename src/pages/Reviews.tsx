@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, MessageSquare, Sparkles, Search, ChevronUp, X as XIcon } from 'lucide-react';
+import { Star, MessageSquare, Sparkles, Search, ChevronUp, X as XIcon } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
-import RyznWordLogo from '@/components/RyznWordLogo';
+import SubpageNav from '@/components/landing/SubpageNav';
 import {
   supabase,
   getOrCreateDeviceId,
@@ -153,22 +152,15 @@ const Reviews = () => {
         />
       </div>
 
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-[1000] h-16 backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(8,8,14,0.8)] border-b border-primary/[0.1]">
-        <div className="max-w-[1200px] mx-auto h-full flex items-center justify-between px-6">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft size={18} />
-            <span className="text-sm font-medium">Back</span>
-          </Link>
-          <Link to="/" className="flex items-center">
-            <RyznWordLogo height={26} />
-          </Link>
-          <div className="w-14" />
-        </div>
-      </nav>
+      {/* Shared subpage nav — consistent across Scan / Coaches / Reviews. */}
+      <SubpageNav
+        current="reviews"
+        cta={{
+          label: 'Get RYZN',
+          href: 'https://apps.apple.com/us/app/ryzn/id6761982333',
+          external: true,
+        }}
+      />
 
       <main className="pt-[120px] pb-24 max-w-[1100px] mx-auto px-6">
         {/* Header */}

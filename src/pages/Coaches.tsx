@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
   Users,
@@ -18,9 +17,9 @@ import {
   Activity,
 } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
-import RyznWordLogo from '@/components/RyznWordLogo';
 import TeamReachMap from '@/components/coaches/TeamReachMap';
 import Footer from '@/components/landing/Footer';
+import SubpageNav from '@/components/landing/SubpageNav';
 
 // RYZN for Coaches — image-led Trainer Mode page. NO PRICING anywhere:
 // deals are closed directly over email (Jack, 2026-07-11).
@@ -701,21 +700,9 @@ const Coaches = () => {
 
   return (
     <div className="min-h-screen bg-bg-primary text-foreground">
-      {/* Minimal top bar — logo home link only. The main navbar's hash
-          links target homepage sections and would dead-end here. */}
-      <nav className="fixed top-3 left-0 right-0 z-[1000] flex justify-center px-4">
-        <div className="w-full max-w-[1080px] h-14 rounded-full flex items-center justify-between pl-6 pr-3 backdrop-blur-[20px] backdrop-saturate-[180%] bg-[rgba(8,8,14,0.72)] border border-primary/[0.12] shadow-[0_18px_50px_-12px_rgba(0,0,0,0.6)]">
-          <Link to="/" className="flex items-center">
-            <RyznWordLogo height={28} />
-          </Link>
-          <a
-            href={contactHref}
-            className="px-5 py-2.5 rounded-full text-xs font-bold tracking-wide bg-gradient-to-r from-primary to-accent-green text-foreground cta-primary transition-all duration-300"
-          >
-            BECOME A COACH
-          </a>
-        </div>
-      </nav>
+      {/* Shared subpage nav — consistent across Scan / Coaches / Reviews
+          so every page stays reachable from every other page. */}
+      <SubpageNav current="coaches" cta={{ label: 'BECOME A COACH', href: contactHref }} />
 
       {/* Hero — full-bleed real-world photo, minimal copy. */}
       <section className="relative min-h-[92vh] flex items-end overflow-hidden">
