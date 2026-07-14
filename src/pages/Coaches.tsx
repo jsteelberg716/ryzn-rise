@@ -155,11 +155,18 @@ const extras = [
 // ---------------------------------------------------------------------------
 
 const leaderboardRows = [
-  { rank: 1, name: 'M. Carter', pos: 'QB', pts: 1240, pct: 100 },
-  { rank: 2, name: 'D. Okafor', pos: 'LB', pts: 1105, pct: 89 },
-  { rank: 3, name: 'J. Reyes', pos: 'WR', pts: 980, pct: 79 },
-  { rank: 4, name: 'T. Brooks', pos: 'OL', pts: 845, pct: 68 },
+  { rank: 1, name: 'Marcus Lee', init: 'M', meta: '6 workouts · 7 days logged', pts: 982 },
+  { rank: 2, name: 'Sofia Chen', init: 'S', meta: '5 workouts · 7 days logged', pts: 913 },
+  { rank: 3, name: 'Jordan Miles', init: 'J', meta: '5 workouts · 6 days logged', pts: 847 },
+  { rank: 4, name: 'Diego Fuentes', init: 'D', meta: '4 workouts · 6 days logged', pts: 792 },
 ];
+
+// Rank-badge palettes — gold / silver / bronze podium, then muted.
+const rankStyle: Record<number, string> = {
+  1: 'bg-gradient-to-br from-[#f5d167] to-[#c79a2e] text-black',
+  2: 'bg-gradient-to-br from-[#d8dde3] to-[#9aa2ab] text-black',
+  3: 'bg-gradient-to-br from-[#d69a63] to-[#a26a34] text-black',
+};
 
 const reportBars = [42, 58, 50, 72, 66, 84, 91];
 
@@ -481,76 +488,131 @@ const Coaches = () => {
                   Auto-verified
                 </span>
               </div>
-              <div className="space-y-3">
+              {/* Filter tabs — mirror the in-app segmented control. */}
+              <div className="flex gap-1.5 mb-4">
+                {['Week', 'Month', 'Overall', 'Position'].map((t, i) => (
+                  <span
+                    key={t}
+                    className={`px-3 py-1 rounded-full text-[11px] font-semibold ${
+                      i === 0
+                        ? 'bg-primary/15 text-primary border border-primary/30'
+                        : 'text-foreground/45 border border-white/[0.06]'
+                    }`}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <div className="space-y-2">
                 {leaderboardRows.map((r) => (
-                  <div key={r.rank} className="flex items-center gap-3">
+                  <div
+                    key={r.rank}
+                    className="flex items-center gap-3 rounded-[14px] px-3 py-2.5 bg-white/[0.03] border border-white/[0.05]"
+                  >
                     <span
-                      className={`w-5 text-sm font-extrabold ${
-                        r.rank === 1 ? 'text-primary' : 'text-foreground/40'
+                      className={`w-6 h-6 shrink-0 rounded-full grid place-items-center text-[11px] font-extrabold ${
+                        rankStyle[r.rank] ?? 'bg-white/[0.08] text-foreground/50'
                       }`}
                     >
                       {r.rank}
                     </span>
-                    <span className="w-24 shrink-0 text-sm font-semibold text-foreground/90">
-                      {r.name}
+                    <span className="w-8 h-8 shrink-0 rounded-[9px] grid place-items-center text-sm font-bold text-accent-blue bg-accent-blue/15 border border-accent-blue/20">
+                      {r.init}
                     </span>
-                    <span className="text-[10px] font-bold text-foreground/35 w-7">{r.pos}</span>
-                    <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-accent-green"
-                        style={{ width: `${r.pct}%` }}
-                      />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-bold text-foreground truncate">{r.name}</div>
+                      <div className="text-[11px] text-foreground/45 truncate">{r.meta}</div>
                     </div>
-                    <span className="text-xs font-bold text-foreground/70 tabular-nums">
-                      {r.pts.toLocaleString()}
-                    </span>
+                    <div className="text-right shrink-0">
+                      <div className="text-lg font-extrabold text-accent-blue tabular-nums leading-none">
+                        {r.pts.toLocaleString()}
+                      </div>
+                      <div className="text-[8px] font-bold tracking-[0.15em] text-foreground/35 mt-0.5">
+                        PTS
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
               <p className="mt-5 text-xs text-foreground/45">
                 Points from completed sessions, protein targets hit, and logging streaks.
-                Filter by position group with one tap.
+                Filter by week, position group, or all-time with one tap.
               </p>
             </IntelCard>
 
             {/* 2 — AI flags inbox */}
             <IntelCard>
-              <IntelEyebrow text="AI Flags" />
-              <div className="rounded-[14px] p-4 bg-white/[0.03] border border-red-500/20">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-red-500" />
-                  <span className="text-sm font-bold text-foreground">
-                    J. Reyes — protein down 32% this week
+              <div className="flex items-center justify-between">
+                <IntelEyebrow text="AI Flags" />
+                <span className="text-[9px] font-bold text-white bg-red-500 rounded-full px-2 py-0.5 mb-4 tabular-nums">
+                  4
+                </span>
+              </div>
+              <div className="rounded-[14px] p-4 bg-red-500/[0.06] border border-red-500/25">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-7 h-7 shrink-0 rounded-full grid place-items-center bg-red-500/15 text-red-400 text-sm">
+                      ♥
+                    </span>
+                    <div>
+                      <div className="text-sm font-bold text-foreground leading-tight">
+                        Marcus Lee
+                      </div>
+                      <div className="text-[11px] text-red-300/80 font-medium">Resting HR Spike</div>
+                    </div>
+                  </div>
+                  <span className="text-[8px] font-extrabold tracking-widest uppercase text-red-400">
+                    Critical
                   </span>
                 </div>
-                <div className="mt-3 space-y-2 text-xs leading-relaxed">
-                  <p>
-                    <span className="font-bold text-foreground/60">WHAT&nbsp;&nbsp;</span>
-                    <span className="text-foreground/70">Avg 96g vs a 142g target across 5 days.</span>
-                  </p>
-                  <p>
-                    <span className="font-bold text-foreground/60">WHY&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <span className="text-foreground/70">Skipped breakfast logs Tue–Fri; dinner unchanged.</span>
-                  </p>
-                  <p>
-                    <span className="font-bold text-foreground/60">IMPACT</span>
-                    <span className="text-foreground/70"> Recovery risk before Saturday's game.</span>
+                <p className="mt-3 text-xs leading-relaxed text-foreground/75">
+                  Resting heart rate is up 18 bpm over his 4-week baseline, 3 days running.
+                </p>
+                <div className="mt-3 rounded-[10px] p-3 bg-red-500/[0.05] border border-red-500/15">
+                  <div className="text-[9px] font-extrabold tracking-widest uppercase text-red-400/90 mb-1">
+                    Why it matters
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-foreground/65">
+                    Sustained resting-HR elevation usually means illness, overtraining, or poor
+                    recovery — the body fighting something instead of absorbing training.
                   </p>
                 </div>
+                <button className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25">
+                  ✓ Mark handled
+                </button>
               </div>
               <p className="mt-5 text-xs text-foreground/45">
                 Anomalies surface to your inbox before they become problems — every flag
-                explains what changed, why it matters, and what to do.
+                explains what changed, why it matters, and its team impact.
               </p>
             </IntelCard>
 
             {/* 3 — Sunday report card */}
             <IntelCard>
-              <IntelEyebrow text="Sunday Report" />
-              <p className="text-sm font-bold text-foreground">
-                Team protein compliance up 12% — best week this season.
+              <div className="flex items-center justify-between">
+                <IntelEyebrow text="Team Weekly Report" />
+                <span className="text-[10px] font-semibold text-foreground/35 mb-4">Jul 7</span>
+              </div>
+              <p className="text-[15px] font-bold text-foreground leading-snug">
+                Team fueling is up 9% — three athletes need eyes this week.
               </p>
-              <div className="mt-5 flex items-end gap-2 h-24">
+              <div className="mt-4 space-y-2.5">
+                <div className="flex gap-2.5">
+                  <LineChart size={14} className="text-accent-blue shrink-0 mt-0.5" />
+                  <p className="text-[11px] leading-relaxed text-foreground/65">
+                    <span className="font-bold text-foreground/80">Trends&nbsp;·&nbsp;</span>
+                    7 of 8 athletes logged 5+ days. Protein avg climbed to 141g/day (up from 129).
+                  </p>
+                </div>
+                <div className="flex gap-2.5">
+                  <Trophy size={14} className="text-primary shrink-0 mt-0.5" />
+                  <p className="text-[11px] leading-relaxed text-foreground/65">
+                    <span className="font-bold text-foreground/80">Climbing&nbsp;·&nbsp;</span>
+                    Sofia jumped two leaderboard spots; Jordan put up his biggest volume week.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex items-end gap-2 h-20">
                 {reportBars.map((v, i) => (
                   <div key={i} className="flex-1 flex flex-col justify-end h-full">
                     <div
@@ -564,44 +626,52 @@ const Coaches = () => {
                   </div>
                 ))}
               </div>
-              <div className="mt-2 flex justify-between text-[9px] font-semibold text-foreground/30 uppercase tracking-wider">
+              <div className="mt-1.5 flex justify-between text-[9px] font-semibold text-foreground/30 uppercase tracking-wider">
                 <span>Mon</span>
                 <span>Sun</span>
               </div>
               <p className="mt-4 text-xs text-foreground/45">
-                A full analytics report card lands every Sunday morning — team-wide for
-                staff, personal for every athlete.
+                A full report card lands every Sunday morning — team-wide for staff,
+                personal for every athlete.
               </p>
             </IntelCard>
 
             {/* 4 — Macro autopilot */}
             <IntelCard>
-              <div className="flex items-center justify-between">
-                <IntelEyebrow text="Macro Autopilot" />
-                <span className="text-[9px] font-bold tracking-widest uppercase text-primary/80 border border-primary/25 rounded-full px-2.5 py-1 mb-4">
-                  AI Recommended
-                </span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-extrabold tracking-tight gradient-text tabular-nums">
-                  3,490
-                </span>
-                <span className="text-sm font-semibold text-foreground/60">cal / day</span>
-              </div>
-              <p className="mt-1 text-xs text-foreground/50">Quarterback · High school · In-season</p>
-              <div className="mt-4 flex gap-2.5">
-                {[
-                  ['Protein', '196g'],
-                  ['Carbs', '452g'],
-                  ['Fat', '97g'],
-                ].map(([label, v]) => (
-                  <span
-                    key={label}
-                    className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/[0.05] border border-white/[0.08] text-foreground/80"
-                  >
-                    {label} <span className="text-primary font-bold">{v}</span>
-                  </span>
-                ))}
+              <IntelEyebrow text="Macro Autopilot" />
+              {/* AI-recommended card — green frame, exactly like the app. */}
+              <div className="rounded-[14px] p-4 bg-accent-green/[0.05] border border-accent-green/25">
+                <div className="text-[9px] font-extrabold tracking-widest uppercase text-accent-green mb-2">
+                  ✦ AI Recommended
+                </div>
+                <div className="flex items-end justify-between gap-3">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-extrabold tracking-tight text-foreground tabular-nums">
+                      3,490
+                    </span>
+                    <span className="text-sm font-semibold text-foreground/55">cal</span>
+                  </div>
+                  <div className="flex gap-3 text-xs font-bold tabular-nums">
+                    <span>
+                      <span className="text-primary">P</span>{' '}
+                      <span className="text-foreground/80">174g</span>
+                    </span>
+                    <span>
+                      <span className="text-[hsl(38_92%_55%)]">C</span>{' '}
+                      <span className="text-foreground/80">419g</span>
+                    </span>
+                    <span>
+                      <span className="text-accent-blue">F</span>{' '}
+                      <span className="text-foreground/80">124g</span>
+                    </span>
+                  </div>
+                </div>
+                <p className="mt-2 text-[11px] text-foreground/55">
+                  Quarterback · High School — maintenance fueling, steady energy.
+                </p>
+                <button className="mt-3 w-full rounded-[10px] py-2 text-xs font-bold text-accent-green bg-accent-green/[0.08] border border-accent-green/25">
+                  Apply recommendation
+                </button>
               </div>
               <p className="mt-5 text-xs text-foreground/45">
                 Position- and league-aware targets for the whole roster, one tap to apply —
