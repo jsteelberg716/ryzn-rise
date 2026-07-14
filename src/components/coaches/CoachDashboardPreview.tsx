@@ -352,7 +352,7 @@ const CoachDashboardPreview = () => {
             Tap any athlete. See everything.
           </motion.h2>
           <motion.p variants={fadeUpVariant} className="mt-4 text-foreground/70 text-lg">
-            This is the exact screen you get on every athlete — auto-verified training and
+            This is the exact screen you get on every athlete — verified training and
             nutrition, a live muscle map, and macros you assign in a tap. No self-reporting,
             no chasing. Switch between athletes below and scroll through it.
           </motion.p>
@@ -403,7 +403,7 @@ const CoachDashboardPreview = () => {
 
             <div className="mt-6 space-y-2.5 max-w-[340px]">
               {[
-                'Every stat auto-verified from their logs — never self-reported',
+                'Every stat pulled straight from their logs — never self-reported',
                 'Live muscle-focus map from their real training volume',
                 'Assign calorie & macro targets in one tap',
                 'Deep-dive nutrition, workouts and strength trends',
