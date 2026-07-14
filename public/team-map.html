@@ -222,7 +222,7 @@
 <nav>
   <div class="bar">
     <a href="/coaches" class="word">RY<span>Z</span>N</a>
-    <a href="mailto:hello@ryznrise.com?subject=RYZN%20for%20Teams" class="cta">TALK TO THE FOUNDER</a>
+    <a href="mailto:jackwork716@gmail.com?subject=RYZN%20for%20Teams" class="cta">TALK TO THE FOUNDER</a>
   </div>
 </nav>
 
@@ -239,7 +239,7 @@
       every rep, every macro, every athlete — verified, 24/7.</b>
     </p>
     <div class="hero-cta">
-      <a href="mailto:hello@ryznrise.com?subject=RYZN%20for%20Teams%20%E2%80%94%20Let%27s%20Talk" class="btn-primary">
+      <a href="mailto:jackwork716@gmail.com?subject=RYZN%20for%20Teams%20%E2%80%94%20Let%27s%20Talk" class="btn-primary">
         Put my team on the board
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
@@ -267,8 +267,8 @@
   <div class="wrap">
     <div class="center reveal">
       <span class="eyebrow">The board</span>
-      <h2 class="sec">Every team in the country is in play.</h2>
-      <p class="lead">Pro. College. Prep. From an NFL locker room to a Friday-night program — the same system, the same edge. Filter by league to see the reach.</p>
+      <h2 class="sec">Every athlete in the country is in play.</h2>
+      <p class="lead">Pro and women's pro, college, high school, Olympic and individual — every sport, every league, men's and women's. From an NFL locker room to a Friday-night program to a national team. The market isn't one sport. It's every athlete. Filter to see the reach.</p>
     </div>
 
     <div class="map-shell reveal">
@@ -364,7 +364,7 @@
           <h3 style="margin-top:14px">Built by an athlete. Priced for your program.</h3>
           <p>No per-seat menu, no fine print. Tell me about your team and I'll build the deal around it — pro to prep. You talk directly to the founder, and your athletes never pay a cent.</p>
         </div>
-        <a href="mailto:hello@ryznrise.com?subject=RYZN%20for%20Teams%20%E2%80%94%20Pricing%20for%20my%20program" class="btn-primary" style="flex-shrink:0">
+        <a href="mailto:jackwork716@gmail.com?subject=RYZN%20for%20Teams%20%E2%80%94%20Pricing%20for%20my%20program" class="btn-primary" style="flex-shrink:0">
           Start the conversation
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
@@ -381,12 +381,12 @@
       <h2 style="margin-top:16px">Get your roster on the board.</h2>
       <p>The talent's already there. RYZN makes sure none of it gets wasted between the hours you can't see.</p>
       <div style="margin-top:34px">
-        <a href="mailto:hello@ryznrise.com?subject=RYZN%20for%20Teams%20%E2%80%94%20Let%27s%20Talk" class="btn-primary">
+        <a href="mailto:jackwork716@gmail.com?subject=RYZN%20for%20Teams%20%E2%80%94%20Let%27s%20Talk" class="btn-primary">
           Talk to the founder
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
       </div>
-      <p class="em">hello@ryznrise.com — replies come from the founder, usually same-day.</p>
+      <p class="em">jackwork716@gmail.com — replies come from the founder, usually same-day.</p>
     </div>
   </div>
 </section>
@@ -396,115 +396,183 @@
 <div id="tip"></div>
 
 <script>
-/* ---------- league config ---------- */
-const LEAGUES = {
-  NFL:  { color:'hsl(145 72% 50%)', label:'NFL',          per:53  },
-  NCAA: { color:'hsl(195 60% 55%)', label:'College',      per:110 },
-  MLB:  { color:'#f5a623',          label:'MLB',          per:40  },
-  HS:   { color:'#b07cff',          label:'High School',  per:65  },
+/* ---------- category config (drives color + filter) ---------- */
+const CATS = {
+  pro:     { color:'hsl(145 72% 50%)', label:'Pro',                  w:55    },
+  womens:  { color:'hsl(330 82% 62%)', label:"Women's Pro",          w:30    },
+  college: { color:'hsl(195 60% 55%)', label:'College',              w:550   },
+  hs:      { color:'hsl(265 72% 68%)', label:'High School',          w:280000},
+  ind:     { color:'hsl(38 92% 55%)',  label:'Olympic & Individual', w:3500  },
 };
 
-/* ---------- team dataset [name, league, city, lon, lat] ---------- */
+/* ---------- athlete dataset [name, league, cat, city, lon, lat, weight?] ---------- */
 const TEAMS = [
-  // NFL
-  ['Patriots','NFL','Foxborough, MA',-71.264,42.091],
-  ['Bills','NFL','Buffalo, NY',-78.787,42.774],
-  ['Jets / Giants','NFL','East Rutherford, NJ',-74.074,40.813],
-  ['Eagles','NFL','Philadelphia, PA',-75.167,39.901],
-  ['Commanders','NFL','Landover, MD',-76.864,38.908],
-  ['Steelers','NFL','Pittsburgh, PA',-80.016,40.447],
-  ['Ravens','NFL','Baltimore, MD',-76.623,39.278],
-  ['Browns','NFL','Cleveland, OH',-81.699,41.506],
-  ['Bengals','NFL','Cincinnati, OH',-84.516,39.095],
-  ['Dolphins','NFL','Miami Gardens, FL',-80.239,25.958],
-  ['Jaguars','NFL','Jacksonville, FL',-81.638,30.324],
-  ['Titans','NFL','Nashville, TN',-86.771,36.166],
-  ['Colts','NFL','Indianapolis, IN',-86.164,39.760],
-  ['Texans','NFL','Houston, TX',-95.411,29.685],
-  ['Chiefs','NFL','Kansas City, MO',-94.484,39.049],
-  ['Broncos','NFL','Denver, CO',-105.020,39.744],
-  ['Raiders','NFL','Las Vegas, NV',-115.184,36.091],
-  ['Rams / Chargers','NFL','Inglewood, CA',-118.339,33.953],
-  ['49ers','NFL','Santa Clara, CA',-121.970,37.403],
-  ['Seahawks','NFL','Seattle, WA',-122.332,47.595],
-  ['Cardinals','NFL','Glendale, AZ',-112.263,33.528],
-  ['Cowboys','NFL','Arlington, TX',-97.093,32.748],
-  ['Packers','NFL','Green Bay, WI',-88.062,44.501],
-  ['Vikings','NFL','Minneapolis, MN',-93.258,44.974],
-  ['Bears','NFL','Chicago, IL',-87.617,41.862],
-  ['Lions','NFL','Detroit, MI',-83.046,42.340],
-  ['Falcons','NFL','Atlanta, GA',-84.401,33.755],
-  ['Panthers','NFL','Charlotte, NC',-80.853,35.226],
-  ['Saints','NFL','New Orleans, LA',-90.081,29.951],
-  ['Buccaneers','NFL','Tampa, FL',-82.503,27.976],
-  // NCAA
-  ['Alabama','NCAA','Tuscaloosa, AL',-87.538,33.208],
-  ['Ohio State','NCAA','Columbus, OH',-83.020,40.001],
-  ['Michigan','NCAA','Ann Arbor, MI',-83.749,42.266],
-  ['Georgia','NCAA','Athens, GA',-83.373,33.950],
-  ['Texas','NCAA','Austin, TX',-97.733,30.284],
-  ['USC','NCAA','Los Angeles, CA',-118.287,34.021],
-  ['LSU','NCAA','Baton Rouge, LA',-91.187,30.412],
-  ['Oklahoma','NCAA','Norman, OK',-97.442,35.206],
-  ['Notre Dame','NCAA','South Bend, IN',-86.235,41.703],
-  ['Oregon','NCAA','Eugene, OR',-123.068,44.058],
-  ['Florida','NCAA','Gainesville, FL',-82.348,29.650],
-  ['Penn State','NCAA','State College, PA',-77.859,40.812],
-  ['Nebraska','NCAA','Lincoln, NE',-96.705,40.820],
-  ['Washington','NCAA','Seattle, WA',-122.303,47.650],
-  ['Clemson','NCAA','Clemson, SC',-82.837,34.678],
-  ['Tennessee','NCAA','Knoxville, TN',-83.925,35.955],
-  ['Wisconsin','NCAA','Madison, WI',-89.412,43.075],
-  ['Utah','NCAA','Salt Lake City, UT',-111.849,40.762],
-  ['Texas A&M','NCAA','College Station, TX',-96.340,30.610],
-  ['Colorado','NCAA','Boulder, CO',-105.271,40.010],
-  // MLB
-  ['Yankees / Mets','MLB','New York, NY',-73.926,40.829],
-  ['Red Sox','MLB','Boston, MA',-71.097,42.346],
-  ['Nationals','MLB','Washington, DC',-77.007,38.873],
-  ['Cardinals','MLB','St. Louis, MO',-90.193,38.623],
-  ['Cubs / White Sox','MLB','Chicago, IL',-87.656,41.948],
-  ['Astros','MLB','Houston, TX',-95.355,29.757],
-  ['Rangers','MLB','Arlington, TX',-97.083,32.751],
-  ['Dodgers / Angels','MLB','Los Angeles, CA',-118.240,34.073],
-  ['Giants / Athletics','MLB','San Francisco, CA',-122.389,37.779],
-  ['Padres','MLB','San Diego, CA',-117.157,32.707],
-  ['Rockies','MLB','Denver, CO',-104.994,39.756],
-  ['Brewers','MLB','Milwaukee, WI',-87.971,43.028],
-  ['Twins','MLB','Minneapolis, MN',-93.278,44.982],
-  ['Diamondbacks','MLB','Phoenix, AZ',-112.067,33.445],
-  ['Braves','MLB','Atlanta, GA',-84.468,33.891],
-  ['Mariners','MLB','Seattle, WA',-122.332,47.591],
-  // HS clusters
-  ['Texas HS Football','HS','Dallas–Fort Worth, TX',-96.797,32.777],
-  ['Texas HS Football','HS','Houston, TX',-95.369,29.760],
-  ['Florida HS Football','HS','Miami, FL',-80.192,25.762],
-  ['California HS Football','HS','Los Angeles, CA',-118.244,34.052],
-  ['Georgia HS Football','HS','Atlanta, GA',-84.388,33.749],
-  ['Ohio HS Football','HS','Columbus, OH',-82.999,39.961],
-  ['Pennsylvania HS Football','HS','Pittsburgh, PA',-79.996,40.441],
-  ['New Jersey HS Football','HS','Newark, NJ',-74.172,40.735],
-  ['Louisiana HS Football','HS','New Orleans, LA',-90.071,29.951],
-  ['Arizona HS Football','HS','Phoenix, AZ',-112.074,33.448],
+  /* ===== PRO — NFL / NBA / MLB / NHL / MLS ===== */
+  ['Patriots — NFL','NFL','pro','Foxborough, MA',-71.264,42.091],
+  ['Bills — NFL','NFL','pro','Buffalo, NY',-78.787,42.774],
+  ['Giants / Jets — NFL','NFL','pro','East Rutherford, NJ',-74.074,40.813],
+  ['Eagles — NFL','NFL','pro','Philadelphia, PA',-75.167,39.901],
+  ['Cowboys — NFL','NFL','pro','Arlington, TX',-97.093,32.748],
+  ['49ers — NFL','NFL','pro','Santa Clara, CA',-121.970,37.403],
+  ['Chiefs — NFL','NFL','pro','Kansas City, MO',-94.484,39.049],
+  ['Packers — NFL','NFL','pro','Green Bay, WI',-88.062,44.501],
+  ['Dolphins — NFL','NFL','pro','Miami, FL',-80.239,25.958],
+  ['Seahawks — NFL','NFL','pro','Seattle, WA',-122.332,47.595],
+  ['Broncos — NFL','NFL','pro','Denver, CO',-105.020,39.744],
+  ['Saints — NFL','NFL','pro','New Orleans, LA',-90.081,29.951],
+  ['Lakers / Clippers — NBA','NBA','pro','Los Angeles, CA',-118.267,34.043],
+  ['Celtics — NBA','NBA','pro','Boston, MA',-71.062,42.366],
+  ['Warriors — NBA','NBA','pro','San Francisco, CA',-122.388,37.768],
+  ['Knicks / Nets — NBA','NBA','pro','New York, NY',-73.993,40.750],
+  ['Heat — NBA','NBA','pro','Miami, FL',-80.187,25.781],
+  ['Bulls — NBA','NBA','pro','Chicago, IL',-87.674,41.881],
+  ['Nuggets — NBA','NBA','pro','Denver, CO',-105.007,39.749],
+  ['Mavericks — NBA','NBA','pro','Dallas, TX',-96.810,32.790],
+  ['Suns — NBA','NBA','pro','Phoenix, AZ',-112.071,33.446],
+  ['Bucks — NBA','NBA','pro','Milwaukee, WI',-87.917,43.045],
+  ['Yankees / Mets — MLB','MLB','pro','New York, NY',-73.926,40.829],
+  ['Red Sox — MLB','MLB','pro','Boston, MA',-71.097,42.346],
+  ['Dodgers — MLB','MLB','pro','Los Angeles, CA',-118.240,34.073],
+  ['Cubs — MLB','MLB','pro','Chicago, IL',-87.656,41.948],
+  ['Braves — MLB','MLB','pro','Atlanta, GA',-84.468,33.891],
+  ['Astros — MLB','MLB','pro','Houston, TX',-95.355,29.757],
+  ['Cardinals — MLB','MLB','pro','St. Louis, MO',-90.193,38.623],
+  ['Giants — MLB','MLB','pro','San Francisco, CA',-122.389,37.779],
+  ['Rangers — NHL','NHL','pro','New York, NY',-73.976,40.750],
+  ['Bruins — NHL','NHL','pro','Boston, MA',-71.062,42.366],
+  ['Blackhawks — NHL','NHL','pro','Chicago, IL',-87.674,41.881],
+  ['Red Wings — NHL','NHL','pro','Detroit, MI',-83.055,42.341],
+  ['Avalanche — NHL','NHL','pro','Denver, CO',-105.008,39.749],
+  ['Golden Knights — NHL','NHL','pro','Las Vegas, NV',-115.178,36.103],
+  ['Wild — NHL','NHL','pro','St. Paul, MN',-93.101,44.945],
+  ['LAFC / Galaxy — MLS','MLS','pro','Los Angeles, CA',-118.284,33.864],
+  ['Sounders — MLS','MLS','pro','Seattle, WA',-122.331,47.595],
+  ['Atlanta United — MLS','MLS','pro','Atlanta, GA',-84.401,33.755],
+  ['Timbers — MLS','MLS','pro','Portland, OR',-122.691,45.521],
+  ['Inter Miami — MLS','MLS','pro','Miami, FL',-80.161,25.958],
+  ['FC Cincinnati — MLS','MLS','pro','Cincinnati, OH',-84.522,39.111],
+  ['Nashville SC — MLS','MLS','pro','Nashville, TN',-86.766,36.131],
+  /* ===== WOMEN'S PRO — WNBA / NWSL / PWHL ===== */
+  ['NY Liberty — WNBA','WNBA','womens','New York, NY',-73.994,40.683],
+  ['Las Vegas Aces — WNBA','WNBA','womens','Las Vegas, NV',-115.198,36.090],
+  ['Seattle Storm — WNBA','WNBA','womens','Seattle, WA',-122.354,47.622],
+  ['Phoenix Mercury — WNBA','WNBA','womens','Phoenix, AZ',-112.071,33.446],
+  ['Chicago Sky — WNBA','WNBA','womens','Chicago, IL',-87.617,41.853],
+  ['Minnesota Lynx — WNBA','WNBA','womens','Minneapolis, MN',-93.276,44.979],
+  ['Indiana Fever — WNBA','WNBA','womens','Indianapolis, IN',-86.155,39.764],
+  ['Atlanta Dream — WNBA','WNBA','womens','Atlanta, GA',-84.396,33.757],
+  ['Dallas Wings — WNBA','WNBA','womens','Arlington, TX',-97.117,32.744],
+  ['LA Sparks — WNBA','WNBA','womens','Los Angeles, CA',-118.267,34.043],
+  ['GS Valkyries — WNBA','WNBA','womens','San Francisco, CA',-122.388,37.768],
+  ['Washington Mystics — WNBA','WNBA','womens','Washington, DC',-76.986,38.868],
+  ['Connecticut Sun — WNBA','WNBA','womens','Uncasville, CT',-72.090,41.437],
+  ['Portland Thorns — NWSL','NWSL','womens','Portland, OR',-122.691,45.521],
+  ['Angel City FC — NWSL','NWSL','womens','Los Angeles, CA',-118.284,33.864],
+  ['KC Current — NWSL','NWSL','womens','Kansas City, MO',-94.581,39.100],
+  ['Gotham FC — NWSL','NWSL','womens','Harrison, NJ',-74.150,40.736],
+  ['Washington Spirit — NWSL','NWSL','womens','Washington, DC',-76.986,38.868],
+  ['San Diego Wave — NWSL','NWSL','womens','San Diego, CA',-117.119,32.746],
+  ['Houston Dash — NWSL','NWSL','womens','Houston, TX',-95.352,29.752],
+  ['Orlando Pride — NWSL','NWSL','womens','Orlando, FL',-81.389,28.539],
+  ['NC Courage — NWSL','NWSL','womens','Cary, NC',-78.780,35.791],
+  ['Bay FC — NWSL','NWSL','womens','San Jose, CA',-121.925,37.361],
+  ['Utah Royals — NWSL','NWSL','womens','Salt Lake City, UT',-111.893,40.583],
+  ['Racing Louisville — NWSL','NWSL','womens','Louisville, KY',-85.759,38.328],
+  ['PWHL Boston','PWHL','womens','Boston, MA',-71.062,42.366],
+  ['PWHL Minnesota','PWHL','womens','St. Paul, MN',-93.101,44.945],
+  ['PWHL New York','PWHL','womens','Newark, NJ',-74.172,40.735],
+  /* ===== COLLEGE — NCAA (all sports) ===== */
+  ['Alabama','NCAA','college','Tuscaloosa, AL',-87.538,33.208],
+  ['Ohio State','NCAA','college','Columbus, OH',-83.020,40.001],
+  ['Michigan','NCAA','college','Ann Arbor, MI',-83.749,42.266],
+  ['Georgia','NCAA','college','Athens, GA',-83.373,33.950],
+  ['Texas','NCAA','college','Austin, TX',-97.733,30.284],
+  ['USC / UCLA','NCAA','college','Los Angeles, CA',-118.287,34.021],
+  ['LSU','NCAA','college','Baton Rouge, LA',-91.187,30.412],
+  ['Oklahoma','NCAA','college','Norman, OK',-97.442,35.206],
+  ['Notre Dame','NCAA','college','South Bend, IN',-86.235,41.703],
+  ['Oregon','NCAA','college','Eugene, OR',-123.068,44.058],
+  ['Florida','NCAA','college','Gainesville, FL',-82.348,29.650],
+  ['Penn State','NCAA','college','State College, PA',-77.859,40.812],
+  ['Nebraska','NCAA','college','Lincoln, NE',-96.705,40.820],
+  ['Washington','NCAA','college','Seattle, WA',-122.303,47.650],
+  ['Clemson','NCAA','college','Clemson, SC',-82.837,34.678],
+  ['Tennessee','NCAA','college','Knoxville, TN',-83.925,35.955],
+  ['Wisconsin','NCAA','college','Madison, WI',-89.412,43.075],
+  ['Utah','NCAA','college','Salt Lake City, UT',-111.849,40.762],
+  ['Texas A&M','NCAA','college','College Station, TX',-96.340,30.610],
+  ['Colorado','NCAA','college','Boulder, CO',-105.271,40.010],
+  ['North Carolina','NCAA','college','Chapel Hill, NC',-79.051,35.905],
+  ['Duke','NCAA','college','Durham, NC',-78.938,36.001],
+  ['Kentucky','NCAA','college','Lexington, KY',-84.504,38.031],
+  ['Arkansas','NCAA','college','Fayetteville, AR',-94.178,36.068],
+  ['Stanford / Cal','NCAA','college','Berkeley, CA',-122.259,37.872],
+  ['Arizona State','NCAA','college','Tempe, AZ',-111.939,33.425],
+  ['Iowa','NCAA','college','Iowa City, IA',-91.530,41.661],
+  ['Michigan State','NCAA','college','East Lansing, MI',-84.483,42.701],
+  ['Illinois','NCAA','college','Champaign, IL',-88.243,40.116],
+  ['Auburn','NCAA','college','Auburn, AL',-85.481,32.594],
+  ['Ole Miss','NCAA','college','Oxford, MS',-89.538,34.365],
+  ['West Virginia','NCAA','college','Morgantown, WV',-79.955,39.629],
+  ['Virginia Tech','NCAA','college','Blacksburg, VA',-80.418,37.229],
+  ['Miami (FL)','NCAA','college','Coral Gables, FL',-80.279,25.721],
+  ['Kansas','NCAA','college','Lawrence, KS',-95.244,38.954],
+  ['Oklahoma State','NCAA','college','Stillwater, OK',-97.058,36.116],
+  ['BYU','NCAA','college','Provo, UT',-111.658,40.234],
+  ['Baylor','NCAA','college','Waco, TX',-97.115,31.549],
+  ['Washington State','NCAA','college','Pullman, WA',-117.180,46.731],
+  ['Oregon State','NCAA','college','Corvallis, OR',-123.262,44.564],
+  /* ===== HIGH SCHOOL — state athletic associations ===== */
+  ['Texas HS Athletics','UIL','hs','Dallas–Fort Worth, TX',-96.797,32.777,600000],
+  ['Texas HS Athletics','UIL','hs','Houston, TX',-95.369,29.760,480000],
+  ['California HS Athletics','CIF','hs','Los Angeles, CA',-118.244,34.052,700000],
+  ['California HS Athletics','CIF','hs','SF Bay Area, CA',-122.271,37.804,300000],
+  ['Florida HS Athletics','FHSAA','hs','Miami, FL',-80.192,25.762,300000],
+  ['IMG Academy','Prep','hs','Bradenton, FL',-82.583,27.470,1400],
+  ['Georgia HS Athletics','GHSA','hs','Atlanta, GA',-84.388,33.749,250000],
+  ['Ohio HS Athletics','OHSAA','hs','Columbus, OH',-82.999,39.961,300000],
+  ['Pennsylvania HS Athletics','PIAA','hs','Pittsburgh, PA',-79.996,40.441,250000],
+  ['New Jersey HS Athletics','NJSIAA','hs','Newark, NJ',-74.172,40.735,220000],
+  ['New York HS Athletics','NYSPHSAA','hs','Long Island, NY',-73.590,40.789,300000],
+  ['Illinois HS Athletics','IHSA','hs','Chicago, IL',-87.617,41.862,300000],
+  ['Louisiana HS Athletics','LHSAA','hs','New Orleans, LA',-90.071,29.951,150000],
+  ['Arizona HS Athletics','AIA','hs','Phoenix, AZ',-112.074,33.448,200000],
+  ['Tennessee HS Athletics','TSSAA','hs','Nashville, TN',-86.781,36.162,180000],
+  ['Michigan HS Athletics','MHSAA','hs','Detroit, MI',-83.046,42.331,240000],
+  ['Washington HS Athletics','WIAA','hs','Seattle, WA',-122.332,47.606,180000],
+  ['Colorado HS Athletics','CHSAA','hs','Denver, CO',-104.991,39.739,160000],
+  /* ===== OLYMPIC & INDIVIDUAL — federations, combat, tour sports ===== */
+  ['Team USA Training Center','USOPC','ind','Colorado Springs, CO',-104.821,38.834,15000],
+  ['USA Track & Field','USATF','ind','Eugene, OR',-123.021,44.058,4000],
+  ['USA Gymnastics','USAG','ind','Indianapolis, IN',-86.158,39.768,3000],
+  ['USA Swimming','USA-S','ind','Colorado Springs, CO',-104.760,38.846,8000],
+  ['UFC / MMA','UFC','ind','Las Vegas, NV',-115.140,36.170,2000],
+  ['PGA Tour','PGA','ind','Ponte Vedra, FL',-81.386,30.196,1500],
+  ['USTA Tennis','USTA','ind','Orlando, FL',-81.290,28.360,3000],
+  ['CrossFit Games','CrossFit','ind','Madison, WI',-89.384,43.074,5000],
+  ['NASCAR','NASCAR','ind','Charlotte, NC',-80.843,35.227,1200],
+  ['USA Wrestling','USAW','ind','Colorado Springs, CO',-104.800,38.870,3500],
+  ['USA Boxing','USAB','ind','Colorado Springs, CO',-104.810,38.855,2500],
+  ['USA Volleyball','USAV','ind','Anaheim, CA',-117.914,33.836,4000],
 ];
 
 /* ---------- build chips + legend ---------- */
 let active = 'ALL';
 const chipsEl = document.getElementById('chips');
 const legendEl = document.getElementById('legend');
-const order = ['ALL','NFL','NCAA','MLB','HS'];
+const order = ['ALL','pro','womens','college','hs','ind'];
 order.forEach(k=>{
   const c=document.createElement('div');
   c.className='chip'+(k==='ALL'?' active all':'');
   c.dataset.k=k;
-  if(k==='ALL'){ c.textContent='All teams'; }
-  else{ c.innerHTML='<span class="sw" style="background:'+LEAGUES[k].color+'"></span>'+LEAGUES[k].label; }
+  if(k==='ALL'){ c.textContent='Every athlete'; }
+  else{ c.innerHTML='<span class="sw" style="background:'+CATS[k].color+'"></span>'+CATS[k].label; }
   c.onclick=()=>setActive(k);
   chipsEl.appendChild(c);
 });
-Object.keys(LEAGUES).forEach(k=>{
+Object.keys(CATS).forEach(k=>{
   const s=document.createElement('span');
-  s.innerHTML='<i style="background:'+LEAGUES[k].color+'"></i>'+LEAGUES[k].label;
+  s.innerHTML='<i style="background:'+CATS[k].color+'"></i>'+CATS[k].label;
   legendEl.appendChild(s);
 });
 
@@ -525,14 +593,15 @@ d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(us=>{
     .data(states.features).join('path')
     .attr('class','state').attr('d',path);
 
-  // jitter so co-located pins across leagues fan out slightly
-  const jit={NFL:[0,0],NCAA:[-4,-4],MLB:[5,4],HS:[-5,5]};
+  // jitter by category so co-located pins fan into a colored constellation
+  const jit={pro:[0,-5],womens:[5,-2],college:[4,5],hs:[-5,4],ind:[-5,-4]};
   const g=svg.append('g');
   const placed=TEAMS.map(t=>{
-    const p=projection([t[3],t[4]]);
+    const p=projection([t[4],t[5]]);
     if(!p) return null;
-    const j=jit[t[1]]||[0,0];
-    return {name:t[0],lg:t[1],city:t[2],x:p[0]+j[0],y:p[1]+j[1]};
+    const j=jit[t[2]]||[0,0];
+    return {name:t[0],league:t[1],cat:t[2],city:t[3],
+      x:p[0]+j[0]+(Math.random()*4-2), y:p[1]+j[1]+(Math.random()*4-2)};
   }).filter(Boolean);
 
   pinsSel=g.selectAll('g.pin').data(placed).join('g')
@@ -542,26 +611,27 @@ d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(us=>{
 
   pinsSel.append('circle').attr('class','ring')
     .attr('r',5).attr('fill','none')
-    .attr('stroke',d=>LEAGUES[d.lg].color).attr('stroke-width',1.6);
+    .attr('stroke',d=>CATS[d.cat].color).attr('stroke-width',1.6);
   pinsSel.append('circle').attr('class','core')
-    .attr('r',3.6).attr('fill',d=>LEAGUES[d.lg].color)
+    .attr('r',3.6).attr('fill',d=>CATS[d.cat].color)
     .attr('stroke','rgba(0,0,0,.35)').attr('stroke-width',.5);
 
   // stagger reveal
   pinsSel.each(function(d,i){
-    setTimeout(()=>{ this.style.transition='opacity .5s'; this.style.opacity=1; }, 200+i*22);
+    setTimeout(()=>{ this.style.transition='opacity .5s'; this.style.opacity=1; }, 200+i*14);
   });
   // randomize pulse phase
   pinsSel.select('.ring').style('animation-delay',()=> (Math.random()*2.6).toFixed(2)+'s');
 
   // hover
   pinsSel.on('mousemove',(e,d)=>{
-    const L=LEAGUES[d.lg];
+    const C=CATS[d.cat];
     tip.innerHTML='<div class="tn">'+d.name+'</div><div class="tc">'+d.city+'</div>'+
-      '<div class="tb" style="color:'+L.color+';background:'+L.color.replace('hsl','hsla').replace(')',',.14)').replace('#f5a623','#f5a623')+
-      ';border:1px solid '+L.color+'">'+L.label+'</div>';
-    // amber/violet are hex; build translucent bg safely below
-    tip.querySelector('.tb').style.background = hexOrHslAlpha(L.color,.14);
+      '<div class="tb">'+d.league+' · '+C.label+'</div>';
+    const tb=tip.querySelector('.tb');
+    tb.style.color=C.color;
+    tb.style.background=hexOrHslAlpha(C.color,.14);
+    tb.style.border='1px solid '+C.color;
     tip.style.left=e.clientX+'px'; tip.style.top=e.clientY+'px'; tip.style.opacity=1;
   });
   pinsSel.on('mouseleave',()=>{ tip.style.opacity=0; });
@@ -583,13 +653,13 @@ function setActive(k){
     c.classList.toggle('active',c.dataset.k===k);
     c.classList.toggle('all',c.dataset.k==='ALL'&&k==='ALL');
   });
-  if(pinsSel) pinsSel.classed('dim',d=> k!=='ALL' && d.lg!==k);
+  if(pinsSel) pinsSel.classed('dim',d=> k!=='ALL' && d.cat!==k);
   updateReach();
 }
 
 let reachRAF;
 function updateReach(){
-  const target=TEAMS.reduce((s,t)=> (active==='ALL'||t[1]===active)? s+LEAGUES[t[1]].per : s, 0);
+  const target=TEAMS.reduce((s,t)=> (active==='ALL'||t[2]===active)? s+(t[6]||CATS[t[2]].w) : s, 0);
   const el=document.getElementById('reachNum');
   const from=parseInt(el.textContent.replace(/\D/g,''))||0;
   cancelAnimationFrame(reachRAF);
