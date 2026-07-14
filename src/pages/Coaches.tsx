@@ -17,7 +17,6 @@ import {
   Activity,
 } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
-import TeamReachMap from '@/components/coaches/TeamReachMap';
 import Footer from '@/components/landing/Footer';
 import SubpageNav from '@/components/landing/SubpageNav';
 
@@ -843,9 +842,6 @@ const Coaches = () => {
           </div>
         </div>
       </section>
-
-      {/* The board — interactive reach map: every athlete is the market. */}
-      <TeamReachMap />
 
       {/* Image-led feature bands — photo sells, three bullets confirm. */}
       <section id="toolkit" className="relative py-20 lg:py-28 scroll-mt-24">
