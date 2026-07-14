@@ -6,7 +6,7 @@ import {
   PersonStanding, Check,
 } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '@/lib/animations';
-import { RealMuscleMap, BACK_REMAP } from '@/components/landing/MuscleMapSection';
+import { RealMuscleMap, getColor } from '@/components/landing/MuscleMapSection';
 
 // ---------------------------------------------------------------------------
 // CoachDashboardPreview — the flagship /coaches proof. A faithful, interactive
@@ -104,6 +104,43 @@ const ATHLETES: Athlete[] = [
 ];
 
 const fmtVol = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
+
+// Posterior figure — the front silhouette (MUSCLE_PATHS) only reads as a front
+// view, so we author a matching back view here. Same viewBox + scale as
+// RealMuscleMap so the two figures sit side-by-side at equal size. Groups map
+// straight to the athlete.back keys (lats / rear_delts / triceps / forearms /
+// lower_back / upper_back / hamstrings) so the same heat data colors it.
+const BackMuscleMap = ({ state, className = 'w-full h-auto' }: { state: Record<string, number>; className?: string }) => {
+  const fill = (g: string) => getColor(state[g] ?? 0);
+  const stroke = 'rgba(255,255,255,0.06)';
+  const styleFor = (g: string) => ({
+    transition: 'fill 0.8s ease',
+    filter: (state[g] ?? 0) >= 2 ? `drop-shadow(0 0 6px ${fill(g)})` : 'none',
+  });
+  return (
+    <svg viewBox="330 80 300 440" className={className}>
+      {/* traps / upper back */}
+      <path d="M480 148 L513 208 L480 226 L447 208 Z" fill={fill('upper_back')} stroke={stroke} strokeWidth="0.5" style={styleFor('upper_back')} />
+      {/* rear delts */}
+      <ellipse cx="425" cy="177" rx="27" ry="21" fill={fill('rear_delts')} stroke={stroke} strokeWidth="0.5" style={styleFor('rear_delts')} />
+      <ellipse cx="535" cy="177" rx="27" ry="21" fill={fill('rear_delts')} stroke={stroke} strokeWidth="0.5" style={styleFor('rear_delts')} />
+      {/* lats — tapering V toward the waist */}
+      <path d="M472 210 C446 236, 440 284, 468 332 C478 302, 483 252, 481 214 Z" fill={fill('lats')} stroke={stroke} strokeWidth="0.5" style={styleFor('lats')} />
+      <path d="M488 210 C514 236, 520 284, 492 332 C482 302, 477 252, 479 214 Z" fill={fill('lats')} stroke={stroke} strokeWidth="0.5" style={styleFor('lats')} />
+      {/* triceps — back of the upper arms */}
+      <ellipse cx="397" cy="245" rx="17" ry="45" fill={fill('triceps')} stroke={stroke} strokeWidth="0.5" style={styleFor('triceps')} />
+      <ellipse cx="563" cy="245" rx="17" ry="45" fill={fill('triceps')} stroke={stroke} strokeWidth="0.5" style={styleFor('triceps')} />
+      {/* forearms */}
+      <ellipse cx="379" cy="325" rx="13" ry="46" fill={fill('forearms')} stroke={stroke} strokeWidth="0.5" style={styleFor('forearms')} />
+      <ellipse cx="581" cy="325" rx="13" ry="46" fill={fill('forearms')} stroke={stroke} strokeWidth="0.5" style={styleFor('forearms')} />
+      {/* lower back — erector column */}
+      <path d="M462 300 C456 332, 460 374, 480 394 C500 374, 504 332, 498 300 C489 313, 471 313, 462 300 Z" fill={fill('lower_back')} stroke={stroke} strokeWidth="0.5" style={styleFor('lower_back')} />
+      {/* hamstrings */}
+      <ellipse cx="453" cy="448" rx="23" ry="62" fill={fill('hamstrings')} stroke={stroke} strokeWidth="0.5" style={styleFor('hamstrings')} />
+      <ellipse cx="507" cy="448" rx="23" ry="62" fill={fill('hamstrings')} stroke={stroke} strokeWidth="0.5" style={styleFor('hamstrings')} />
+    </svg>
+  );
+};
 
 // Count-up number that tweens whenever its target changes — this is what makes
 // an athlete switch feel like the values "shift" instead of fade out and in.
@@ -251,6 +288,7 @@ const CoachDashboardPreview = () => {
     return () => cancelAnimationFrame(id);
   }, [athlete, editingMacros, deepTab]);
 
+  const HANDLE = 20; // px — the draggable circle sitting on the external rail
   const startThumbDrag = (e: React.PointerEvent) => {
     e.preventDefault();
     const move = (ev: PointerEvent) => {
@@ -258,8 +296,8 @@ const CoachDashboardPreview = () => {
       const track = trackRef.current;
       if (!el || !track) return;
       const rect = track.getBoundingClientRect();
-      const thumbH = scroll.thumb * rect.height;
-      let p = (ev.clientY - rect.top - thumbH / 2) / (rect.height - thumbH);
+      const travel = rect.height - 16 - HANDLE; // 8px pad top+bottom
+      let p = (ev.clientY - rect.top - 8 - HANDLE / 2) / travel;
       p = Math.max(0, Math.min(1, p));
       el.scrollTop = p * (el.scrollHeight - el.clientHeight);
     };
@@ -306,42 +344,42 @@ const CoachDashboardPreview = () => {
         </motion.div>
 
         <motion.div
-          className="mt-12 grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center"
+          className="mt-12 grid lg:grid-cols-2 gap-10 lg:gap-8 items-center max-w-[960px] mx-auto"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* Left: athlete switcher + coach-facing bullets */}
-          <div className="order-2 lg:order-1">
+          <div className="order-2 lg:order-1 w-full max-w-[420px] mx-auto lg:justify-self-end">
             <p className="text-foreground/45 text-xs font-semibold tracking-widest uppercase mb-3">Your roster</p>
-            <div className="space-y-2 max-w-[320px]">
+            <div className="space-y-2.5">
               {ATHLETES.map((a) => {
                 const on = a.id === activeId;
                 return (
                   <button
                     key={a.id}
                     onClick={() => setActiveId(a.id)}
-                    className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-all duration-300 border"
+                    className="w-full flex items-center gap-3 rounded-2xl px-4 py-3.5 text-left transition-all duration-300 border"
                     style={{
                       background: on ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
                       borderColor: on ? 'hsl(var(--primary) / 0.45)' : 'rgba(255,255,255,0.06)',
-                      boxShadow: on ? '0 10px 30px -12px hsl(var(--primary) / 0.45)' : 'none',
+                      boxShadow: on ? '0 12px 34px -12px hsl(var(--primary) / 0.45)' : 'none',
                     }}
                   >
                     <span
-                      className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-[13px]"
+                      className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-[15px]"
                       style={{ background: `linear-gradient(135deg, ${a.grad[0]}, ${a.grad[1]})` }}
                     >
                       {a.initials}
                     </span>
                     <span className="flex-1 min-w-0">
-                      <span className="block text-foreground font-semibold text-[13.5px] truncate">{a.name}</span>
-                      <span className="block text-foreground/45 text-[11.5px]">{a.position}</span>
+                      <span className="block text-foreground font-semibold text-[15px] truncate">{a.name}</span>
+                      <span className="block text-foreground/45 text-[12.5px]">{a.position}</span>
                     </span>
                     <span className="text-right shrink-0">
-                      <span className="block font-bold text-[15px] tabular-nums leading-none" style={{ color: on ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.6)' }}>{a.score}</span>
-                      <span className="block text-foreground/35 text-[9px] tracking-wider uppercase mt-0.5">Score</span>
+                      <span className="block font-bold text-[18px] tabular-nums leading-none" style={{ color: on ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.6)' }}>{a.score}</span>
+                      <span className="block text-foreground/35 text-[10px] tracking-wider uppercase mt-0.5">Score</span>
                     </span>
                   </button>
                 );
@@ -364,9 +402,9 @@ const CoachDashboardPreview = () => {
           </div>
 
           {/* Right: the phone — house frame, app surface, custom scrollbar */}
-          <div className="order-1 lg:order-2 justify-self-center">
+          <div className="order-1 lg:order-2 justify-self-center lg:justify-self-start flex items-start gap-3">
             <div
-              className="relative w-[330px] rounded-[44px] p-[3px]"
+              className="relative w-[330px] shrink-0 rounded-[44px] p-[3px]"
               style={{
                 background: '#1c1c1e',
                 boxShadow: '0 40px 90px -30px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.05)',
@@ -426,9 +464,7 @@ const CoachDashboardPreview = () => {
                           <span className="text-white/30 text-[9px] tracking-widest uppercase">Front</span>
                         </div>
                         <div className="flex flex-col items-center">
-                          <div style={{ transform: 'scaleX(-1)' }}>
-                            <RealMuscleMap state={athlete.back} remap={BACK_REMAP} className="w-[108px] h-auto" />
-                          </div>
+                          <BackMuscleMap state={athlete.back} className="w-[108px] h-auto" />
                           <span className="text-white/30 text-[9px] tracking-widest uppercase">Back</span>
                         </div>
                       </div>
@@ -598,22 +634,33 @@ const CoachDashboardPreview = () => {
                     </Card>
                   </div>
                 </div>
-
-                {/* custom draggable scrollbar */}
-                <div ref={trackRef} className="absolute right-1.5 top-10 bottom-3 w-1.5 z-30">
-                  <div className="relative w-full h-full">
-                    <div
-                      onPointerDown={startThumbDrag}
-                      className="absolute left-0 w-full rounded-full cursor-grab active:cursor-grabbing transition-colors"
-                      style={{
-                        height: `${scroll.thumb * 100}%`,
-                        top: `${scroll.progress * (1 - scroll.thumb) * 100}%`,
-                        background: 'rgba(255,255,255,0.28)',
-                      }}
-                    />
-                  </div>
-                </div>
               </div>
+            </div>
+
+            {/* external draggable scrollbar with circle handle */}
+            <div ref={trackRef} className="relative w-5 shrink-0" style={{ height: 660 }}>
+              {/* rail line */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-[3px] rounded-full bg-white/10" />
+              {/* progress fill */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 top-2 w-[3px] rounded-full"
+                style={{
+                  height: `${scroll.progress * (660 - 16 - HANDLE)}px`,
+                  background: 'hsl(var(--primary) / 0.5)',
+                }}
+              />
+              {/* circle handle */}
+              <div
+                onPointerDown={startThumbDrag}
+                className="absolute left-1/2 -translate-x-1/2 rounded-full cursor-grab active:cursor-grabbing touch-none"
+                style={{
+                  width: HANDLE,
+                  height: HANDLE,
+                  top: `${8 + scroll.progress * (660 - 16 - HANDLE)}px`,
+                  background: 'hsl(var(--primary))',
+                  boxShadow: '0 0 0 4px hsl(var(--primary) / 0.18), 0 4px 12px -2px rgba(0,0,0,0.6)',
+                }}
+              />
             </div>
           </div>
         </motion.div>
