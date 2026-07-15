@@ -30,7 +30,7 @@ import CoachDashboardPreview from '@/components/coaches/CoachDashboardPreview';
 // lives on the final "invite-only" CTA section, so old links land on
 // the register block instead of a dead hash.
 
-const CONTACT_EMAIL = 'hello@ryznrise.com';
+const CONTACT_EMAIL = 'jackwork716@gmail.com';
 const CONTACT_SUBJECT = encodeURIComponent('RYZN for Coaches — Register My Team');
 const CONTACT_BODY = encodeURIComponent(
   "Hi Jack,\n\nI'm a coach/trainer interested in RYZN for Coaches.\n\nSport / discipline:\nTeam or client count:\nWhat I'm looking for:\n"
